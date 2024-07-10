@@ -1,0 +1,12 @@
+C:\Users\f\Desktop\blog_api\SharedKernel\bin\Debug\net8.0\SharedKernel.deps.json
+C:\Users\f\Desktop\blog_api\SharedKernel\bin\Debug\net8.0\SharedKernel.dll
+C:\Users\f\Desktop\blog_api\SharedKernel\bin\Debug\net8.0\SharedKernel.pdb
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.csproj.AssemblyReference.cache
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.AssemblyInfoInputs.cache
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.AssemblyInfo.cs
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.csproj.CoreCompileInputs.cache
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.dll
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\refint\SharedKernel.dll
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\SharedKernel.pdb
+C:\Users\f\Desktop\blog_api\SharedKernel\obj\Debug\net8.0\ref\SharedKernel.dll
