@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pRG1IeilxndZHigXpBE6DYhm+YojhmAV4HBWBlfHRFFGaMhY/at7AfKTtm8jWAPfrzIjuQ2emcOI3GEU0VIV2Q==",
+  "dgSpecHash": "aGd+YmMh2Q/KHlUJC1GG8gCHGr55E5lR/InS7GcFRTHCHz2tusK7xm6Ye6UW7YvfY7tY1KEwiY4xFZO1cppyjg==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
@@ -40,8 +40,10 @@
     "C:\\Users\\f\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\nreco.videoconverter\\1.2.1\\nreco.videoconverter.1.2.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\nsubstitute\\5.1.0\\nsubstitute.5.1.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\nuget.frameworks\\6.5.0\\nuget.frameworks.6.5.0.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\nunit\\2.5.7.10213\\nunit.2.5.7.10213.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -59,6 +61,7 @@
     "C:\\Users\\f\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\scrutor\\4.2.2\\scrutor.4.2.2.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\sixlabors.imagesharp\\3.1.5\\sixlabors.imagesharp.3.1.5.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
@@ -130,5 +133,16 @@
     "C:\\Users\\f\\.nuget\\packages\\xunit.extensibility.execution\\2.5.3\\xunit.extensibility.execution.2.5.3.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\xunit.runner.visualstudio\\2.5.3\\xunit.runner.visualstudio.2.5.3.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'NUnit 2.5.7.10213' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "NUnit",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

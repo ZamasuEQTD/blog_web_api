@@ -10,6 +10,11 @@ namespace SharedKernel.Abstractions
         {
             Value = value;
         }
+
+        public override string ToString()
+        {
+            return this.Value.ToString();
+        }
         protected override IEnumerable<object> GetAtomicValues()
         {
             return [Value];

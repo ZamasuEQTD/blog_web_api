@@ -1,11 +1,13 @@
+using Domain.Comentarios;
+using Domain.Comentarios.Abstractions;
+using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using SharedKernel;
 using SharedKernel.Abstractions;
 
 namespace Domain.Usuarios
 {
-    public abstract class Usuario : Entity<UsuarioId>
-    {
+    public abstract class Usuario : Entity<UsuarioId> {
         public Username Username { get; private set; }
         public string HashedPassword { get; private set; }
         public RangoDeUsuario Rango { get; set; }
@@ -18,17 +20,13 @@ namespace Domain.Usuarios
             this.Username = username;
             this.HashedPassword = HashedPassword;
         }
-
-        public abstract Result EliminarHilo(IHilosManager manager);
         public enum RangoDeUsuario {
             Anonimo,
             Moderador
         }
-
     }
 
-    public class Anonimo : Usuario
-    {
+    public class Anonimo : Usuario {
         private Anonimo(){}
         private Anonimo(
             UsuarioId id,
@@ -48,13 +46,10 @@ namespace Domain.Usuarios
             );
         }
 
-        public override Result EliminarHilo(IHilosManager manager) => manager.EliminarHilo(this);
     }
 
 
-    public class Moderador : Usuario
-    {
+    public class Moderador : Usuario {
         public Moderador(UsuarioId id, Username username, string HashedPassword) : base(id, username, HashedPassword) {}
-        public override Result EliminarHilo(IHilosManager manager)=> manager.EliminarHilo(this);
     }
 }

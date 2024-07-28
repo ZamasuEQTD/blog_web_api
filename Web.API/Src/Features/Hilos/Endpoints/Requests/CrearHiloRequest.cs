@@ -1,6 +1,7 @@
 using Application.Hilos;
 using Application.Hilos.Commands;
 using Ardalis.ApiEndpoints;
+using Infraestructure.Media;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -26,7 +27,10 @@ namespace WebApi.Hilos.Endpoints
         {
             var command = new CrearHiloCommand(
                 request.Titulo,
-                request.Descripcion
+                request.Descripcion,
+                request.Encuesta,
+                new CrearHiloCommand.ConfiguracionDeComentariosCommand(),
+                new FormFileProvider(request.Portada)
             );
 
             var result = await _sender.Send(command,cancellationToken);
@@ -38,6 +42,8 @@ namespace WebApi.Hilos.Endpoints
     }
     public record CrearHiloRequest(
         string Titulo,
-        string Descripcion
+        string Descripcion,
+        List<string>? Encuesta,
+        IFormFile Portada
     );
 }

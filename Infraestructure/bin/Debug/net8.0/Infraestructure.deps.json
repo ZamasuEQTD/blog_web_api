@@ -12,7 +12,9 @@
           "BCrypt.Net-Next": "4.0.3",
           "Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "NReco.VideoConverter": "1.2.1",
+          "SixLabors.ImageSharp": "3.1.5"
         },
         "runtime": {
           "Infraestructure.dll": {}
@@ -212,6 +214,14 @@
           }
         }
       },
+      "NReco.VideoConverter/1.2.1": {
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "assemblyVersion": "1.2.1.0",
+            "fileVersion": "1.2.1.0"
+          }
+        }
+      },
       "Scrutor/4.2.2": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
@@ -221,6 +231,14 @@
           "lib/net6.0/Scrutor.dll": {
             "assemblyVersion": "4.0.0.0",
             "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "SixLabors.ImageSharp/3.1.5": {
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.1.5.0"
           }
         }
       },
@@ -456,12 +474,26 @@
       "path": "microsoft.identitymodel.tokens/7.1.2",
       "hashPath": "microsoft.identitymodel.tokens.7.1.2.nupkg.sha512"
     },
+    "NReco.VideoConverter/1.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "path": "nreco.videoconverter/1.2.1",
+      "hashPath": "nreco.videoconverter.1.2.1.nupkg.sha512"
+    },
     "Scrutor/4.2.2": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-t5VIYA7WJXoJJo7s4DoHakMGwTu+MeEnZumMOhTCH7kz9xWha24G7dJNxWrHPlu0ZdZAS4jDZCxxAnyaBh7uYw==",
       "path": "scrutor/4.2.2",
       "hashPath": "scrutor.4.2.2.nupkg.sha512"
+    },
+    "SixLabors.ImageSharp/3.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lNtlq7dSI/QEbYey+A0xn48z5w4XHSffF8222cC4F4YwTXfEImuiBavQcWjr49LThT/pRmtWJRcqA/PlL+eJ6g==",
+      "path": "sixlabors.imagesharp/3.1.5",
+      "hashPath": "sixlabors.imagesharp.3.1.5.nupkg.sha512"
     },
     "System.Buffers/4.5.1": {
       "type": "package",

@@ -1,28 +1,35 @@
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
-    public class UsuariosRepository : IUsuariosRepository
-    {
+    public class UsuariosRepository : IUsuariosRepository {
+
+        private readonly ApplicationDbContext _context;
+
+        public UsuariosRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public void Add(Usuario usuario)
         {
-            throw new NotImplementedException();
+            _context.Usuarios.Add(usuario);
         }
 
         public Task<Usuario?> GetUsuarioById(UsuarioId id)
         {
-            throw new NotImplementedException();
+            return _context.Usuarios.FirstOrDefaultAsync(u=> u.Id == id);
         }
 
-        public Task<Usuario?> GetUsuarioByUsername(Username username)
-        {
-            throw new NotImplementedException();
+        public Task<Usuario?> GetUsuarioByUsername(Username username) {
+            return _context.Usuarios.FirstOrDefaultAsync(u=> u.Username == username);
         }
 
         public Task<bool> UsernameEstaOcupado(Username username)
         {
-            throw new NotImplementedException();
+            return _context.Usuarios.AnyAsync(u=> u.Username == username);
         }
     }
 }

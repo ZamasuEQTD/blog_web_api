@@ -1251,11 +1251,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\f\\Desktop\\blog_api\\Persistence\\Persistence.csproj",
+      "projectUniqueName": "c:\\Users\\f\\Desktop\\blog_api\\Persistence\\Persistence.csproj",
       "projectName": "Persistence",
-      "projectPath": "C:\\Users\\f\\Desktop\\blog_api\\Persistence\\Persistence.csproj",
+      "projectPath": "c:\\Users\\f\\Desktop\\blog_api\\Persistence\\Persistence.csproj",
       "packagesPath": "C:\\Users\\f\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\f\\Desktop\\blog_api\\Persistence\\obj\\",
+      "outputPath": "c:\\Users\\f\\Desktop\\blog_api\\Persistence\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\f\\AppData\\Roaming\\NuGet\\NuGet.Config",

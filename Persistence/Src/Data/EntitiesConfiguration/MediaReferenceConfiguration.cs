@@ -11,19 +11,61 @@ namespace Persistence.EntityConfigurations{
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
             builder.Property(m => m.Spoiler).HasColumnName("spoiler").IsRequired();
-            builder.HasOne<Media>().WithMany().HasForeignKey(m=> m.MediaId);
+            builder.HasOne<MediaSource>().WithMany().HasForeignKey(m=> m.MediaId);
         }
     }
 
+    public class MediaSourceConfiguration : IEntityTypeConfiguration<MediaSource> {
+        public void Configure(EntityTypeBuilder<MediaSource> builder)
+        {
+            builder.ToTable("medias_sources");
+            builder.HasKey(m => m.Id);
+            builder.Property(m => m.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+            builder.HasOne<Media>().WithOne().HasForeignKey<MediaSource>(m=> m.Media);        
+     
+            builder.HasDiscriminator<string>("discriminator")
+            .HasValue<HashedMedia>("hashed");
+        }
+    }
+
+     
+
     public class MediaConfiguration : IEntityTypeConfiguration<Media>
     {
-      
         public void Configure(EntityTypeBuilder<Media> builder)
         {
             builder.ToTable("medias");
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
-            builder.Property(m => m.Hash).HasColumnName("hash").IsRequired();
+
+
+            builder
+            .HasDiscriminator<string>("discriminatro")
+            .HasValue<Video>("video")
+            .HasValue<Youtube>("youtube")
+            .HasValue<Imagen>("imagen");
+        }
+    }
+
+    public class VideoConfiguration : IEntityTypeConfiguration<Video> {
+        public void Configure(EntityTypeBuilder<Video> builder)
+        {
+            builder.HasOne<Imagen>().WithOne().HasForeignKey<Video>(v=> v.Previsualizacion);
+            builder.HasOne<Imagen>().WithOne().HasForeignKey<Video>(v=> v.Thumbnail);
+        }
+    }
+
+    public class YoutubeConfiguration : IEntityTypeConfiguration<Youtube>
+    {
+        public void Configure(EntityTypeBuilder<Youtube> builder)
+        {
+        }
+    }
+
+    public class ImagenConfiguration : IEntityTypeConfiguration<Imagen> {
+        public void Configure(EntityTypeBuilder<Imagen> builder)
+        {
+            builder.HasOne<Imagen>().WithOne().HasForeignKey<Imagen>(v=> v.Thumbnail);
         }
     }
 }

@@ -128,3 +128,8 @@ C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\Microsoft.IdentityModel.Token
 C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\nunit.framework.dll
+C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\nunit.mocks.dll
+C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\pnunit.framework.dll
+C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\NReco.VideoConverter.dll
+C:\Users\f\Desktop\blog_api\Tests\bin\Debug\net8.0\SixLabors.ImageSharp.dll

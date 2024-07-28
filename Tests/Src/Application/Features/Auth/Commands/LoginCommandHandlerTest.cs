@@ -31,7 +31,7 @@ namespace Tests.Application.Auth.Commands {
         public async Task Handle_DebeRetornarResultFailure_Cuando_UsernameNoExiste() {
             Username username = Username.Create("username").Value;
             
-            _usuariosRepository.GetUsuarioByUsername(username).When(r=> Task.FromResult(username)).ReturnsNull();
+            _usuariosRepository.GetUsuarioByUsername(username).ReturnsNull();
 
             var result = await _handler.Handle(new("username","password"), default);
 

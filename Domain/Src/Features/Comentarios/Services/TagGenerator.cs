@@ -1,20 +1,16 @@
-using Domain.Comentarios.Abstractions;
 using Domain.Comentarios.ValueObjects;
-using Domain.Hilos;
-using Domain.Usuarios;
+using Domain.Common.Abstractions;
 
 namespace Domain.Comentarios.Services
 {
-    public class TagGenerator : ITagGenerator
-    {
-        public Tag GenerarTag()
+    public class TagGenerator {
+        private readonly IRandomTextGenerator _random;
+
+        public TagGenerator(IRandomTextGenerator random)
         {
-            throw new NotImplementedException();
+            _random = random;
         }
 
-        public TagUnico GenerarTagUnico(Hilo.HiloId hiloId, UsuarioId usuarioId)
-        {
-            throw new NotImplementedException();
-        }
+        public Tag Generar() => Tag.Create(_random.BuildRandomString(8)).Value;
     }
 }

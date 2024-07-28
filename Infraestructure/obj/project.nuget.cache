@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "C0eoOmdgflLnahw0dLU+QNuKcJCjdzl9HZP4MdngsWm6/IzFlLVgJa2ttQeHOa/o5nS1fDnzwMC0ramTDA/AFQ==",
+  "dgSpecHash": "mlk1KUVLYZzP1E9ln8l1iKZ3TGU404VdrDY6tSZ9XIRvApBM3az7zbb38T3JTp8vdyLNtBGPTPm+NJMrSKcN2g==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Infraestructure\\Infraestructure.csproj",
   "expectedPackageFiles": [
@@ -28,7 +28,9 @@
     "C:\\Users\\f\\.nuget\\packages\\microsoft.identitymodel.protocols\\7.1.2\\microsoft.identitymodel.protocols.7.1.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\7.1.2\\microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.1.2\\microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\nreco.videoconverter\\1.2.1\\nreco.videoconverter.1.2.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\scrutor\\4.2.2\\scrutor.4.2.2.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\sixlabors.imagesharp\\3.1.5\\sixlabors.imagesharp.3.1.5.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.1.2\\system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",

@@ -9,6 +9,7 @@ using Domain.Hilos.Abstractions;
 using Domain.Media.Abstractions;
 using Domain.Encuestas.Abstractions;
 using Domain.Usuarios.Abstractions;
+using Domain.Comentarios.Abstractions;
 
 namespace Persistence.Configuration
 {
@@ -37,7 +38,7 @@ namespace Persistence.Configuration
             services.AddScoped<IMediasRepository,MediasRepository>();
             services.AddScoped<IEncuestasRepository,EncuestasRepository>();
             services.AddScoped<IUsuariosRepository,UsuariosRepository>();
-
+            services.AddScoped<IComentariosRepository,ComentariosRepository>();
             return services;
         }
 }

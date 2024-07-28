@@ -31,7 +31,7 @@ namespace WebApi.Extensions
                     r.Errors
                 ),
             _ => CreateDetails(
-                    "Validation Error",
+                    result.Error.Code,
                     StatusCodes.Status400BadRequest,
                     result.Error
                 )

@@ -131,3 +131,6 @@ C:\Users\f\Desktop\blog_api\Web.API\bin\Debug\net8.0\Autofac.Extensions.Dependen
 C:\Users\f\Desktop\blog_api\Web.API\bin\Debug\net8.0\Hellang.Middleware.ProblemDetails.dll
 C:\Users\f\Desktop\blog_api\Web.API\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\f\Desktop\blog_api\Web.API\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\f\Desktop\blog_api\Web.Api\bin\Debug\net8.0\BCrypt.Net-Next.dll
+C:\Users\f\Desktop\blog_api\Web.Api\bin\Debug\net8.0\NReco.VideoConverter.dll
+C:\Users\f\Desktop\blog_api\Web.Api\bin\Debug\net8.0\SixLabors.ImageSharp.dll

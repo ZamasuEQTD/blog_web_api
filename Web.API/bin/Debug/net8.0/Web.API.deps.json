@@ -62,6 +62,14 @@
           }
         }
       },
+      "BCrypt.Net-Next/4.0.3": {
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.0.3.0"
+          }
+        }
+      },
       "FluentValidation/11.9.2": {
         "runtime": {
           "lib/net8.0/FluentValidation.dll": {
@@ -594,6 +602,14 @@
           }
         }
       },
+      "NReco.VideoConverter/1.2.1": {
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "assemblyVersion": "1.2.1.0",
+            "fileVersion": "1.2.1.0"
+          }
+        }
+      },
       "Scrutor/4.2.2": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
@@ -603,6 +619,14 @@
           "lib/net6.0/Scrutor.dll": {
             "assemblyVersion": "4.0.0.0",
             "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "SixLabors.ImageSharp/3.1.5": {
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.1.5.0"
           }
         }
       },
@@ -785,9 +809,12 @@
       "Infraestructure/1.0.0": {
         "dependencies": {
           "Application": "1.0.0",
+          "BCrypt.Net-Next": "4.0.3",
           "Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "NReco.VideoConverter": "1.2.1",
+          "SixLabors.ImageSharp": "3.1.5"
         },
         "runtime": {
           "Infraestructure.dll": {}
@@ -848,6 +875,13 @@
       "sha512": "sha512-tf+//4MBola256qaaVQqQ6tx2R57S8A8BFekRWNpHkpSFzRBPkU+/fEDUSrCjqldK/B2zRoDbsMcQmYy3PYGWg==",
       "path": "autofac.extensions.dependencyinjection/9.0.0",
       "hashPath": "autofac.extensions.dependencyinjection.9.0.0.nupkg.sha512"
+    },
+    "BCrypt.Net-Next/4.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "path": "bcrypt.net-next/4.0.3",
+      "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
     },
     "FluentValidation/11.9.2": {
       "type": "package",
@@ -1136,12 +1170,26 @@
       "path": "npgsql.entityframeworkcore.postgresql/8.0.4",
       "hashPath": "npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512"
     },
+    "NReco.VideoConverter/1.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "path": "nreco.videoconverter/1.2.1",
+      "hashPath": "nreco.videoconverter.1.2.1.nupkg.sha512"
+    },
     "Scrutor/4.2.2": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-t5VIYA7WJXoJJo7s4DoHakMGwTu+MeEnZumMOhTCH7kz9xWha24G7dJNxWrHPlu0ZdZAS4jDZCxxAnyaBh7uYw==",
       "path": "scrutor/4.2.2",
       "hashPath": "scrutor.4.2.2.nupkg.sha512"
+    },
+    "SixLabors.ImageSharp/3.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lNtlq7dSI/QEbYey+A0xn48z5w4XHSffF8222cC4F4YwTXfEImuiBavQcWjr49LThT/pRmtWJRcqA/PlL+eJ6g==",
+      "path": "sixlabors.imagesharp/3.1.5",
+      "hashPath": "sixlabors.imagesharp.3.1.5.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.4.0": {
       "type": "package",

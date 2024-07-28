@@ -408,6 +408,19 @@
           }
         }
       },
+      "NReco.VideoConverter/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Scrutor/4.2.2": {
         "type": "package",
         "dependencies": {
@@ -423,6 +436,22 @@
           "lib/net6.0/Scrutor.dll": {
             "related": ".pdb;.xml"
           }
+        }
+      },
+      "SixLabors.ImageSharp/3.1.5": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/SixLabors.ImageSharp.props": {}
         }
       },
       "System.Buffers/4.5.1": {
@@ -1210,6 +1239,21 @@
         "microsoft.identitymodel.tokens.nuspec"
       ]
     },
+    "NReco.VideoConverter/1.2.1": {
+      "sha512": "d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "type": "package",
+      "path": "nreco.videoconverter/1.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/NReco.VideoConverter.dll",
+        "lib/net45/NReco.VideoConverter.xml",
+        "lib/netstandard2.0/NReco.VideoConverter.dll",
+        "lib/netstandard2.0/NReco.VideoConverter.xml",
+        "nreco.videoconverter.1.2.1.nupkg.sha512",
+        "nreco.videoconverter.nuspec"
+      ]
+    },
     "Scrutor/4.2.2": {
       "sha512": "t5VIYA7WJXoJJo7s4DoHakMGwTu+MeEnZumMOhTCH7kz9xWha24G7dJNxWrHPlu0ZdZAS4jDZCxxAnyaBh7uYw==",
       "type": "package",
@@ -1231,6 +1275,22 @@
         "lib/netstandard2.0/Scrutor.xml",
         "scrutor.4.2.2.nupkg.sha512",
         "scrutor.nuspec"
+      ]
+    },
+    "SixLabors.ImageSharp/3.1.5": {
+      "sha512": "lNtlq7dSI/QEbYey+A0xn48z5w4XHSffF8222cC4F4YwTXfEImuiBavQcWjr49LThT/pRmtWJRcqA/PlL+eJ6g==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/3.1.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "lib/net6.0/SixLabors.ImageSharp.dll",
+        "lib/net6.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.3.1.5.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
       ]
     },
     "System.Buffers/4.5.1": {
@@ -1438,7 +1498,9 @@
       "BCrypt.Net-Next >= 4.0.3",
       "Domain >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.6",
-      "Microsoft.Extensions.Configuration.Abstractions >= 8.0.0"
+      "Microsoft.Extensions.Configuration.Abstractions >= 8.0.0",
+      "NReco.VideoConverter >= 1.2.1",
+      "SixLabors.ImageSharp >= 3.1.5"
     ]
   },
   "packageFolders": {
@@ -1503,6 +1565,14 @@
           "Microsoft.Extensions.Configuration.Abstractions": {
             "target": "Package",
             "version": "[8.0.0, )"
+          },
+          "NReco.VideoConverter": {
+            "target": "Package",
+            "version": "[1.2.1, )"
+          },
+          "SixLabors.ImageSharp": {
+            "target": "Package",
+            "version": "[3.1.5, )"
           }
         },
         "imports": [

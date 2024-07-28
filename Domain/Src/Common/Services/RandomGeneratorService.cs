@@ -12,17 +12,5 @@ namespace Domain.Common.Abstractions {
         {
             return GenerarInt(0,max);
         }
-
-        public int GenerarSeedInt(int seed, int max)
-        {
-            return GenerarSeedInt(seed,0,max);
-        }
-
-        public int GenerarSeedInt(int seed, int min, int max)
-        {
-            Random random = new Random(seed);
-            
-            return random.Next(min, max);
-        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "RjRjC54FG6+opWcoETcqlSPeIYgHydKe6gbET4kRuLlNdOjVVALVkGSb7hTdWWRdlrNNuuKHKCB7S+Skb0B7Gg==",
+  "dgSpecHash": "cGgWP8vCJXnoMmzUiJbTEPF90wRYpVlGmmyluGNa9iBrIb0jUS5acsddOJuiqYiO3Ql2yEDB4yyVr3JRP9WD9w==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Web.API\\Web.API.csproj",
   "expectedPackageFiles": [
@@ -50,7 +50,9 @@
     "C:\\Users\\f\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\npgsql\\8.0.3\\npgsql.8.0.3.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.4\\npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\nreco.videoconverter\\1.2.1\\nreco.videoconverter.1.2.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\scrutor\\4.2.2\\scrutor.4.2.2.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\sixlabors.imagesharp\\3.1.5\\sixlabors.imagesharp.3.1.5.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\6.6.2\\swashbuckle.aspnetcore.annotations.6.6.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",

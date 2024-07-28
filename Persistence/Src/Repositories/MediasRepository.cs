@@ -7,9 +7,9 @@ namespace Persistence.Repositories
 {
     public class MediasRepository : IMediasRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public MediasRepository(IApplicationDbContext context)
+        public MediasRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -24,9 +24,16 @@ namespace Persistence.Repositories
             _context.Medias.Add(media);
         }
 
+        public void Add(MediaSource source)=> _context.Add(source);
+
+        public Task<HashedMedia?> GetHashedMediaByHash(string hash)
+        {
+            return _context.MediaSources.OfType<HashedMedia>().FirstOrDefaultAsync(m=> m.Hash == hash);
+        }
+
         public Task<Media?> GetMediaByHash(string hash)
         {
-            return _context.Medias.FirstOrDefaultAsync(m=>m.Hash == hash);
+            throw new NotImplementedException();
         }
 
     }

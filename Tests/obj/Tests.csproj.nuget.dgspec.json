@@ -216,6 +216,14 @@
             "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "NReco.VideoConverter": {
+              "target": "Package",
+              "version": "[1.2.1, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.5, )"
             }
           },
           "imports": [
@@ -366,6 +374,10 @@
             "NSubstitute": {
               "target": "Package",
               "version": "[5.1.0, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[2.5.7.10213, )"
             },
             "coverlet.collector": {
               "target": "Package",

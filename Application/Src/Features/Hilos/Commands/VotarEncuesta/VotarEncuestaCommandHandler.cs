@@ -15,6 +15,7 @@ namespace Application.Hilos.Commands
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserContext _userContext;
+
         public VotarEncuestaCommandHandler(IUnitOfWork unitOfWork, IEncuestasRepository encuestasRepository, IHilosRepository hilosRepository, IUserContext userContext)
         {
             _unitOfWork = unitOfWork;
@@ -24,11 +25,9 @@ namespace Application.Hilos.Commands
         }
 
         public async Task<Result> Handle(VotarEncuestaCommand request, CancellationToken cancellationToken) {
-            Hilo? hilo = await _hilosRepository.GetHiloById(new Hilo.HiloId(request.HiloId));
+            Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.HiloId));
             
-            if(hilo is null){
-                return HilosFailures.HILO_INEXISTENTE;
-            }
+            if(hilo is null) return HilosFailures.HILO_INEXISTENTE;
 
             Encuesta? encuesta = await _encuestasRepository.GetEncuestaById(hilo.EncuestaId!);
 

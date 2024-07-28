@@ -1,14 +1,15 @@
 using Application.Abstractions.Data;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
     public class HilosRepository : IHilosRepository
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public HilosRepository(IApplicationDbContext  context)
+        public HilosRepository(ApplicationDbContext  context)
         {
             _context = context;
         }
@@ -17,10 +18,9 @@ namespace Persistence.Repositories
         {
             _context.Hilos.Add(hilo);    
         }
-
-        public Task<Hilo> GetHiloById(Hilo.HiloId id)
+        public Task<Hilo?> GetHiloById(HiloId id)
         {
-            throw new NotImplementedException();
+            return _context.Hilos.FirstOrDefaultAsync(h=>  h.Id == id);
         }
     }
 }

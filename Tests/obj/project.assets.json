@@ -822,6 +822,19 @@
           }
         }
       },
+      "NReco.VideoConverter/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "NSubstitute/5.1.0": {
         "type": "package",
         "dependencies": {
@@ -845,6 +858,19 @@
         },
         "runtime": {
           "lib/netstandard2.0/NuGet.Frameworks.dll": {}
+        }
+      },
+      "NUnit/2.5.7.10213": {
+        "type": "package",
+        "compile": {
+          "lib/nunit.framework.dll": {},
+          "lib/nunit.mocks.dll": {},
+          "lib/pnunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/nunit.framework.dll": {},
+          "lib/nunit.mocks.dll": {},
+          "lib/pnunit.framework.dll": {}
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -1033,6 +1059,22 @@
           "lib/net6.0/Scrutor.dll": {
             "related": ".pdb;.xml"
           }
+        }
+      },
+      "SixLabors.ImageSharp/3.1.5": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/_._": {}
         }
       },
       "System.AppContext/4.3.0": {
@@ -2357,7 +2399,9 @@
           "BCrypt.Net-Next": "4.0.3",
           "Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "NReco.VideoConverter": "1.2.1",
+          "SixLabors.ImageSharp": "3.1.5"
         },
         "compile": {
           "bin/placeholder/Infraestructure.dll": {}
@@ -3497,6 +3541,21 @@
         "packageIcon.png"
       ]
     },
+    "NReco.VideoConverter/1.2.1": {
+      "sha512": "d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "type": "package",
+      "path": "nreco.videoconverter/1.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/NReco.VideoConverter.dll",
+        "lib/net45/NReco.VideoConverter.xml",
+        "lib/netstandard2.0/NReco.VideoConverter.dll",
+        "lib/netstandard2.0/NReco.VideoConverter.xml",
+        "nreco.videoconverter.1.2.1.nupkg.sha512",
+        "nreco.videoconverter.nuspec"
+      ]
+    },
     "NSubstitute/5.1.0": {
       "sha512": "ZCqOP3Kpp2ea7QcLyjMU4wzE+0wmrMN35PQMsdPOHYc2IrvjmusG9hICOiqiOTPKN0gJon6wyCn6ZuGHdNs9hQ==",
       "type": "package",
@@ -3528,6 +3587,70 @@
         "lib/netstandard2.0/NuGet.Frameworks.dll",
         "nuget.frameworks.6.5.0.nupkg.sha512",
         "nuget.frameworks.nuspec"
+      ]
+    },
+    "NUnit/2.5.7.10213": {
+      "sha512": "4aEVHJ3K6SRvmnUn630f6LMy6wfM5tZyMhSSAcMrOs2EspiwI0wsGtTQkFWizqjhNsO+fn0I/ravWZAAVfXpqg==",
+      "type": "package",
+      "path": "nunit/2.5.7.10213",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Logo.ico",
+        "NUnitFitTests.html",
+        "Tools/NUnitFitTests.html",
+        "Tools/NUnitTests.config",
+        "Tools/NUnitTests.nunit",
+        "Tools/agent.conf",
+        "Tools/agent.log.conf",
+        "Tools/launcher.log.conf",
+        "Tools/lib/Failure.png",
+        "Tools/lib/Ignored.png",
+        "Tools/lib/Inconclusive.png",
+        "Tools/lib/Skipped.png",
+        "Tools/lib/Success.png",
+        "Tools/lib/fit.dll",
+        "Tools/lib/log4net.dll",
+        "Tools/lib/nunit-console-runner.dll",
+        "Tools/lib/nunit-gui-runner.dll",
+        "Tools/lib/nunit.core.dll",
+        "Tools/lib/nunit.core.interfaces.dll",
+        "Tools/lib/nunit.fixtures.dll",
+        "Tools/lib/nunit.uiexception.dll",
+        "Tools/lib/nunit.uikit.dll",
+        "Tools/lib/nunit.util.dll",
+        "Tools/nunit-agent-x86.exe",
+        "Tools/nunit-agent-x86.exe.config",
+        "Tools/nunit-agent.exe",
+        "Tools/nunit-agent.exe.config",
+        "Tools/nunit-console-x86.exe",
+        "Tools/nunit-console-x86.exe.config",
+        "Tools/nunit-console.exe",
+        "Tools/nunit-console.exe.config",
+        "Tools/nunit-x86.exe",
+        "Tools/nunit-x86.exe.config",
+        "Tools/nunit.exe",
+        "Tools/nunit.exe.config",
+        "Tools/nunit.framework.dll",
+        "Tools/pnunit-agent.exe",
+        "Tools/pnunit-agent.exe.config",
+        "Tools/pnunit-launcher.exe",
+        "Tools/pnunit-launcher.exe.config",
+        "Tools/pnunit.framework.dll",
+        "Tools/pnunit.tests.dll",
+        "Tools/runFile.exe",
+        "Tools/runFile.exe.config",
+        "Tools/runpnunit.bat",
+        "Tools/test.conf",
+        "fit-license.txt",
+        "lib/nunit.framework.dll",
+        "lib/nunit.framework.xml",
+        "lib/nunit.mocks.dll",
+        "lib/pnunit.framework.dll",
+        "license.txt",
+        "nunit.2.5.7.10213.nupkg.sha512",
+        "nunit.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -3775,6 +3898,22 @@
         "lib/netstandard2.0/Scrutor.xml",
         "scrutor.4.2.2.nupkg.sha512",
         "scrutor.nuspec"
+      ]
+    },
+    "SixLabors.ImageSharp/3.1.5": {
+      "sha512": "lNtlq7dSI/QEbYey+A0xn48z5w4XHSffF8222cC4F4YwTXfEImuiBavQcWjr49LThT/pRmtWJRcqA/PlL+eJ6g==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/3.1.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "lib/net6.0/SixLabors.ImageSharp.dll",
+        "lib/net6.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.3.1.5.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -7194,6 +7333,7 @@
       "Infraestructure >= 1.0.0",
       "Microsoft.NET.Test.Sdk >= 17.8.0",
       "NSubstitute >= 5.1.0",
+      "NUnit >= 2.5.7.10213",
       "coverlet.collector >= 6.0.0",
       "xunit >= 2.5.3",
       "xunit.runner.visualstudio >= 2.5.3"
@@ -7265,6 +7405,10 @@
             "target": "Package",
             "version": "[5.1.0, )"
           },
+          "NUnit": {
+            "target": "Package",
+            "version": "[2.5.7.10213, )"
+          },
           "coverlet.collector": {
             "target": "Package",
             "version": "[6.0.0, )"
@@ -7297,5 +7441,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'NUnit 2.5.7.10213' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "NUnit",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
