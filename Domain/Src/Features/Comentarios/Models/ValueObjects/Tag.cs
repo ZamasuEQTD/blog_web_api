@@ -1,11 +1,9 @@
 using System.Text.RegularExpressions;
-using Domain.Comentarios.Validators;
 using SharedKernel;
 
 namespace Domain.Comentarios.ValueObjects
 {
-    public class Tag : ValueObject
-    {
+    public class Tag : ValueObject {
         static public readonly int LENGTH = 8;
         static public readonly string REGEX_STRING = "[A-Z0-9]{8}";
         static private readonly string TAG_REGEX_STRING = $"^{REGEX_STRING}$";
@@ -17,14 +15,8 @@ namespace Domain.Comentarios.ValueObjects
             Value = value;
         }
 
-        static public Result<Tag> Create(string tag)
-        {
-            Result result = new TagValidator(tag).Handle();
-
-            if(result.IsFailure){
-                return result.Error;
-            }
-
+        static public Tag Create(string tag) {
+            CheckRule(new ValidarTagRegexRule(tag));
             return new Tag(tag);
         }
 

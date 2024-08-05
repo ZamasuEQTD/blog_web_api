@@ -1,40 +1,34 @@
+using System.Diagnostics.Contracts;
 using Domain.Media.Abstractions;
 
 namespace Domain.Media.Services
 {
-    public class PrevisualizadorProcesor {
-        private readonly IVistaPreviaService _vistaPreviaService;
+    public class PrevisualizacionProcesor
+    {
         private readonly IFolderProvider _folderProvider;
+        private readonly IPrevisualizacionVideoGenerador _previsualizacionVideoGenerador;
         private readonly IFileService _fileService;
-        private readonly MiniaturaProcesor _miniaturaProcesor;
-        private readonly IMediasRepository _mediasRepository;
-        public PrevisualizadorProcesor(IVistaPreviaService vistaPreviaService, IFolderProvider folderProvider, IFileService fileService, MiniaturaProcesor miniaturaProcesor, IMediasRepository mediasRepository)
+
+        public PrevisualizacionProcesor(IFileService fileService, IPrevisualizacionVideoGenerador previsualizacionVideoGenerador, IFolderProvider folderProvider)
         {
-            _vistaPreviaService = vistaPreviaService;
-            _folderProvider = folderProvider;
             _fileService = fileService;
-            _miniaturaProcesor = miniaturaProcesor;
-            _mediasRepository = mediasRepository;
+            _previsualizacionVideoGenerador = previsualizacionVideoGenerador;
+            _folderProvider = folderProvider;
         }
 
-        public async Task<Imagen> Procesar(string path){
+        public async Task<string> Procesar(Stream video){
             string previsualizacion_path = _folderProvider.VistasPrevias + "/" + Guid.NewGuid() + ".png";
 
-            Stream vista_previa = _vistaPreviaService.GenerarDesdeVideo(path);
+            Stream vista_previa = _previsualizacionVideoGenerador.Generar(video);
 
-            await _fileService.GuardarArchivo(vista_previa,previsualizacion_path) ;
+            await _fileService.GuardarArchivo(vista_previa, previsualizacion_path);
 
-            Imagen thumbnail = await _miniaturaProcesor.Procesar(previsualizacion_path);
-
-            _mediasRepository.Add(thumbnail);
-
-            return new Imagen(
-                new(Guid.NewGuid()),
-                MediaProvider.File(
-                    previsualizacion_path
-                ),
-                thumbnail.Id
-            ); 
+            return previsualizacion_path;
         }
+    }
+
+    public interface IPrevisualizacionVideoGenerador
+    {
+        Stream Generar(Stream path);
     }
 }

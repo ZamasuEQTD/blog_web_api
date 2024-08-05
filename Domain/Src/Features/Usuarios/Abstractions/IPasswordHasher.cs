@@ -6,6 +6,5 @@ namespace Domain.Usuarios.Abstractions
     {
         public string Hash(Password password);
         public bool Verify(Password password,string hashedPassword);
-
     }
 }

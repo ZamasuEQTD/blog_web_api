@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Domain.Comentarios.Validators;
+using Domain.Comentarios.Rules;
 using SharedKernel;
 
 namespace Domain.Comentarios.ValueObjects
@@ -14,13 +14,8 @@ namespace Domain.Comentarios.ValueObjects
             Value = value;
         }
 
-        public static Result<TagUnico> Create(string tag){
-            Result result = new TagUnicoValidator(tag).Handle();
-
-            if(result.IsFailure){
-                return result.Error;
-            }
-
+        public static TagUnico Create(string tag){
+            CheckRule(new ValidarTagUnicoRegexRule(tag));
             return new TagUnico(tag);
         }
 

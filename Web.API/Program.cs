@@ -1,14 +1,8 @@
 using Application.Configuration;
-using Persistence.Configuration;
-using Infraestructure.Configuration;
-using WebApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text.Json.Serialization;
-using WebApi.Configuration;
-using WebApi.Middlewares;
 using SharedKernel;
 using Hellang.Middleware.ProblemDetails;
-using WebApi.Configuration.Validation;
 using MediatR;
 using Application.Behaviors;
 using FluentValidation;
@@ -23,12 +17,6 @@ builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeLi
 
 builder.Services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly, includeInternalTypes:true);
 
-builder.Services
-.AddDomain()
-.AddApplication()
-.AddInfraestructure()
-.AddPersistence(builder.Configuration)
-.AddSwaggerBearerTokenSupport();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -37,8 +25,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -50,7 +36,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ApplyMigrations();
 
 }
 
@@ -58,7 +43,6 @@ app.UseCors(policy => policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseRouting();
 

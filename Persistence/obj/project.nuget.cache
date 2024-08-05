@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Drk66N7DCqXUcXpXf7UHVYWpDYhaAcrmvHX5Lvt/HJLksDY507SMNROmbgOabUgg80Yba+0RmGBMRmMRneF4gA==",
+  "dgSpecHash": "aLjNGVOzA3jGi76hzGXv7nac9PacWBawnl79w0DpOeAi2dhb+r1It7iITi/pkxldfZ0+R3x8PAj6OlWYN9zG4g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Persistence\\Persistence.csproj",
+  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Persistence\\Persistence.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",

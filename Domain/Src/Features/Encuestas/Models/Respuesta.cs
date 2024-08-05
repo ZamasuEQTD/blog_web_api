@@ -14,12 +14,10 @@ namespace Domain.Encuestas
         }
 
         public Respuesta(
-            RespuestaId id,
             EncuestaId encuestaId,
             string contenido
-        )
-        {
-            Id = id;
+        ){
+            Id = new (Guid.NewGuid());
             EncuestaId = encuestaId;
             Contenido = contenido;
         }

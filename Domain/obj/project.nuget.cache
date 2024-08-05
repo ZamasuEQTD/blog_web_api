@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aM1KD6zAgkmCOGyvsuf+hXAW1/mkiPsDsxpPYXpppcQSmnf9OxKjLJ5Rbv+sARlP4PVFqk1Q39J1y7c7FrZU4Q==",
+  "dgSpecHash": "duRZRY6JAsC75uoYaNGJX5dtFMIeMD/nQnW2xa0SA5X8JtnmYIr5MjfE+oFzKn3PjNYVFHa/nmdoyCwRMIIAwg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Domain\\Domain.csproj",
+  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Domain\\Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

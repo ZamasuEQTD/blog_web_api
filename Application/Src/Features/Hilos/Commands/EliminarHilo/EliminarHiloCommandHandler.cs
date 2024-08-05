@@ -1,39 +1,30 @@
-using System.Net.NetworkInformation;
-using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
-using Domain.Hilos.Failures;
-using Domain.Usuarios;
-using Domain.Usuarios.Abstractions;
-using SharedKernel;
+using SharedKernel.Abstractions;
 
-namespace Application.Hilos.Commands {
+namespace Application.Hilos.Commands
+{
     public class EliminarHiloCommandHandler : ICommandHandler<EliminarHiloCommand> {
-
         private readonly IHilosRepository _hilosRepository;
+        private readonly IDateTimeProvider _timeProvider;
         private readonly IUnitOfWork _unitOfWork;
 
-        public EliminarHiloCommandHandler(
-            IUnitOfWork unitOfWork, 
-            IHilosRepository hilosRepository
-        ){
+        public EliminarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository)
+        {
             _unitOfWork = unitOfWork;
             _hilosRepository = hilosRepository;
         }
 
-        public async Task<Result> Handle(EliminarHiloCommand request, CancellationToken cancellationToken) {
-            Hilo? hilo = await _hilosRepository.GetHiloById(new(request.HiloId));
+        public async Task Handle(EliminarHiloCommand request, CancellationToken cancellationToken) {
+            Hilo? hilo = await _hilosRepository.GetHiloById(new  (request.Hilo));
 
-            if (hilo is  null) return HilosFailures.HILO_INEXISTENTE;
+            if(hilo is null) throw new HiloNoEncontrado();
 
-            var result = hilo.Eliminar();
-
-            if(result.IsFailure) return result.Error;
+            hilo.Eliminar(_timeProvider.UtcNow);
 
             await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
         }
     }
 }

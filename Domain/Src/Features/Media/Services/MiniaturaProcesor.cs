@@ -12,7 +12,7 @@ namespace Domain.Media.Services {
             _folderProvider = folderProvider;
         }
 
-        public async Task<Imagen> Procesar(string imagen){
+        public async Task<string> Procesar(string imagen){
             string miniatura_path = _folderProvider.ThumbnailFolder + "/" + Guid.NewGuid() + ".jpeg";
             
             Stream resized = await _resizer.Resize(
@@ -25,13 +25,7 @@ namespace Domain.Media.Services {
 
             resized.Dispose();
 
-            return new Imagen(
-                new MediaId(Guid.NewGuid()),
-                MediaProvider.File(
-                    miniatura_path
-                ),
-                null
-            );
+            return miniatura_path;
         }  
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mlk1KUVLYZzP1E9ln8l1iKZ3TGU404VdrDY6tSZ9XIRvApBM3az7zbb38T3JTp8vdyLNtBGPTPm+NJMrSKcN2g==",
+  "dgSpecHash": "7c2EFt0SV7UvYygDrN5JdTxqm0AgZjrUvF4Se7Q8F04M6BHJMGUcR2F2ER7FG4IKmZzx3DQmsmtFEP2L1/rK7w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Infraestructure\\Infraestructure.csproj",
+  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Infraestructure\\Infraestructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",

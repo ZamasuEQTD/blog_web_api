@@ -2,9 +2,9 @@ using Application.Abstractions;
 using Application.Abstractions.Messaging;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
-using Domain.Usuarios.Failures;
 using Domain.Usuarios.ValueObjects;
 using SharedKernel;
+using SharedKernel.Abstractions;
 
 namespace Application.Usuarios.Commands {
     public class LoginCommandHandler : ICommandHandler<LoginCommand,  string> {
@@ -18,30 +18,30 @@ namespace Application.Usuarios.Commands {
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken) {
-            var username = Username.Create(request.Username);
+        public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken) {
+            Username username;
+            
+            Password password;
+            
+            try {
+                username = Username.Create(request.Username);
 
-            if(username.IsFailure){
-                return UsuariosFailures.USERNAME_O_PASSWORD_INVALIDA;
+                password = Password.Create(request.Password);
+            }
+            catch (BusinessRuleValidationException)
+            {
+                throw new UsernamePasswordInvalida();
             }
 
-            var password = Password.Create(request.Password);
+            Usuario? usuario = await _repository.GetUsuarioByUsername(username);
 
-            if(password.IsFailure){
-                return UsuariosFailures.USERNAME_O_PASSWORD_INVALIDA;
-            }
-
-            Usuario? usuario = await _repository.GetUsuarioByUsername(username.Value);
-
-            if(usuario is null){
-                return UsuariosFailures.USERNAME_O_PASSWORD_INVALIDA;
-            }
-
-            if(!_hasher.Verify(password.Value, usuario.HashedPassword)){
-                return UsuariosFailures.USERNAME_O_PASSWORD_INVALIDA;
-            }
+            if(usuario is null || !_hasher.Verify(password, usuario.HashedPassword)) throw new UsernamePasswordInvalida();
 
             return _jwtProvider.Generar(usuario);
         }
+    }
+
+    public class UsernamePasswordInvalida : ApplicationException {
+        public UsernamePasswordInvalida() : base(""){}
     }
 }

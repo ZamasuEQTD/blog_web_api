@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
-using Application.Encuestas.Services;
-using Application.Hilos.Commands;
 
 namespace Application.Configuration
 {
@@ -15,8 +13,6 @@ namespace Application.Configuration
             .AddClasses(c => c.AssignableTo(typeof(IRequestHandler<>)))
             .AsImplementedInterfaces().WithScopedLifetime());
         
-            services.AddScoped<MediaProcesor>();
-            services.AddSingleton<EncuestaOrchetastor>();
 
             return services;
         }

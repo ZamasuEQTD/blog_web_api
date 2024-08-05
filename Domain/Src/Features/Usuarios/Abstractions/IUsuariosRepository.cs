@@ -1,3 +1,5 @@
+using Domain.Usuarios;
+
 namespace Domain.Usuarios.Abstractions
 {
     public interface IUsuariosRepository {

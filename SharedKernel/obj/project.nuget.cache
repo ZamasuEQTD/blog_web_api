@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "S/O9MsfE3gx642BLwZ9QCnSitY/eX36wc0Lz0Qh2GtT/4YJBq79nfTRGVFQpRgOM8LndlVSWGX+Fhpy+LXXWcA==",
+  "dgSpecHash": "tQxVwAlu0xgfxM2eOPFe0hKMRsWjFs+vJRcQ3Sv7XeB5RIbW2RMkA+Epcn9xv+CBjQfQqUUPb1iGqYNo5xzk8g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\SharedKernel\\SharedKernel.csproj",
+  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\SharedKernel\\SharedKernel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

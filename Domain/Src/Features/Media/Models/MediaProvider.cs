@@ -1,7 +1,4 @@
-using SharedKernel.Abstractions;
-
-namespace Domain.Media
-{
+namespace Domain.Media  {
     public class MediaProvider {
         public string Path { get; private set;}
         public ProviderSource Source { get; private set;}
@@ -18,13 +15,5 @@ namespace Domain.Media
             File,
             Network
         }
-    }
-     
-
-    public class MediaProviderId : EntityId
-    {
-        public MediaProviderId() : base(){}
-
-        public MediaProviderId(Guid id) : base(id) {}
     }
 }

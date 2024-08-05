@@ -1,6 +1,5 @@
-using Domain.Usuarios.Validations;
+using Domain.Usuarios.Rules;
 using SharedKernel;
-using SharedKernel.Abstractions;
 
 namespace Domain.Usuarios.ValueObjects
 {
@@ -9,22 +8,22 @@ namespace Domain.Usuarios.ValueObjects
         public Password(string value) {
             Value = value;
         }
+        
         private Password(){}
 
-        static public Result<Password> Create(string value) {
-            ValidationHandler handler = new ValidarLargoDePasswordHandler(value);
-            handler.SetNext(new PasswordSinEspaciosEnBlancos(value));
-            
-            Result result = handler.Handle();
-            
-            if(result.IsFailure) return result.Error;
+        static public Password Create(string value) {
+            CheckRule(new PasswordSinEspaciosEnBlancoRule(value));
+            CheckRule(new LargoDePasswordValidoRule(value));
 
-            return new Password(value);
+            return new Password(){
+                Value = value
+            };
         }
 
-        protected override IEnumerable<object> GetAtomicValues()
-        {
-            throw new NotImplementedException();
+        protected override IEnumerable<object> GetAtomicValues() {
+            return new [] { 
+                Value
+            };
         }
     }
 }

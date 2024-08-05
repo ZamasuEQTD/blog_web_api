@@ -1,3 +1,5 @@
+using SharedKernel.Abstractions;
+
 namespace SharedKernel
 {
     public abstract class ValueObject : IEquatable<ValueObject>
@@ -36,5 +38,16 @@ namespace SharedKernel
 
     private bool ValuesAreEqual(ValueObject valueObject) =>
         GetAtomicValues().SequenceEqual(valueObject.GetAtomicValues());
+
+
+     protected static void CheckRule(IBusinessRule rule)
+        {
+            if (rule.IsBroken())
+            {
+                throw new BusinessRuleValidationException(rule);
+            }
+        }
     }
+
+   
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cGgWP8vCJXnoMmzUiJbTEPF90wRYpVlGmmyluGNa9iBrIb0jUS5acsddOJuiqYiO3Ql2yEDB4yyVr3JRP9WD9w==",
+  "dgSpecHash": "1HCUnrDZzGWyNfHxfxgPgP08JXgPZ90FY4v0sojueN7Jad1b6fIhxMDMGBinI4Mo1e9oeEviM6+x3Eb8w8EJXw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api\\Web.API\\Web.API.csproj",
+  "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Web.API\\Web.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\ardalis.apiendpoints\\4.1.0\\ardalis.apiendpoints.4.1.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\ardalis.apiendpoints.codeanalyzers\\4.0.0\\ardalis.apiendpoints.codeanalyzers.4.0.0.nupkg.sha512",

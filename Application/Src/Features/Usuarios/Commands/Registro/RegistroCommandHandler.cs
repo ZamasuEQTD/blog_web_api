@@ -3,7 +3,6 @@ using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
-using Domain.Usuarios.Failures;
 using Domain.Usuarios.ValueObjects;
 using SharedKernel;
 
@@ -22,20 +21,16 @@ namespace Application.Usuarios.Commands
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<Result<string>> Handle(RegistroCommand request, CancellationToken cancellationToken) {
+        public async Task<string> Handle(RegistroCommand request, CancellationToken cancellationToken) {
             var username = Username.Create(request.Username);
 
-            if(username.IsFailure) return username.Error;
-
-            if(await _usuariosRepository.UsernameEstaOcupado(username.Value)) return UsuariosFailures.USERNAME_OCUPADO;
+            if(await _usuariosRepository.UsernameEstaOcupado(username)) throw new ApplicationException("");
 
             var password = Password.Create(request.Password);            
-            if(password.IsFailure) return password.Error;
             
-            Anonimo usuario = Anonimo.Create(
-                new UsuarioId(Guid.NewGuid()),
-                username.Value,
-                _passwordHasher.Hash(password.Value)
+            Anonimo usuario = new Anonimo(
+                username,
+                _passwordHasher.Hash(password)
             );
             
             _usuariosRepository.Add(usuario);

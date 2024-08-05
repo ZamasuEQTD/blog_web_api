@@ -1,5 +1,5 @@
-using Domain.Comentarios.Validators;
 using SharedKernel;
+using SharedKernel.Abstractions;
 
 namespace Domain.Comentarios.ValueObjects
 {
@@ -16,12 +16,9 @@ namespace Domain.Comentarios.ValueObjects
             Value = value;
         }
 
-        static public Result<Dados> Create(int valor){
-            Result result = new ValorDeDadosValidator(valor).Handle();
-
-            if(result.IsFailure) return result.Error;
-
-            return Result.Success(new Dados(valor));
+        static public  Dados Create(int valor){
+            CheckRule(new ValidarValorDeDadosRule(valor));
+            return new Dados(valor);
         }
 
         static public bool ValorEsValido(int valor) => valor < MAX && valor> MIN;
@@ -32,5 +29,18 @@ namespace Domain.Comentarios.ValueObjects
                 this.Value
             };
         }
+    }
+
+    public class ValidarValorDeDadosRule : IBusinessRule {
+        private readonly int _valor;
+
+        public ValidarValorDeDadosRule(int valor)
+        {
+            _valor = valor;
+        }
+
+        public string Message => throw new NotImplementedException();
+
+        public bool IsBroken() => Dados.ValorEsInvalido(_valor);
     }
 }
