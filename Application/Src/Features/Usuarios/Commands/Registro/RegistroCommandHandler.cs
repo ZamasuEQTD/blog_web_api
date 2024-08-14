@@ -8,7 +8,8 @@ using SharedKernel;
 
 namespace Application.Usuarios.Commands
 {
-    public class RegistroCommandHandler : ICommandHandler<RegistroCommand,   string > {
+    public class RegistroCommandHandler : ICommandHandler<RegistroCommand, string>
+    {
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtProvider _jwtProvider;
@@ -21,22 +22,22 @@ namespace Application.Usuarios.Commands
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<string> Handle(RegistroCommand request, CancellationToken cancellationToken) {
-            var username = Username.Create(request.Username);
+        public async Task<Result<string>> Handle(RegistroCommand request, CancellationToken cancellationToken)
+        {
+            Result<Username> username = Username.Create(request.Username);
+            Result<Password> password = Password.Create(request.Password);
 
-            if(await _usuariosRepository.UsernameEstaOcupado(username)) throw new ApplicationException("");
+            if (await _usuariosRepository.UsernameEstaOcupado(username.Value)) throw new ApplicationException("");
 
-            var password = Password.Create(request.Password);            
-            
             Anonimo usuario = new Anonimo(
-                username,
-                _passwordHasher.Hash(password)
+                username.Value,
+                _passwordHasher.Hash(password.Value)
             );
-            
+
             _usuariosRepository.Add(usuario);
 
             await _unitOfWork.SaveChangesAsync();
- 
+
             return _jwtProvider.Generar(usuario);
         }
     }

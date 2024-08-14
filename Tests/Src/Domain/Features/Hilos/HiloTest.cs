@@ -21,17 +21,18 @@ namespace Tests.Domain.Hilos
 
         public HiloBaseTest()
         {
-            Autor = new Anonimo(Username.Create("CODUBI2024"),"PASSWORD");
+            Autor = new Anonimo(Username.Create("CODUBI2024"), "PASSWORD");
 
-            Denunciante = new Anonimo(Username.Create("GATUBI2024"),"PASSWORD");
+            Denunciante = new Anonimo(Username.Create("GATUBI2024"), "PASSWORD");
 
-            Seguidor = new Anonimo(Username.Create("GATUBI2024"),"PASSWORD");
+            Seguidor = new Anonimo(Username.Create("GATUBI2024"), "PASSWORD");
 
             Seguidores = [];
 
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < 12; i++)
+            {
                 Seguidores.Add(
-                    new Anonimo(Username.Create("GATUBI2024"),"PASSWORD")
+                    new Anonimo(Username.Create("GATUBI2024"), "PASSWORD")
                 );
             }
 
@@ -46,10 +47,11 @@ namespace Tests.Domain.Hilos
             Hilo = new Hilo(
                 "titulo",
                 "descripcion",
-                new SubcategoriaId(Guid.NewGuid()),
-                Autor,
+                new(Guid.NewGuid()),
+                new(Guid.NewGuid()),
+                Autor.Id,
                 null,
-                new (
+                new(
                     false,
                     false
                 )
@@ -57,49 +59,56 @@ namespace Tests.Domain.Hilos
         }
 
         [Test]
-        public void Denunciar_Rompe_HiloDebeEstarActivo_Cuando_HiloEstaEliminado(){
+        public void Denunciar_Rompe_HiloDebeEstarActivo_Cuando_HiloEstaEliminado()
+        {
             Hilo.Eliminar(DateTime.UtcNow);
 
-            AssertBrokenRule<HiloDebeEstarActivoRule>(() => {
+            AssertBrokenRule<HiloDebeEstarActivoRule>(() =>
+            {
                 Hilo.Denunciar(
                 Seguidor.Id
             );
             });
-            
+
         }
 
         [Test]
-        public void Denunciar_Rompe_SoloPuedeDenunciarUnaVezRule_Cuando_UsuarioYaHaDenunciado(){
+        public void Denunciar_Rompe_SoloPuedeDenunciarUnaVezRule_Cuando_UsuarioYaHaDenunciado()
+        {
             Hilo.Denunciar(
                 Seguidor.Id
             );
 
-            AssertBrokenRule<SoloPuedeDenunciarUnaVezRule>(() => {
+            AssertBrokenRule<SoloPuedeDenunciarUnaVezRule>(() =>
+            {
                 Hilo.Denunciar(
                 Seguidor.Id
                 );
             });
-            
+
         }
 
         [Test]
-        public void Denunciar_Agrega_Denuncia_CuandoEsValido(){
+        public void Denunciar_Agrega_Denuncia_CuandoEsValido()
+        {
             Hilo.Denunciar(
                 Denunciante.Id
-            ); 
+            );
 
-            bool HaDenunciado = Hilo.Denuncias.Any(d=> d.DenuncianteId == Denunciante.Id);
+            bool HaDenunciado = Hilo.Denuncias.Any(d => d.DenuncianteId == Denunciante.Id);
 
             HaDenunciado.Should().BeTrue();
         }
 
         [Test]
-        public void EstablecerSticky_Rompe_HiloDebeEstarActivoRule_CuandoHiloNoEstaActivo(){
+        public void EstablecerSticky_Rompe_HiloDebeEstarActivoRule_CuandoHiloNoEstaActivo()
+        {
             Hilo.Eliminar(
                 DateTime.UtcNow
-            ); 
+            );
 
-            AssertBrokenRule<HiloDebeEstarActivoRule>(() => {
+            AssertBrokenRule<HiloDebeEstarActivoRule>(() =>
+            {
                 Hilo.EstablecerSticky(
                     UtcNow.AddMinutes(100),
                     UtcNow
@@ -108,13 +117,15 @@ namespace Tests.Domain.Hilos
         }
 
         [Test]
-        public void EstablecerSticky_Rompe_NoDebeTenerStickyActivo_CuandoHiloTieneStickyValido(){
+        public void EstablecerSticky_Rompe_NoDebeTenerStickyActivo_CuandoHiloTieneStickyValido()
+        {
             Hilo.EstablecerSticky(
                 UtcNow.AddMinutes(100),
                 UtcNow
             );
-            
-            AssertBrokenRule<NoDebeTenerStickyActivoRule>(() => {
+
+            AssertBrokenRule<NoDebeTenerStickyActivoRule>(() =>
+            {
                 Hilo.EstablecerSticky(
                     UtcNow.AddMinutes(100),
                     UtcNow
@@ -123,25 +134,30 @@ namespace Tests.Domain.Hilos
         }
 
         [Test]
-        public void EstablecerSticky_AgregaSticky_CuandoEsValido(){
+        public void EstablecerSticky_AgregaSticky_CuandoEsValido()
+        {
             Hilo.EstablecerSticky(
                 UtcNow.AddMinutes(100),
                 UtcNow
             );
-            
+
             Hilo.TieneStickyActivo(UtcNow).Should().BeTrue();
         }
 
         [Test]
-        public void EliminarSticky_Rompe_DebeTenerStickyActivoRule(){
-            AssertBrokenRule<DebeTenerStickyActivoRule>(() => {
+        public void EliminarSticky_Rompe_DebeTenerStickyActivoRule()
+        {
+            AssertBrokenRule<DebeTenerStickyActivoRule>(() =>
+            {
                 Hilo.EliminarSticky(
                     UtcNow
                 );
             });
         }
+
         [Test]
-        public void EliminarSticky_DebeEliminarStickyActivo(){
+        public void EliminarSticky_DebeEliminarStickyActivo()
+        {
             Hilo.EstablecerSticky(
                 UtcNow.AddMinutes(100),
                 UtcNow

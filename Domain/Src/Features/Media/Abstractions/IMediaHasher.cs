@@ -1,8 +1,8 @@
-namespace Domain.Media.Abstractions
+namespace Domain.Medias.Abstractions
 {
     public interface IMediaHasher
     {
-        public Task<string> HashStream(Stream stream);
-        public Task<string> HashString(string url);
+        Task<string> HashStream(Stream stream);
+        Task<string> HashString(string url);
     }
 }

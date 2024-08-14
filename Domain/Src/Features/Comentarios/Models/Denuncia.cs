@@ -2,11 +2,11 @@ using Domain.Usuarios;
 
 namespace Domain.Comentarios
 {
-    public class Denuncia : Denuncias.Denuncia
+    public class DenunciaDeComentario : Denuncias.Denuncia
     {
         public ComentarioId ComentarioId { get; private set; }
-        public RazonDeDenuncia Razon { get; private set;}
-        public Denuncia(UsuarioId denuncianteId, ComentarioId comentarioId, RazonDeDenuncia razon) : base(denuncianteId)
+        public RazonDeDenuncia Razon { get; private set; }
+        public DenunciaDeComentario(UsuarioId denuncianteId, ComentarioId comentarioId, RazonDeDenuncia razon) : base(denuncianteId)
         {
             ComentarioId = comentarioId;
             Razon = razon;

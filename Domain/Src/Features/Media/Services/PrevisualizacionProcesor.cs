@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
-using Domain.Media.Abstractions;
+using Domain.Medias.Abstractions;
 
-namespace Domain.Media.Services
+namespace Domain.Medias.Services
 {
     public class PrevisualizacionProcesor
     {
@@ -16,7 +16,8 @@ namespace Domain.Media.Services
             _folderProvider = folderProvider;
         }
 
-        public async Task<string> Procesar(Stream video){
+        public async Task<string> Procesar(Stream video)
+        {
             string previsualizacion_path = _folderProvider.VistasPrevias + "/" + Guid.NewGuid() + ".png";
 
             Stream vista_previa = _previsualizacionVideoGenerador.Generar(video);

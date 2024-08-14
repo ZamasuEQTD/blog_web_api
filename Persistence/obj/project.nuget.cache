@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "aLjNGVOzA3jGi76hzGXv7nac9PacWBawnl79w0DpOeAi2dhb+r1It7iITi/pkxldfZ0+R3x8PAj6OlWYN9zG4g==",
+  "dgSpecHash": "6k8p5p7EaxDnNhuvJ28woWy3Rzw7hRa3fivDTq807gxtVLVEfyjcO9gdrYHvXP8AbNwiZqqa4c/Q+3j9AlfhfA==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Persistence\\Persistence.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\f\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper.sqlbuilder\\2.0.78\\dapper.sqlbuilder.2.0.78.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

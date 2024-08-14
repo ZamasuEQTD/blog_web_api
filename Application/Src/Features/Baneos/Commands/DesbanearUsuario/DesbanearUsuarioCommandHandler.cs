@@ -1,11 +1,15 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Baneos;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
+using SharedKernel;
 
-namespace Application.Bneos.Commands {
+namespace Application.Bneos.Commands
+{
     public class DesbanearUsuarioCommandHandler : ICommandHandler<DesbanearUsuarioCommand>
     {
+        private readonly IBaneosRepository _baneosRepository;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,17 +19,31 @@ namespace Application.Bneos.Commands {
             _usuariosRepository = usuariosRepository;
         }
 
-        public async Task Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken) 
+        public async Task<Result> Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken)
         {
-            Usuario? usuario = await  _usuariosRepository.GetUsuarioById(new (request.Usuario));
+            Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.Usuario));
 
-            if(usuario is not Anonimo anon){
-                return;
+            if (usuario is not Anonimo) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
+
+            foreach (var baneo in await _baneosRepository.GetBaneos(new UsuarioId(request.Usuario)))
+            {
+                baneo.Eliminar();
             }
 
-            anon.Desbanear();
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
+    }
+
+    public interface IBaneosRepository
+    {
+        void Add(Baneo baneo);
+        Task<List<Baneo>> GetBaneos(UsuarioId usuarioId);
+    }
+
+    static public class BaneosFailures
+    {
+        static public readonly Error SoloPuedesBanearUsuariosAnonimos = new Error("");
     }
 }

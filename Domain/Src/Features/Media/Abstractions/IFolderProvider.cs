@@ -1,4 +1,4 @@
-namespace Domain.Media.Abstractions
+namespace Domain.Medias.Abstractions
 {
     public interface IFolderProvider {
         string ThumbnailFolder { get; }

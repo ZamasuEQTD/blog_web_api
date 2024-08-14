@@ -1,19 +1,21 @@
-namespace Domain.Media  {
-    public class MediaProvider {
-        public string Path { get; private set;}
-        public ProviderSource Source { get; private set;}
-        protected MediaProvider() { }
-        private MediaProvider(string path,ProviderSource source) {
-            this.Path = path;
-            this.Source = source;
-        }
+using SharedKernel.Abstractions;
 
-        static public MediaProvider Network (string url) => new  MediaProvider(url,ProviderSource.Network);
-        static public MediaProvider File (string url) => new  MediaProvider(url,ProviderSource.File);
+namespace Domain.Medias
+{
+    public class HashedMediaProvider : Entity<HashedMediaProviderId> {
+        public MediaId Media { get; private set; }
+        public string Hash { get; private set; }
 
-        public enum ProviderSource {
-            File,
-            Network
+        public HashedMediaProvider(string hash, MediaId media)
+        {
+            Id = new (Guid.NewGuid());
+            Hash = hash;
+            Media = media;
         }
+    }
+
+    public class HashedMediaProviderId : EntityId
+    {
+        public HashedMediaProviderId(Guid id) : base(id) { }
     }
 }

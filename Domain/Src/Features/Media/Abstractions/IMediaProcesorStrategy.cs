@@ -1,18 +1,19 @@
 using Domain.Abstractions;
 using MediatR;
 
-namespace Domain.Media.Abstractions
+namespace Domain.Medias.Abstractions
 {
 
-    public class MediaProcesorParams {
-        public Stream Stream;
-        public string Filename;
-        public string ContentType;
-        public string Path;
-        public MediaProcesorParams(Stream stream)
-        {
-            Stream = stream;
-        }
+    public class MediaProcesorParams
+    {
+        public required Stream Stream;
+        public required string Filename;
+        public required string ContentType;
+        public required string Path;
     }
-    public interface IMediaProcesorStrategy : IStrategy<MediaProcesorParams,Media>{}
+    public interface IMediaProcesorStrategy : IStrategy<MediaProcesorParams, Media> { }
+
+    public interface IUrlMediaProcesorStrategy : IStrategy<string, Media>
+    {
+    }
 }

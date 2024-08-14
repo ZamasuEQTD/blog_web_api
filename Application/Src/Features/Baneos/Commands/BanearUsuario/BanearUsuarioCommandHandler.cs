@@ -2,12 +2,17 @@ using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Usuarios.Exceptions;
+using Domain.Baneos;
+using Domain.Baneos.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
+using SharedKernel;
 
-namespace Application.Bneos.Commands 
+namespace Application.Bneos.Commands
 {
-    public class BanearUsuarioCommandHandler : ICommandHandler<BanearUsuarioCommand> {
+    public class BanearUsuarioCommandHandler : ICommandHandler<BanearUsuarioCommand>
+    {
+        private readonly IBaneosRepository _baneosRepository;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,17 +24,21 @@ namespace Application.Bneos.Commands
             _usuariosRepository = usuariosRepository;
         }
 
-        public async Task Handle(BanearUsuarioCommand request, CancellationToken cancellationToken) {
-            Usuario? usuario =  await _usuariosRepository.GetUsuarioById(new(request.UsuarioId));
+        public async Task<Result> Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
+        {
+            Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.UsuarioId));
 
-            if(usuario is not Anonimo anon) throw new NoEsUsuarioAnonimoException();
+            if (usuario is not Anonimo anon) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
 
-            anon.Banear(
+            Baneo baneo = anon.Banear(
                 new(_context.UsuarioId),
                 request.Mensaje
             );
 
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

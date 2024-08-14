@@ -4,21 +4,26 @@ using Domain.Usuarios.Rules;
 using SharedKernel;
 using SharedKernel.Abstractions;
 
-namespace Domain.Usuarios{
-    public class Username : ValueObject {
+namespace Domain.Usuarios
+{
+    public class Username : ValueObject
+    {
         public static readonly int MAXIMO_LENGTH = 16;
         public static readonly int MIN_LENGTH = 8;
-        
-        public string Value { get; private set;}
 
-        private Username (){}
+        public string Value { get; private set; }
 
-        static public  Username Create(string username){
-            CheckRule(new LargoDeUsernameDebeSerValidoRule(username));
-            CheckRule(new UsernameSinEspaciosEnBlancoRule(username));
+        private Username() { }
 
-            return  new Username(){
-                Value = username
+        static public Result<Username> Create(string value)
+        {
+            if (value.Length < MIN_LENGTH || value.Length > MAXIMO_LENGTH) return UsuariosFailures.LongitudDeUsernameInvalida;
+
+            if (StringUtils.ContieneEspaciosEnBlanco(value)) return UsuariosFailures.UsernameTieneEspaciosEnBlanco;
+
+            return new Username()
+            {
+                Value = value
             };
         }
 
@@ -28,7 +33,8 @@ namespace Domain.Usuarios{
         }
     }
 
-    public abstract class TextoSinEspaciosEnBlancoRule : IBusinessRule {
+    public abstract class TextoSinEspaciosEnBlancoRule : IBusinessRule
+    {
         public string _message;
         public string Message => _message;
         private readonly string _text;
@@ -40,4 +46,15 @@ namespace Domain.Usuarios{
 
         public bool IsBroken() => StringUtils.ContieneEspaciosEnBlanco(_text);
     }
+
+    public static class UsuariosFailures
+    {
+        public static readonly Error UsernameTieneEspaciosEnBlanco = new Error("");
+        public static readonly Error LongitudDeUsernameInvalida = new Error("");
+        public static readonly Error LongitudDePasswordInvalida = new Error("");
+        public static readonly Error PasswordTieneEspaciosEnBlanco = new Error("");
+        public static readonly Error UsernameOrPasswordIncorrecta = new Error("");
+
+    }
+
 }

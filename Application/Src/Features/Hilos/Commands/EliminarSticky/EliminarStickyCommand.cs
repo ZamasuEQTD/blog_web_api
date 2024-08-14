@@ -4,6 +4,6 @@ namespace Application.Hilos.Commands
 {
     public class EliminarStickyCommand : ICommand
     {
-        public Guid Hilo {get; set;}
+        public Guid Hilo { get; set; }
     }
 }

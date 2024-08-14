@@ -6,8 +6,10 @@ using Domain.Usuarios.ValueObjects;
 using SharedKernel;
 using SharedKernel.Abstractions;
 
-namespace Application.Usuarios.Commands {
-    public class LoginCommandHandler : ICommandHandler<LoginCommand,  string> {
+namespace Application.Usuarios.Commands
+{
+    public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
+    {
         private readonly IUsuariosRepository _repository;
         private readonly IPasswordHasher _hasher;
         private readonly IJwtProvider _jwtProvider;
@@ -18,30 +20,18 @@ namespace Application.Usuarios.Commands {
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken) {
-            Username username;
-            
-            Password password;
-            
-            try {
-                username = Username.Create(request.Username);
+        public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        {
+            Result<Username> username = Username.Create(request.Username);
+            Result<Password> password = Password.Create(request.Password);
 
-                password = Password.Create(request.Password);
-            }
-            catch (BusinessRuleValidationException)
-            {
-                throw new UsernamePasswordInvalida();
-            }
+            if (username.IsFailure || password.IsFailure) return UsuariosFailures.UsernameOrPasswordIncorrecta;
 
-            Usuario? usuario = await _repository.GetUsuarioByUsername(username);
+            Usuario? usuario = await _repository.GetUsuarioByUsername(username.Value);
 
-            if(usuario is null || !_hasher.Verify(password, usuario.HashedPassword)) throw new UsernamePasswordInvalida();
+            if (usuario is null || !_hasher.Verify(password.Value, usuario.HashedPassword)) return UsuariosFailures.UsernameOrPasswordIncorrecta;
 
             return _jwtProvider.Generar(usuario);
         }
-    }
-
-    public class UsernamePasswordInvalida : ApplicationException {
-        public UsernamePasswordInvalida() : base(""){}
     }
 }

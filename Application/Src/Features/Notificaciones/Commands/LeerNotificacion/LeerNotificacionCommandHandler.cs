@@ -1,29 +1,39 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Domain.Usuarios;
-using Domain.Usuarios.Abstractions;
+using Domain.Notificaciones;
+using Domain.Notificaciones.Abstractions;
+using SharedKernel;
 
 namespace Application.Notificaciones.Commands
 {
-    public class LeerNotificacionCommandHandler : ICommandHandler<LeerNotificacionCommand> {
-        private readonly IUsuariosRepository _usuariosRepository;
+    public class LeerNotificacionCommandHandler : ICommandHandler<LeerNotificacionCommand>
+    {
+        private readonly INotificacionesRepository _notificacionesRepository;
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
-
-        public LeerNotificacionCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository)
+        public LeerNotificacionCommandHandler(IUnitOfWork unitOfWork, IUserContext context, INotificacionesRepository notificacionesRepository)
         {
             _unitOfWork = unitOfWork;
             _context = context;
-            _usuariosRepository = usuariosRepository;
+            _notificacionesRepository = notificacionesRepository;
         }
 
-        public async Task Handle(LeerNotificacionCommand request, CancellationToken cancellationToken) {
-            Usuario usuario = (await _usuariosRepository.GetUsuarioById(new(_context.UsuarioId)))!;
-            
-            usuario.LeerNotificacion(new(request.Notificacion));
-            
+        public async Task<Result> Handle(LeerNotificacionCommand request, CancellationToken cancellationToken)
+        {
+            Notificacion notificacion = await _notificacionesRepository.GetNotificacion(new NotificacionId(request.Notificacion));
+
+            Result result = notificacion.Leer(
+                new(_context.UsuarioId)
+            );
+
+            if (result.IsFailure) return result.Error;
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
+
+
 }

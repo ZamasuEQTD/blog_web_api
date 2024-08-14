@@ -4,6 +4,7 @@ using Application.Abstractions.Messaging;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
+using SharedKernel;
 
 namespace Application.Hilos.Commands
 {
@@ -12,17 +13,24 @@ namespace Application.Hilos.Commands
         private readonly IHilosRepository _hilosRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
-        public async Task Handle(DenunciarHiloCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DenunciarHiloCommand request, CancellationToken cancellationToken)
         {
-            Hilo? hilo = await _hilosRepository.GetHiloById(new (request.Hilo));
+            Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));
 
-            if(hilo is null) throw new HiloNoEncontrado();
+            if (hilo is null) throw new HiloNoEncontrado();
 
-            hilo.Denunciar(
+            Result<DenunciaDeHilo> result = await hilo.Denunciar(
+                _hilosRepository,
                 new UsuarioId(_user.UsuarioId)
             );
 
+            if (result.IsFailure) return result.Error;
+
+            _hilosRepository.Add(result.Value);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

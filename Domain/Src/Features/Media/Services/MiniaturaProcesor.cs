@@ -1,6 +1,6 @@
-using Domain.Media.Abstractions;
+using Domain.Medias.Abstractions;
 
-namespace Domain.Media.Services {
+namespace Domain.Medias.Services {
     public class MiniaturaProcesor {
         private readonly IResizer _resizer;
         private readonly IFileService _fileService;

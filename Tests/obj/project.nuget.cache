@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "6t8YgddoL51aolfc1dnxxurIkP9yimZYzsFq1PhyIQw1KvcQBXHHZZBsSSbZSmLzup4cNenAFjQwwmEYVy/z0A==",
+  "dgSpecHash": "rlLx/0HvwSUAx/iJx4UxmkPAFM15R2fWLTsOfQOU1z4jpTANjlEBrI4AquWKimsH1SCEcyYb2nCi9CdMJlinZA==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\f\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper.sqlbuilder\\2.0.78\\dapper.sqlbuilder.2.0.78.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentassertions\\6.12.0\\fluentassertions.6.12.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",

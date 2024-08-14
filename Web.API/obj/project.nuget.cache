@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1HCUnrDZzGWyNfHxfxgPgP08JXgPZ90FY4v0sojueN7Jad1b6fIhxMDMGBinI4Mo1e9oeEviM6+x3Eb8w8EJXw==",
+  "dgSpecHash": "pkxpPHT0IsXh6VXV54gOB5fxddIKNJP8gHn0wZk8C/YAzSak60tp3vfIP/dc7CriIlo5cIL2SP1CeRrGEXaNVg==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Web.API\\Web.API.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,8 @@
     "C:\\Users\\f\\.nuget\\packages\\autofac\\8.0.0\\autofac.8.0.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\autofac.extensions.dependencyinjection\\9.0.0\\autofac.extensions.dependencyinjection.9.0.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper.sqlbuilder\\2.0.78\\dapper.sqlbuilder.2.0.78.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\hellang.middleware.problemdetails\\6.5.1\\hellang.middleware.problemdetails.6.5.1.nupkg.sha512",

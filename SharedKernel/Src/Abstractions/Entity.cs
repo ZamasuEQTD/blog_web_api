@@ -1,10 +1,11 @@
 namespace SharedKernel.Abstractions
 {
-    public abstract class Entity 
+    public abstract class Entity
     {
         private readonly List<IDomainEvent> _domainEvents = new();
         public ICollection<IDomainEvent> DomainEvents => _domainEvents;
-        protected void Raise(IDomainEvent IDomainEvent) {
+        protected void Raise(IDomainEvent IDomainEvent)
+        {
             _domainEvents.Add(IDomainEvent);
         }
 
@@ -14,21 +15,38 @@ namespace SharedKernel.Abstractions
             {
                 throw new BusinessRuleValidationException(rule);
             }
-        }    
+        }
 
-        protected Entity() {}
+        protected Entity() { }
     }
 
-    public abstract class Entity<TId> : Entity where TId:EntityId{
-        public DateTime CreatedAt {get; protected set;} = DateTime.UtcNow;
-        public TId Id {get;protected set;}
-        protected Entity(){}
-        protected Entity(TId id) :base() {
+    public abstract class Entity<TId> : Entity where TId : EntityId
+    {
+        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+        public TId Id { get; protected set; }
+        protected Entity() { }
+        protected Entity(TId id) : base()
+        {
             Id = id;
         }
     }
 
-    public class BusinessRuleValidationException : Exception {
+    public class DomainExcepction : IBusinessRule
+    {
+        private readonly string _message;
+
+        public DomainExcepction(string message)
+        {
+            _message = message;
+        }
+
+        public string Message => _message;
+
+        public bool IsBroken() => true;
+    }
+
+    public class BusinessRuleValidationException : Exception
+    {
         public IBusinessRule BrokenRule { get; }
 
         public string Details { get; }
@@ -40,13 +58,15 @@ namespace SharedKernel.Abstractions
             this.Details = brokenRule.Message;
         }
 
+
         public override string ToString()
         {
             return $"{BrokenRule.GetType().FullName}: {BrokenRule.Message}";
         }
     }
 
-    public interface IBusinessRule {
+    public interface IBusinessRule
+    {
         bool IsBroken();
 
         string Message { get; }

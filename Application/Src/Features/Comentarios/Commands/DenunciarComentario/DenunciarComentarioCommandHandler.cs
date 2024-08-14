@@ -6,12 +6,14 @@ using Domain.Comentarios;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
+using SharedKernel;
 
 namespace Application.Comentarios.Commands
 {
     public class DenunciarComentarioCommandHandler : ICommandHandler<DenunciarComentarioCommand>
     {
         private readonly IHilosRepository _hilosRepository;
+        private readonly IComentariosRepository _comentariosRepository;
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -22,18 +24,26 @@ namespace Application.Comentarios.Commands
             _hilosRepository = hilosRepository;
         }
 
-        public async Task Handle(DenunciarComentarioCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DenunciarComentarioCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-            if(hilo is null) throw new HiloNoEncontrado();
+            Comentario? comentario = await _comentariosRepository.GetComentarioById(new(request.Comentario));
 
-            hilo.Denunciar(
-                new ComentarioId(request.Comentario),
-                new UsuarioId(_context.UsuarioId) 
+            if (hilo is null) return HilosFailures.NoEncontrado;
+
+            if (comentario is null) return ComentariosFailures.NoEncontrado;
+
+            var result = await comentario.Denunciar(
+                _comentariosRepository,
+                new(_context.UsuarioId)
             );
 
+            if (result.IsFailure) return result.Error;
+
             await _unitOfWork.SaveChangesAsync();
+
+            return Result.Success();
         }
     }
 }

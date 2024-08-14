@@ -1,15 +1,20 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Comentarios;
+using Domain.Notificaciones;
+using Domain.Notificaciones.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
+using SharedKernel;
 
 namespace Application.Notificaciones.Commands
 {
-    public class LeerNotificacionesCommandHandler : ICommandHandler<LeerNotificacionesCommand> {
+    public class LeerNotificacionesCommandHandler : ICommandHandler<LeerNotificacionesCommand>
+    {
 
-        private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUserContext _context;
+        private readonly INotificacionesRepository _notificacionesRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public LeerNotificacionesCommandHandler(IUnitOfWork unitOfWork)
@@ -17,13 +22,20 @@ namespace Application.Notificaciones.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(LeerNotificacionesCommand request, CancellationToken cancellationToken) {
-            
-            Usuario usuario = ( await _usuariosRepository.GetUsuarioById(new(_context.UsuarioId)))!;
+        public async Task<Result> Handle(LeerNotificacionesCommand request, CancellationToken cancellationToken)
+        {
+            List<Notificacion> notificaciones = await _notificacionesRepository.GetNotificaciones(new UsuarioId(_context.UsuarioId));
 
-            usuario.LeerTodasLasNotificaciones();
+            foreach (var n in notificaciones)
+            {
+                n.Leer(
+                    new(_context.UsuarioId)
+                );
+            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

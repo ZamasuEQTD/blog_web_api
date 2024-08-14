@@ -1,166 +1,138 @@
-
-using Domain.Comentarios.Rules;
-using Domain.Comentarios.Services;
+using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
+using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
-using Domain.Usuarios.Rules;
+using SharedKernel;
 using SharedKernel.Abstractions;
 
-namespace Domain.Comentarios {
-    public class Comentario : Entity<ComentarioId> {
-        public UsuarioId AutorId {get; private set; }
-        public Usuario Autor {get; private set; }
+namespace Domain.Comentarios
+{
+    public class Comentario : Entity<ComentarioId>
+    {
+        public UsuarioId AutorId { get; private set; }
         public HiloId Hilo { get; private set; }
-        public InformacionComentario Informacion { get; private set; }
-        public ComentarioStatus Status { get; private set; }	
-        public List<Interaccion> Interacciones { get; private set; }
-        public List<Denuncia> Denuncias { get; private set; }
-        public string Texto { get; private set; }
-        public bool Destacado {get; private set; }
-        public bool RecibirNotificaciones {get; private set; }
+        public Texto Texto { get; private set; }
+        public ComentarioStatus Status { get; private set; }
+        public bool Destacado { get; private set; }
+        public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
-        public HashSet<Tag> Taggueos => TagUtils.GetTagsUnicos(Texto);
-        private Comentario(){}
-        
-        public Comentario(
-            string texto,
-            HiloId hilo,
-            UsuarioId autorId,
-            InformacionComentario informacion
-        ){
-            this.Id = new(Guid.NewGuid());
-            this.Texto = texto;
-            this.Hilo = hilo;
-            this.AutorId = autorId;
-            this.Informacion = informacion;
-            this.Interacciones = [];         
-            this.Status = ComentarioStatus.Activo;
-            this.Destacado = false;
-            this.RecibirNotificaciones = true;
-        }
-
-        public void Eliminar(){
-            if(Destacado) {
-                Destacar();
-            }
-            Status = ComentarioStatus.Eliminado;
-        }
-        
-        internal void Denunciar(UsuarioId usuarioId){
-            Denuncia denuncia = new Denuncia(
-                usuarioId,
-                Id,
-                Denuncia.RazonDeDenuncia.Otro
-            );
-
-            this.Denuncias.Add(denuncia);
-        }
-
-        internal void Destacar(){
-            this.CheckRule(new ComentarioDebeEstarActivoRule(Status));
-            Destacado = !Destacado;
-        }
-
-        public void ModificarPreferenciaNotificaciones(UsuarioId usuario){
-            this.CheckRule(new ComentarioDebeEstarActivoRule(Status));
-            this.CheckRule(new SoloAutorPuedeRealizarEstaAccionRule(usuario, this.AutorId));
-            RecibirNotificaciones = !RecibirNotificaciones;
-        }
-
-        public void Ocultar(UsuarioId usuarioId){
-            Interaccion? interaccion = Interacciones.FirstOrDefault(i=> i.UsuarioId == usuarioId);
-            
-            if(interaccion is  null) {
-                interaccion = new Interaccion(this.Id, usuarioId);
-            
-                Interacciones.Add(interaccion);
-            }
-
-            interaccion.Ocultar();
-        }
-
 
         public enum ComentarioStatus
         {
             Activo,
             Eliminado
         }
-    }
 
-    public class InformacionComentario {
-        public Tag Tag { get; private set; }
-        public Dados? Dados {get;private set;}
-        public TagUnico? TagUnico{ get;private set; }
-
-        private InformacionComentario(){}
-
-        public InformacionComentario(Tag tag, Dados? dados,TagUnico? tagUnico)
+        public Result Eliminar(Hilo hilo)
         {
-            this.Tag = tag;
-            this.Dados = dados;
-            this.TagUnico = tagUnico;
+            if (!hilo.Activo) return HilosFailures.Inactivo;
+
+            if (Destacado)
+            {
+                Destacado = false;
+            }
+
+            Status = ComentarioStatus.Eliminado;
+
+            return Result.Success();
+        }
+
+        public async Task<Result<DenunciaDeComentario>> Denunciar(IComentariosRepository denunciasRepository, UsuarioId usuario)
+        {
+            if (await denunciasRepository.HaDenunciado(Id, usuario)) return ComentariosFailures.YaHaDenunciado;
+
+            return new DenunciaDeComentario(
+                usuario,
+                this.Id,
+                0
+            );
+        }
+
+        public async Task<Result> Destacar(
+            Hilo hilo,
+            UsuarioId usuario,
+            IComentariosRepository comentariosRepository)
+        {
+            if (!hilo.Activo) return HilosFailures.Inactivo;
+
+            if (hilo.EsAutor(usuario)) return HilosFailures.NoEsAutor;
+
+            if (!Activo) return ComentariosFailures.Inactivo;
+
+            if (!Destacado)
+            {
+                if (await comentariosRepository.CantidadDeDestacados(this.Hilo) > 5) return ComentariosFailures.HaAlcanzadoMaximaCantidadDeDestacados;
+
+                Destacado = true;
+            }
+            else
+            {
+                Destacado = false;
+            }
+
+            return Result.Success();
+        }
+
+        public Result Ocultar(Hilo hilo, RelacionDeComentario relacion)
+        {
+            if (!hilo.Activo) return HilosFailures.Inactivo;
+
+            if (!Activo) return ComentariosFailures.Inactivo;
+
+
+            return Result.Success();
         }
     }
 
-    public class ComentarioId : EntityId {
-        private ComentarioId (){}
+    public class ComentarioId : EntityId
+    {
+        private ComentarioId() { }
         public ComentarioId(Guid id) : base(id) { }
     }
 
-    public abstract class Notificacion : Entity<NotificacionId>  {
-        public UsuarioId NotificadoId { get; private set;}
-        public NotificacionStatus Status { get; private set;}
-
-        protected Notificacion(UsuarioId usuarioId){ 
-            this.Id = new(Guid.NewGuid());
-            this.NotificadoId = usuarioId;
-            this.Status = NotificacionStatus.SinLeer;
-        }
-
-        public void Leer(){
-            this.Status = NotificacionStatus.Leida;
-        }
-
-        public enum NotificacionStatus {
-            Leida,
-            SinLeer
-        }
-    }
-
-
-    public class HiloSeguidoComentado : Notificacion
+    public interface IComentariosRepository
     {
-        public HiloSeguidoComentado(UsuarioId usuarioId) : base(usuarioId)
-        {
-        }
+        Task<Comentario?> GetComentarioById(ComentarioId id);
+        Task<bool> HaDenunciado(ComentarioId id, UsuarioId usuarioId);
+        void Add(Denuncias.Denuncia denuncia);
+        Task<int> CantidadDeDestacados(HiloId hilo);
+        Task<RelacionDeComentario?> GetRelacionDeComentario(UsuarioId usuario, ComentarioId comentario);
     }
 
-    public class HiloComentadoNotificacion : Notificacion
+    static public class EncuestaFailures
     {
-        public HiloId HiloId { get; private set; }
-        public ComentarioId ComentarioId { get; private set; }
-        public HiloComentadoNotificacion(UsuarioId usuarioId, HiloId hiloId, ComentarioId comentarioId) : base(usuarioId)
-        {
-            HiloId = hiloId;
-            ComentarioId = comentarioId;
-        }
+        public static readonly Error YaHaVotado = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
+        public static readonly Error RespuestaInexistente = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
+
     }
 
-    public class ComentarioRespondidoNotificacion : Notificacion
+
+    static public class HilosFailures
     {
-        public ComentarioId ComentarioId { get; private set; }
-        public ComentarioId RespuestaId { get; private set; }
+        public static readonly Error SinPortada = new Error("Hilos.SinPortada", "El hilo no tiene portada");
+        public static readonly Error YaEliminado = new Error("Hilos.YaEliminado", "El hilo ya ha sido eliminado");
+        public static readonly Error Inactivo = new Error("Hilos.Inactivo", "El hilo está inactivo");
+        public static readonly Error NoEsAutor = new Error("Hilos.NoEsAutor", "No eres el autor del hilo");
+        public static readonly Error YaHaDenunciado = new Error("Hilos.YaHaDenunciado", "Ya has denunciado este hilo");
+        public static readonly Error YaTieneStickyActivo = new Error("Hilos.YaTieneStickyActivo", "Ya tiene un sticky activo");
+        public static readonly Error SinStickyActivo = new Error("Hilos.SinStickyActivo", "No tienes un sticky activo");
+        public static readonly Error NoEncontrado = new Error("Hilos.NoEncontrado", "El hilo no fue encontrado");
+        public static readonly Error LongitudDeTituloInvalida = new Error("Hilos.LongitudDeTituloInvalida", "La longitud del título es inválida");
+        public static readonly Error LongitudDeDescripcionInvalida = new Error("Hilos.LongitudDeDescripcionInvalida", "La longitud de la descripción es inválida");
+    }
 
-        public ComentarioRespondidoNotificacion(UsuarioId usuarioId, ComentarioId comentarioId, ComentarioId respuestaId) : base(usuarioId)
-        {
-            ComentarioId = comentarioId;
-            RespuestaId = respuestaId;
-        }
+    static public class ComentariosFailures
+    {
+        public static readonly Error NoEncontrado = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error Inactivo = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
+        public static readonly Error YaHaDenunciado = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
+        public static readonly Error HaAlcanzadoMaximaCantidadDeDestacados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error TagInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error TagUnicoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error MaximaCantidadDeTaggueosSuperados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
 
     }
 
-    public class NotificacionId : EntityId {
-        public NotificacionId(Guid id) : base(id) {}
-    }
 }

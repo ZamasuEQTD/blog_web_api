@@ -16,7 +16,6 @@ namespace Application.Comentarios.Commands
 
             if(hilo is null ) throw new HiloNoEncontrado();
 
-            
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

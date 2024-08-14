@@ -2,9 +2,11 @@ using Domain.Hilos;
 using Domain.Usuarios;
 using SharedKernel.Abstractions;
 
-namespace Domain.Denuncias {
-    public abstract class Denuncia :Entity<DenunciaId> {
-        public UsuarioId DenuncianteId { get;  private set; }
+namespace Domain.Denuncias
+{
+    public abstract class Denuncia : Entity<DenunciaId>
+    {
+        public UsuarioId DenuncianteId { get; private set; }
         public DenunciaStatus Status { get; private set; }
 
         protected Denuncia(UsuarioId denuncianteId)
@@ -14,11 +16,13 @@ namespace Domain.Denuncias {
             this.DenuncianteId = denuncianteId;
         }
 
-        internal void Desestimar(){
+        public void Desestimar()
+        {
             this.Status = DenunciaStatus.Destimada;
         }
 
-        public enum DenunciaStatus {
+        public enum DenunciaStatus
+        {
             Activa,
             Destimada
         }

@@ -6,28 +6,38 @@ using Domain.Comentarios;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
+using SharedKernel;
 
 namespace Application.Comentarios.Commands
 {
     public class EliminarComentarioCommandHandler : ICommandHandler<EliminarComentarioCommand>
     {
-
         private readonly IHilosRepository _hilosRepository;
-        private readonly IUserContext _user;
+        private readonly IComentariosRepository _comentariosRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public async Task Handle(EliminarComentarioCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(EliminarComentarioCommand request, CancellationToken cancellationToken)
         {
+
+            Comentario? comentario = await _comentariosRepository.GetComentarioById(new ComentarioId(request.Comentario));
+
+            if (comentario is null) return ComentariosFailures.NoEncontrado;
+
             Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-            if(hilo is null) throw new HiloNoEncontrado();
+            if (hilo is null) return HilosFailures.NoEncontrado;
 
-            hilo.Eliminar(
-                new ComentarioId(request.Comentario),
-                new UsuarioId(_user.UsuarioId)
+            if (hilo.Id != comentario.Hilo) return ComentariosFailures.NoEncontrado;
+
+            Result result = comentario.Eliminar(
+                hilo
             );
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (result.IsFailure) return result.Error;
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Success();
         }
     }
 }

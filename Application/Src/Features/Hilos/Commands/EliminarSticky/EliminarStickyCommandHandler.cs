@@ -1,11 +1,16 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Comentarios;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
+using Domain.Stickies;
+using MediatR;
+using SharedKernel;
 using SharedKernel.Abstractions;
 
 namespace Application.Hilos.Commands
 {
+
     public class EliminarStickyCommandHandler : ICommandHandler<EliminarStickyCommand>
     {
         private readonly IHilosRepository _hilosRepository;
@@ -20,15 +25,22 @@ namespace Application.Hilos.Commands
             _hilosRepository = hilosRepository;
         }
 
-        public async Task Handle(EliminarStickyCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(EliminarStickyCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-            if(hilo is null) throw new HiloNoEncontrado();
+            if (hilo is null) return HilosFailures.NoEncontrado; ;
 
-            hilo.EliminarSticky(_timeProvider.UtcNow);
+            Sticky? sticky = await _hilosRepository.GetStickyActivo(hilo.Id, _timeProvider.UtcNow);
+
+            if (sticky is null) return HilosFailures.SinStickyActivo;
+
+            sticky.Eliminar();
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
+
 }

@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "zef/C0qKF1nthHr1unnQm5sX40sH92UmVVTaw1LXxTp5gnDiy7PzC0sRNLwVzdlhEwAhdp26047DIPQt8shV7g==",
+  "dgSpecHash": "nIhPjNF22dvwF9NuXVaqAjAOP9AXgq55dBOSdiDFgnDrFjhrx2py8REuf83W4/6kByisnFZA+PSWmVczMD82Fw==",
   "success": true,
   "projectFilePath": "C:\\Users\\f\\Desktop\\blog_api - copia\\Application\\Application.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\f\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
+    "C:\\Users\\f\\.nuget\\packages\\dapper.sqlbuilder\\2.0.78\\dapper.sqlbuilder.2.0.78.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr\\12.3.0\\mediatr.12.3.0.nupkg.sha512",
     "C:\\Users\\f\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

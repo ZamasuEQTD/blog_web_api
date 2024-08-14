@@ -2,15 +2,18 @@ using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
 
-namespace Domain.Hilos {
-    public class Interaccion : Entity<InteraccionId> {
-        public HiloId HiloId {get; private set;}
-        public UsuarioId UsuarioId {get; private set;}	
-        public bool Seguido {get; private set;}
-        public bool Favorito {get; private set;}
-        public bool Oculto {get; private set;}
-        
-        public Interaccion(HiloId hiloId, UsuarioId usuarioId){
+namespace Domain.Hilos
+{
+    public class RelacionDeHilo : Entity<InteraccionId>
+    {
+        public HiloId HiloId { get; private set; }
+        public UsuarioId UsuarioId { get; private set; }
+        public bool Seguido { get; private set; }
+        public bool Favorito { get; private set; }
+        public bool Oculto { get; private set; }
+
+        public RelacionDeHilo(HiloId hiloId, UsuarioId usuarioId)
+        {
             this.Id = new(Guid.NewGuid());
             this.HiloId = hiloId;
             this.UsuarioId = usuarioId;
@@ -19,17 +22,21 @@ namespace Domain.Hilos {
             this.Oculto = false;
         }
 
-        public void Seguir() {
+        private void Seguir()
+        {
             this.Seguido = !Seguido;
         }
-        public void Ocultar() {
+        private void Ocultar()
+        {
             this.Oculto = !Oculto;
         }
-        public void PonerEnFavoritos() {
+        private void PonerEnFavoritos()
+        {
             this.Favorito = !Favorito;
         }
 
-        public void EjecutarAccion(Acciones accion){
+        public void EjecutarAccion(Acciones accion)
+        {
             switch (accion)
             {
                 case Acciones.Seguir:
@@ -46,16 +53,18 @@ namespace Domain.Hilos {
             }
         }
 
-        public enum Acciones {
+        public enum Acciones
+        {
             Seguir,
             Ocultar,
             Favorito
         }
     }
 
-     
 
-    public class InteraccionId : EntityId {
-        public InteraccionId(Guid id) : base(id){}
+
+    public class InteraccionId : EntityId
+    {
+        public InteraccionId(Guid id) : base(id) { }
     }
 }
