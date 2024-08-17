@@ -4,7 +4,7 @@ namespace Domain.Encuestas
 {
     public class EncuestaId : EntityId
     {
-        public EncuestaId(Guid id) : base( id ){}
-        private EncuestaId(){}
+        public EncuestaId(Guid id) : base(id) { }
+        private EncuestaId() { }
     }
 }

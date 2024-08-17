@@ -15,11 +15,20 @@ namespace Application.Comentarios.Commands
         private readonly IComentariosRepository _comentariosRepository;
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
+
+        public OcultarComentarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IComentariosRepository comentariosRepository, IHilosRepository hilosRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _context = context;
+            _comentariosRepository = comentariosRepository;
+            _hilosRepository = hilosRepository;
+        }
+
         public async Task<Result> Handle(OcultarComentarioCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));
 
-            if (hilo is null) throw new HiloNoEncontrado();
+            if (hilo is null) return HilosFailures.NoEncontrado;
 
             Comentario? comentario = await _comentariosRepository.GetComentarioById(new(request.Comentario));
 

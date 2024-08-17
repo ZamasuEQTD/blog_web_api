@@ -7,17 +7,14 @@ using MediatR;
 using Application.Behaviors;
 using FluentValidation;
 using Domain;
+using Persistence.Configuration;
+using WebApi.Extensions;
+using WebApi.Configuration;
+using Infraestructure.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
 
-builder.Services.AddSignalR();
-
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeLineBehavior<,>));
-
-builder.Services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly, includeInternalTypes:true);
-
-
+builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration).AddSwaggerBearerTokenSupport(); ;
 builder.Services.AddSwaggerGen(c =>
 {
     c.EnableAnnotations();
@@ -25,6 +22,23 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+builder.Services.AddSignalR();
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeLineBehavior<,>));
+
+builder.Services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly, includeInternalTypes: true);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
+
 
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -32,6 +46,7 @@ builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOption
 
 
 var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -39,10 +54,8 @@ if (app.Environment.IsDevelopment())
 
 }
 
-app.UseCors(policy => policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
 
 app.UseHttpsRedirection();
-
 
 app.UseRouting();
 

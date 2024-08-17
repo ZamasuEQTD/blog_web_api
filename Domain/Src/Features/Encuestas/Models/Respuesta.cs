@@ -2,25 +2,22 @@ using SharedKernel.Abstractions;
 
 namespace Domain.Encuestas
 {
-    public class Respuesta : Entity {
+    public class Respuesta : Entity<RespuestaId>
+    {
+        public string Contenido { get; private set; }
 
-        public RespuestaId Id {get;private set;}
-        public string Contenido {get;private set;}
-        public EncuestaId EncuestaId{ get; private set; }
-
-        private Respuesta( )
+        private Respuesta()
         {
-            
+
         }
 
         public Respuesta(
-            EncuestaId encuestaId,
             string contenido
-        ){
-            Id = new (Guid.NewGuid());
-            EncuestaId = encuestaId;
+        )
+        {
+            Id = new(Guid.NewGuid());
             Contenido = contenido;
         }
     }
-    
+
 }

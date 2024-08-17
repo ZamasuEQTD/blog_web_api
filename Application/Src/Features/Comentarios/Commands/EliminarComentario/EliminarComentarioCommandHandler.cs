@@ -16,6 +16,13 @@ namespace Application.Comentarios.Commands
         private readonly IComentariosRepository _comentariosRepository;
         private readonly IUnitOfWork _unitOfWork;
 
+        public EliminarComentarioCommandHandler(IUnitOfWork unitOfWork, IComentariosRepository comentariosRepository, IHilosRepository hilosRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _comentariosRepository = comentariosRepository;
+            _hilosRepository = hilosRepository;
+        }
+
         public async Task<Result> Handle(EliminarComentarioCommand request, CancellationToken cancellationToken)
         {
 

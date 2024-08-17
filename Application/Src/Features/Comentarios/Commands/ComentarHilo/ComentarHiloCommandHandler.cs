@@ -3,6 +3,7 @@ using Application.Abstractions.Messaging;
 using Application.Hilos;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
+using SharedKernel;
 
 namespace Application.Comentarios.Commands
 {
@@ -10,14 +11,16 @@ namespace Application.Comentarios.Commands
     {
         private readonly IHilosRepository _hilosRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public async Task Handle(ComentarHiloCommand request, CancellationToken cancellationToken)
+
+        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository)
         {
-            Hilo? hilo = await _hilosRepository.GetHiloById(new (request.Hilo));
+            _unitOfWork = unitOfWork;
+            _hilosRepository = hilosRepository;
+        }
 
-            if(hilo is null ) throw new HiloNoEncontrado();
-
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        public Task<Result> Handle(ComentarHiloCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using Domain.Common.Services;
-using Domain.Usuarios.Rules;
+
 using SharedKernel;
 using SharedKernel.Abstractions;
 
@@ -33,22 +33,9 @@ namespace Domain.Usuarios
         }
     }
 
-    public abstract class TextoSinEspaciosEnBlancoRule : IBusinessRule
-    {
-        public string _message;
-        public string Message => _message;
-        private readonly string _text;
-        public TextoSinEspaciosEnBlancoRule(string message, string text)
-        {
-            _message = message;
-            _text = text;
-        }
-
-        public bool IsBroken() => StringUtils.ContieneEspaciosEnBlanco(_text);
-    }
-
     public static class UsuariosFailures
     {
+        public static readonly Error UsernameOcupado = new Error("");
         public static readonly Error UsernameTieneEspaciosEnBlanco = new Error("");
         public static readonly Error LongitudDeUsernameInvalida = new Error("");
         public static readonly Error LongitudDePasswordInvalida = new Error("");

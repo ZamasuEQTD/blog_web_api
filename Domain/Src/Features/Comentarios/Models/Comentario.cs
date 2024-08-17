@@ -17,6 +17,14 @@ namespace Domain.Comentarios
         public bool Destacado { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
+        private Comentario() { }
+        public Comentario(HiloId hilo, UsuarioId autor, Texto texto)
+        {
+            Id = new(Guid.NewGuid());
+            AutorId = autor;
+            Hilo = hilo;
+            Texto = texto;
+        }
 
         public enum ComentarioStatus
         {
@@ -38,9 +46,9 @@ namespace Domain.Comentarios
             return Result.Success();
         }
 
-        public async Task<Result<DenunciaDeComentario>> Denunciar(IComentariosRepository denunciasRepository, UsuarioId usuario)
+        public async Task<Result<DenunciaDeComentario>> Denunciar(IComentariosRepository comentariosRepository, UsuarioId usuario)
         {
-            if (await denunciasRepository.HaDenunciado(Id, usuario)) return ComentariosFailures.YaHaDenunciado;
+            if (await comentariosRepository.HaDenunciado(Id, usuario)) return ComentariosFailures.YaHaDenunciado;
 
             return new DenunciaDeComentario(
                 usuario,
@@ -80,6 +88,7 @@ namespace Domain.Comentarios
 
             if (!Activo) return ComentariosFailures.Inactivo;
 
+            relacion.Ocultar();
 
             return Result.Success();
         }

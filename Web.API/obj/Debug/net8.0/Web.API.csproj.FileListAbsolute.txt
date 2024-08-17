@@ -270,3 +270,5 @@ C:\Users\f\Desktop\blog_api - copia\Web.API\obj\Debug\net8.0\scopedcss\bundle\We
 C:\Users\f\Desktop\blog_api - copia\Web.API\obj\Debug\net8.0\Web.API.csproj.Up2Date
 C:\Users\f\Desktop\blog_api - copia\Web.API\obj\Debug\net8.0\Web.API.genruntimeconfig.cache
 C:\Users\f\Desktop\blog_api - copia\Web.API\obj\Debug\net8.0\ref\Web.API.dll
+C:\Users\f\Desktop\blog_api - copia\Web.API\bin\Debug\net8.0\Dapper.dll
+C:\Users\f\Desktop\blog_api - copia\Web.API\bin\Debug\net8.0\Dapper.SqlBuilder.dll

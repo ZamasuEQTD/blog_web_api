@@ -30,14 +30,6 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado; ;
 
-            var result = await hilo.Votar(
-                _encuestasRepository,
-                new(_user.UsuarioId),
-                new(request.Respuesta)
-            );
-
-            if (result.IsFailure) return result.Error;
-
             await _unitOfWork.SaveChangesAsync();
 
             return Result.Success();

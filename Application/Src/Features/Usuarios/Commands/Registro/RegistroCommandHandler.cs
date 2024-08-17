@@ -25,9 +25,14 @@ namespace Application.Usuarios.Commands
         public async Task<Result<string>> Handle(RegistroCommand request, CancellationToken cancellationToken)
         {
             Result<Username> username = Username.Create(request.Username);
+
+            if (username.IsFailure) return username.Error;
+
             Result<Password> password = Password.Create(request.Password);
 
-            if (await _usuariosRepository.UsernameEstaOcupado(username.Value)) throw new ApplicationException("");
+            if (password.IsFailure) return password.Error;
+
+            if (await _usuariosRepository.UsernameEstaOcupado(username.Value)) return UsuariosFailures.UsernameOcupado;
 
             Anonimo usuario = new Anonimo(
                 username.Value,

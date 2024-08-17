@@ -5,7 +5,7 @@ using SharedKernel;
 
 namespace Application.Categorias.Queries
 {
-    public class GetCategoriasQueryHandler : IQueryHandler<GetCategoriasQuery, List<GetCategoriaDto>>
+    public class GetCategoriasQueryHandler : IQueryHandler<GetCategoriasQuery, List<GetCategoriaReponse>>
     {
         private readonly IDBConnectionFactory _connection;
 
@@ -14,21 +14,42 @@ namespace Application.Categorias.Queries
             _connection = connection;
         }
 
-        public async Task<Result<List<GetCategoriaDto>>> Handle(GetCategoriasQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<GetCategoriaReponse>>> Handle(GetCategoriasQuery request, CancellationToken cancellationToken)
         {
-            var connection = _connection.CreateConnection();
+            Dictionary<Guid, GetCategoriaReponse> categorias = [];
 
-            Dictionary<string, GetCategoriaDto> categoria = [];
+            string sql = @"
+            SELECT
+                c.nombre AS Nombre,
+                s.id AS Id,
+                s.nombre AS Nombre,
+                s.id as Id
+            FROM categorias c
+            LEFT JOIN subcategorias s ON s.categoria_id = c.id
+            ";
 
-            var categorias = await connection.QueryAsync("");
-
-            foreach (var c in categorias)
+            using (var connection = _connection.CreateConnection())
             {
+                await connection.QueryAsync<GetCategoriaReponse, GetSubcategoriaResponse, GetCategoriaReponse>(sql, (categoria, subcategoria) =>
+                {
+                    if (categorias.TryGetValue(categoria.Id, out var c))
+                    {
+                        categoria = c;
+                    }
+                    else
+                    {
+                        categorias.Add(categoria.Id, categoria);
+                    }
 
+                    categoria.Subcategorias.Add(subcategoria);
+
+                    return categoria;
+                }, splitOn: "Id");
             }
 
-            connection.Close();
-            throw new NotImplementedException();
+            List<GetCategoriaReponse> response = categorias.Select(c => c.Value).OrderByDescending(c => c.OcultaDesdePrincipio).ToList();
+
+            return response;
         }
     }
 }

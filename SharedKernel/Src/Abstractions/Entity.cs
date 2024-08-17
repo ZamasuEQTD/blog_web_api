@@ -8,15 +8,6 @@ namespace SharedKernel.Abstractions
         {
             _domainEvents.Add(IDomainEvent);
         }
-
-        protected void CheckRule(IBusinessRule rule)
-        {
-            if (rule.IsBroken())
-            {
-                throw new BusinessRuleValidationException(rule);
-            }
-        }
-
         protected Entity() { }
     }
 
@@ -31,45 +22,4 @@ namespace SharedKernel.Abstractions
         }
     }
 
-    public class DomainExcepction : IBusinessRule
-    {
-        private readonly string _message;
-
-        public DomainExcepction(string message)
-        {
-            _message = message;
-        }
-
-        public string Message => _message;
-
-        public bool IsBroken() => true;
-    }
-
-    public class BusinessRuleValidationException : Exception
-    {
-        public IBusinessRule BrokenRule { get; }
-
-        public string Details { get; }
-
-        public BusinessRuleValidationException(IBusinessRule brokenRule)
-            : base(brokenRule.Message)
-        {
-            BrokenRule = brokenRule;
-            this.Details = brokenRule.Message;
-        }
-
-
-        public override string ToString()
-        {
-            return $"{BrokenRule.GetType().FullName}: {BrokenRule.Message}";
-        }
-    }
-
-    public interface IBusinessRule
-    {
-        bool IsBroken();
-
-        string Message { get; }
-
-    }
 }

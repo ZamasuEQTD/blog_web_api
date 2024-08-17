@@ -30,6 +30,8 @@ namespace Application.Baneos.Queries
                 _user.UsuarioId
             });
 
+            connection.Close();
+
             return baneo;
         }
     }

@@ -9,7 +9,7 @@ namespace Domain.Hilos.ValueObjects
     public class Descripcion : ValueObject
     {
         static public readonly int MAX = 255;
-        static public readonly int MIN = 20;
+        static public readonly int MIN = 10;
 
         public string Value { get; private set; }
         public Descripcion() { }
@@ -28,19 +28,5 @@ namespace Domain.Hilos.ValueObjects
         protected override IEnumerable<object> GetAtomicValues() => [
             this.Value
         ];
-    }
-
-    public class DescripcionDebeRespetarLongitudRule : IBusinessRule
-    {
-        private readonly string _descripcion;
-
-        public DescripcionDebeRespetarLongitudRule(string descripcion)
-        {
-            _descripcion = descripcion;
-        }
-
-        public string Message => throw new NotImplementedException();
-
-        public bool IsBroken() => _descripcion.Length > Descripcion.MAX || _descripcion.Length < Descripcion.MIN;
     }
 }

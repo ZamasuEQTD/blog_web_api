@@ -20,16 +20,20 @@ namespace Application.Categorias.Commands
         public async Task<Result> Handle(CrearCategoriaCommand request, CancellationToken cancellationToken)
         {
             Categoria categoria = new Categoria(
-                request.Nombre,
-                request.Subcategorias.Select(
-                    s => new SubcategoriaDto(
-                        s.Nombre,
-                        s.NombreCorto
-                    )
-                ).ToList()
+                request.Nombre
             );
 
             _categoriasRepository.Add(categoria);
+
+            foreach (var s in request.Subcategorias)
+            {
+                Subcategoria subcategoria = new Subcategoria(
+                    categoria.Id,
+                    s.Nombre,
+                    s.NombreCorto
+                );
+                _categoriasRepository.Add(subcategoria);
+            }
 
             await _unitOfWork.SaveChangesAsync();
 

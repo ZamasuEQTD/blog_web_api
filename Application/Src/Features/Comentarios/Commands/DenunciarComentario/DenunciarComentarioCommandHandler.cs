@@ -17,11 +17,12 @@ namespace Application.Comentarios.Commands
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DenunciarComentarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IHilosRepository hilosRepository)
+        public DenunciarComentarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IHilosRepository hilosRepository, IComentariosRepository comentariosRepository)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _hilosRepository = hilosRepository;
+            _comentariosRepository = comentariosRepository;
         }
 
         public async Task<Result> Handle(DenunciarComentarioCommand request, CancellationToken cancellationToken)

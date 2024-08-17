@@ -2,10 +2,8 @@ using Domain.Categorias;
 using Domain.Comentarios;
 using Domain.Encuestas;
 using Domain.Encuestas.Abstractions;
-using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Hilos.ValueObjects;
-using Domain.Medias;
 using Domain.Stickies;
 using Domain.Usuarios;
 using SharedKernel;
@@ -17,11 +15,11 @@ namespace Domain.Hilos
     {
         public readonly static int CANTIDAD_MAXIMA_DE_DESTACADOS = 5;
         public UsuarioId AutorId { get; private set; }
-        public MediaReferenceId Portada { get; private set; }
         public SubcategoriaId Categoria { get; private set; }
         public EncuestaId? Encuesta { get; private set; }
         public Titulo Titulo { get; private set; }
         public Descripcion Descripcion { get; private set; }
+        public DateTime UltimoBump { get; private set; }
         public HiloStatus Status { get; private set; }
         public ConfiguracionDeComentarios Configuracion { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
@@ -29,10 +27,12 @@ namespace Domain.Hilos
         public bool Eliminado => Status == HiloStatus.Eliminado;
         public bool Archivado => Status == HiloStatus.Archivado;
         public bool EsAutor(UsuarioId usuario) => AutorId == usuario;
+
+        private Hilo() { }
+
         public Hilo(
             Titulo titulo,
             Descripcion descripcion,
-            MediaReferenceId portada,
             UsuarioId autor,
             SubcategoriaId subcategoria,
             EncuestaId? encuesta,
@@ -41,11 +41,11 @@ namespace Domain.Hilos
         {
             Id = new HiloId(Guid.NewGuid());
             AutorId = autor;
-            Portada = portada;
             Categoria = subcategoria;
             Encuesta = encuesta;
             Titulo = titulo;
             Descripcion = descripcion;
+            UltimoBump = DateTime.UtcNow;
             Configuracion = configuracion;
             Status = HiloStatus.Activo;
         }
@@ -75,22 +75,6 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public async Task<Result<Voto>> Votar(
-            IEncuestasRepository encuestaRepository,
-            UsuarioId usuario,
-            RespuestaId respuesta
-        )
-        {
-            if (await encuestaRepository.HaVotado(Encuesta!, usuario)) return EncuestaFailures.YaHaVotado;
-
-            if (!await encuestaRepository.ExisteRespuesta(Encuesta!, respuesta)) return EncuestaFailures.RespuestaInexistente;
-
-            return new Voto(
-                usuario,
-                respuesta
-            );
-        }
-
         public async Task<Result<DenunciaDeHilo>> Denunciar(
             IHilosRepository hilosRepository,
             UsuarioId usuarioId
@@ -101,9 +85,9 @@ namespace Domain.Hilos
             return new DenunciaDeHilo(usuarioId, Id);
         }
 
-        public async Task<Result<Sticky>> EstablecerSticky(IHilosRepository hilosRepository, DateTime? concluye)
+        public async Task<Result<Sticky>> EstablecerSticky(IHilosRepository hilosRepository, DateTime now, DateTime? concluye)
         {
-            if (await hilosRepository.TieneStickyActivo(this.Id)) return HilosFailures.YaTieneStickyActivo;
+            if (await hilosRepository.TieneStickyActivo(this.Id, now)) return HilosFailures.YaTieneStickyActivo;
 
             return new Sticky(
                 Id,

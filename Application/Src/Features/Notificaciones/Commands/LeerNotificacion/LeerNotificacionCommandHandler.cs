@@ -9,27 +9,22 @@ namespace Application.Notificaciones.Commands
 {
     public class LeerNotificacionCommandHandler : ICommandHandler<LeerNotificacionCommand>
     {
-        private readonly INotificacionesRepository _notificacionesRepository;
-        private readonly IUserContext _context;
-        private readonly IUnitOfWork _unitOfWork;
-        public LeerNotificacionCommandHandler(IUnitOfWork unitOfWork, IUserContext context, INotificacionesRepository notificacionesRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _context = context;
-            _notificacionesRepository = notificacionesRepository;
-        }
+        // private readonly INotificacionesRepository _notificacionesRepository;
+        // private readonly IUserContext _context;
+        // private readonly IUnitOfWork _unitOfWork;
+
 
         public async Task<Result> Handle(LeerNotificacionCommand request, CancellationToken cancellationToken)
         {
-            Notificacion notificacion = await _notificacionesRepository.GetNotificacion(new NotificacionId(request.Notificacion));
+            // Notificacion notificacion = await _notificacionesRepository.GetNotificacion(new NotificacionId(request.Notificacion));
 
-            Result result = notificacion.Leer(
-                new(_context.UsuarioId)
-            );
+            // Result result = notificacion.Leer(
+            //     new(_context.UsuarioId)
+            // );
 
-            if (result.IsFailure) return result.Error;
+            // if (result.IsFailure) return result.Error;
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            // await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

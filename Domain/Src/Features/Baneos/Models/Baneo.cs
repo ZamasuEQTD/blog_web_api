@@ -3,15 +3,17 @@ using SharedKernel.Abstractions;
 
 namespace Domain.Baneos
 {
-    public class Baneo : Entity<BaneoId> {
-        public UsuarioId ModeradorId {get;private set;}
-        public UsuarioId UsuarioBaneadoId {get;private set;}
-        public DateTime Concluye { get; private set;}        
-        public BaneoStatus Status { get; private set;}
-        public bool Activo(DateTime utcNow) => Status == BaneoStatus.Activo && utcNow < Concluye;
+    public class Baneo : Entity<BaneoId>
+    {
+        public UsuarioId ModeradorId { get; private set; }
+        public UsuarioId UsuarioBaneadoId { get; private set; }
+        public DateTime Concluye { get; private set; }
+        public BaneoStatus Status { get; private set; }
         public string Mensaje { get; private set; }
+        public bool Activo(DateTime utcNow) => Status == BaneoStatus.Activo && utcNow < Concluye;
 
-        public Baneo(UsuarioId moderadorId, UsuarioId usuarioBaneadoId, string mensaje) {
+        public Baneo(UsuarioId moderadorId, UsuarioId usuarioBaneadoId, string mensaje)
+        {
             this.Id = new BaneoId(Guid.NewGuid());
             this.ModeradorId = moderadorId;
             this.UsuarioBaneadoId = usuarioBaneadoId;
@@ -19,7 +21,8 @@ namespace Domain.Baneos
             this.Status = BaneoStatus.Activo;
         }
 
-        public void Eliminar(){
+        public void Eliminar()
+        {
             Status = BaneoStatus.Eliminado;
         }
 

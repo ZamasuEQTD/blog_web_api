@@ -9,6 +9,7 @@ namespace Domain.Denuncias
         public UsuarioId DenuncianteId { get; private set; }
         public DenunciaStatus Status { get; private set; }
 
+        protected Denuncia() { }
         protected Denuncia(UsuarioId denuncianteId)
         {
             this.Id = new(Guid.NewGuid());
@@ -30,6 +31,8 @@ namespace Domain.Denuncias
 
     public class DenunciaId : EntityId
     {
+        private DenunciaId() : base() { }
+
         public DenunciaId(Guid id) : base(id) { }
     }
 }

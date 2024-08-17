@@ -29,35 +29,6 @@ namespace Domain.Comentarios.ValueObjects
             this.Value
         ];
     }
-
-    public class TextoNoPuedeTagguearMasDe5ComentariosRule : IBusinessRule
-    {
-        private readonly string _texto;
-
-        public TextoNoPuedeTagguearMasDe5ComentariosRule(string texto)
-        {
-
-            _texto = texto;
-        }
-
-        public string Message => "No puedes tagguear mas de 5 comentarios";
-
-        public bool IsBroken() => TagUtils.CantidadDeTags(_texto) > 5;
-    }
-
-    public class TextoDebeRespetarLongitudRule : IBusinessRule
-    {
-        private readonly string _texto;
-
-        public TextoDebeRespetarLongitudRule(string texto)
-        {
-            _texto = texto;
-        }
-
-        public string Message => throw new NotImplementedException();
-
-        public bool IsBroken() => _texto.Length > Texto.MAX || _texto.Length < Texto.MIN;
-    }
 }
 
 

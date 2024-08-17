@@ -8,8 +8,7 @@ namespace Domain.Hilos.Abstractions
         void Add(Hilo hilo);
         void Add(DenunciaDeHilo denuncia);
         Task<Hilo?> GetHiloById(HiloId id);
-        Task<bool> EstaActivo(HiloId id);
-        Task<bool> TieneStickyActivo(HiloId hiloId);
+        Task<bool> TieneStickyActivo(HiloId hiloId, DateTime now);
         Task<bool> HaDenunciado(HiloId hiloId, UsuarioId usuarioId);
         Task<List<DenunciaDeHilo>> GetDenuncias(HiloId id);
         Task<Sticky?> GetStickyActivo(HiloId id, DateTime now);

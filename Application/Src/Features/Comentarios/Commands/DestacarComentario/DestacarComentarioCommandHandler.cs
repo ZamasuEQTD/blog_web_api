@@ -15,6 +15,15 @@ namespace Application.Comentarios.Commands
         private readonly IComentariosRepository _comentariosRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
+
+        public DestacarComentarioCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IComentariosRepository comentariosRepository, IHilosRepository hilosRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _user = user;
+            _comentariosRepository = comentariosRepository;
+            _hilosRepository = hilosRepository;
+        }
+
         public async Task<Result> Handle(DestacarComentarioCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));

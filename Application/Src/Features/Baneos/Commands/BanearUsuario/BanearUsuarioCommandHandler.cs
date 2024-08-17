@@ -17,11 +17,12 @@ namespace Application.Bneos.Commands
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
-        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository)
+        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _usuariosRepository = usuariosRepository;
+            _baneosRepository = baneosRepository;
         }
 
         public async Task<Result> Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
@@ -35,6 +36,7 @@ namespace Application.Bneos.Commands
                 request.Mensaje
             );
 
+            _baneosRepository.Add(baneo);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -2,21 +2,24 @@ using Application.Abstractions.Messaging;
 
 namespace Application.Categorias.Queries
 {
-    public class GetCategoriasQuery : IQuery<List<GetCategoriaDto>>
+    public class GetCategoriasQuery : IQuery<List<GetCategoriaReponse>>
     {
 
     }
 
-    public class GetCategoriaDto
+    public class GetCategoriaReponse
     {
+        internal Guid Id { get; set; }
         public string Nombre { get; set; }
+        internal bool OcultaDesdePrincipio { get; set; }
         public List<GetSubcategoriaResponse> Subcategorias { get; set; } = [];
     }
 
     public class GetSubcategoriaResponse
     {
+        public Guid Id { get; set; }
         public string Nombre { get; set; }
         internal string ImagePath { get; set; }
-        public string Imagen => ImagePath;
+        public string Imagen => "prueba";
     }
 }
