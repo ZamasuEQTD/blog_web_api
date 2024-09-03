@@ -30,7 +30,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpDelete]
+        [HttpDelete("eliminar/:hilo")]
         public async Task<IResult> Eliminar(Guid hilo)
         {
             var result = await sender.Send(new EliminarHiloCommand(hilo));
@@ -41,6 +41,57 @@ namespace WebApi.Controllers
                 result.HandleFailure();
 
         }
+
+        [HttpPost("establecer-sticky/:hilo")]
+        public async Task<IResult> EstablecerSticky(Guid hilo)
+        {
+            var result = await sender.Send(new EstablecerStickyCommand(hilo));
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+        [HttpDelete("eliminar-sticky/:hilo")]
+        public async Task<IResult> EliminarSticky(Guid hilo)
+        {
+            var result = await sender.Send(new EliminarStickyCommand(hilo));
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+        [HttpPost("denunciar/:hilo")]
+        public async Task<IResult> Denunciar(Guid hilo)
+        {
+            var result = await sender.Send(new DenunciarHiloCommand(hilo));
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+
+        }
+
+        [HttpPost("seguir/:hilo")]
+        public async Task<IResult> Seguir(Guid hilo)
+        {
+            var result = await sender.Send(
+                new SeguirHiloCommand()
+                {
+                    Hilo = hilo
+                }
+            );
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
         [HttpGet("hilos/portadas")]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {

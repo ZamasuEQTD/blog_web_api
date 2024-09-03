@@ -7,20 +7,16 @@ namespace Domain.Stickies
     {
         public DateTime? Conluye { get; private set; }
         public HiloId Hilo { get; private set; }
-        public StickyStatus Status { get; private set; }
-        public bool Conluido(DateTime utcNow) => utcNow > Conluye;
-        public bool Activo(DateTime utc) => Status == StickyStatus.Activo && !Conluido(utc);
+        public bool Conluido(DateTime utcNow) => Conluye is not null && utcNow > Conluye;
         public Sticky(HiloId hilo, DateTime? Conluye)
         {
             this.Id = new(Guid.NewGuid());
             this.Hilo = hilo;
             this.Conluye = Conluye;
-            this.Status = StickyStatus.Activo;
         }
-
-        public void Eliminar()
+        public void Eliminar(DateTime now)
         {
-            this.Status = StickyStatus.Eliminado;
+            this.Conluye = now;
         }
 
         public enum StickyStatus

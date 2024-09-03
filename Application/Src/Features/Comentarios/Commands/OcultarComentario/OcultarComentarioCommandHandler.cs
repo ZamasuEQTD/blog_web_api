@@ -34,19 +34,19 @@ namespace Application.Comentarios.Commands
 
             if (comentario is null) return ComentariosFailures.NoEncontrado;
 
-            RelacionDeComentario? relacion = await _comentariosRepository.GetRelacionDeComentario(new(_context.UsuarioId), new(request.Comentario));
+            // RelacionDeComentario? relacion = await _comentariosRepository.GetRelacionDeComentario(new(_context.UsuarioId), new(request.Comentario));
 
-            if (relacion is null)
-            {
-                relacion = new RelacionDeComentario(
-                    comentario.Id,
-                    new(_context.UsuarioId)
-                );
-            }
+            // if (relacion is null)
+            // {
+            //     relacion = new RelacionDeComentario(
+            //         comentario.Id,
+            //         new(_context.UsuarioId)
+            //     );
+            // }
 
-            var result = comentario.Ocultar(hilo, relacion);
+            // var result = comentario.Ocultar(hilo, relacion);
 
-            if (result.IsFailure) return result.Error;
+            // if (result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync();
 

@@ -1,4 +1,5 @@
 using Domain.Comentarios;
+using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Usuarios;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,47 @@ namespace Persistence.Configurations
 
             builder.Property(c => c.Status).HasColumnName("status");
 
-            builder.Property(c => c.Destacado).HasColumnName("destacado");
+
+            builder.ComplexProperty(c => c.Informacion, y =>
+            {
+                y.Property(c => c.TagUnico).HasConversion(id => id.Value, value => TagUnico.Create(value).Value).HasColumnName("tag_unico");
+                y.Property(c => c.Dados).HasConversion(id => id.Value, value => Dados.Create(value).Value).HasColumnName("dados");
+                y.ComplexProperty(i => i.Tag).Property(c => c.Value).HasColumnName("tag");
+            });
 
             builder.Property(c => c.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
+
+            builder.OwnsMany(c => c.Denuncias, y =>
+            {
+                y.ToTable("denuncias_de_comentario");
+
+                y.HasKey(c => c.Id);
+                y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
+                y.Property(h => h.ComentarioId).HasColumnName("comentario_id");
+                y.WithOwner().HasForeignKey(d => d.ComentarioId);
+
+                y.Property(h => h.DenuncianteId).HasColumnName("denunciante_id");
+                y.HasOne<Usuario>().WithMany().HasForeignKey(h => h.DenuncianteId);
+
+                y.Property(h => h.Status).HasColumnName("status");
+            });
+
+            builder.OwnsMany(c => c.Relaciones, y =>
+            {
+                y.ToTable("relaciones_de_comentario");
+
+                y.HasKey(c => c.Id);
+                y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
+                y.Property(r => r.UsuarioId).HasColumnName("usuario_id");
+                y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
+
+                y.Property(r => r.ComentarioId).HasColumnName("comentario_id");
+                y.WithOwner().HasForeignKey(c => c.ComentarioId);
+
+                y.Property(r => r.Oculto).HasColumnName("oculto");
+            });
         }
     }
 }

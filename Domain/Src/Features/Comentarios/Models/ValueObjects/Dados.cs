@@ -19,8 +19,10 @@ namespace Domain.Comentarios.ValueObjects
             Value = value;
         }
 
-        static public Dados Create(int valor)
+        static public Result<Dados> Create(int valor)
         {
+            if (ValorEsInvalido(valor)) return ComentariosFailures.ValorDeDadosInvalidos;
+
             return new Dados(valor);
         }
 

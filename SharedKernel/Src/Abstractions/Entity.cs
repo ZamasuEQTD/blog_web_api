@@ -8,7 +8,14 @@ namespace SharedKernel.Abstractions
         {
             _domainEvents.Add(IDomainEvent);
         }
+
+
         protected Entity() { }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents?.Clear();
+        }
     }
 
     public abstract class Entity<TId> : Entity where TId : EntityId

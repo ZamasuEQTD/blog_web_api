@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Configurations
 {
-    public class EncuestaConfiguration : IEntityTypeConfiguration<Encuesta>
+    internal class EncuestaConfiguration : IEntityTypeConfiguration<Encuesta>
     {
         public void Configure(EntityTypeBuilder<Encuesta> builder)
         {

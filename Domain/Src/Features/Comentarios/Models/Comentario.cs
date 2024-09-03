@@ -1,7 +1,5 @@
-using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
-using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -13,17 +11,23 @@ namespace Domain.Comentarios
         public UsuarioId AutorId { get; private set; }
         public HiloId Hilo { get; private set; }
         public Texto Texto { get; private set; }
+        public InformacionDeComentario Informacion { get; private set; }
+        public List<DenunciaDeComentario> Denuncias { get; private set; }
+        public List<RelacionDeComentario> Relaciones { get; private set; }
         public ComentarioStatus Status { get; private set; }
-        public bool Destacado { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autor, Texto texto)
+        public Comentario(HiloId hilo, UsuarioId autor, Texto texto, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
             AutorId = autor;
             Hilo = hilo;
             Texto = texto;
+            Status = ComentarioStatus.Activo;
+            Informacion = informacion;
+            Denuncias = [];
+            Relaciones = [];
         }
 
         public enum ComentarioStatus
@@ -32,55 +36,28 @@ namespace Domain.Comentarios
             Eliminado
         }
 
-        public Result Eliminar(Hilo hilo)
+        internal void Eliminar()
         {
-            if (!hilo.Activo) return HilosFailures.Inactivo;
-
-            if (Destacado)
+            foreach (var denuncia in Denuncias)
             {
-                Destacado = false;
+                denuncia.Desestimar();
             }
 
             Status = ComentarioStatus.Eliminado;
-
-            return Result.Success();
         }
 
-        public async Task<Result<DenunciaDeComentario>> Denunciar(IComentariosRepository comentariosRepository, UsuarioId usuario)
-        {
-            if (await comentariosRepository.HaDenunciado(Id, usuario)) return ComentariosFailures.YaHaDenunciado;
-
-            return new DenunciaDeComentario(
-                usuario,
-                this.Id,
-                0
-            );
-        }
-
-        public async Task<Result> Destacar(
-            Hilo hilo,
-            UsuarioId usuario,
-            IComentariosRepository comentariosRepository)
+        public Result Denunciar(Hilo hilo, UsuarioId usuarioId)
         {
             if (!hilo.Activo) return HilosFailures.Inactivo;
 
-            if (hilo.EsAutor(usuario)) return HilosFailures.NoEsAutor;
+            if (HaDenunciado(usuarioId)) return ComentariosFailures.YaHaDenunciado;
 
-            if (!Activo) return ComentariosFailures.Inactivo;
-
-            if (!Destacado)
-            {
-                if (await comentariosRepository.CantidadDeDestacados(this.Hilo) > 5) return ComentariosFailures.HaAlcanzadoMaximaCantidadDeDestacados;
-
-                Destacado = true;
-            }
-            else
-            {
-                Destacado = false;
-            }
+            Denuncias.Add(new DenunciaDeComentario(usuarioId, Id, DenunciaDeComentario.RazonDeDenuncia.Otro));
 
             return Result.Success();
         }
+
+        public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
 
         public Result Ocultar(Hilo hilo, RelacionDeComentario relacion)
         {
@@ -92,6 +69,26 @@ namespace Domain.Comentarios
 
             return Result.Success();
         }
+
+        static public Comentario Create(
+            HiloId hilo,
+            UsuarioId usuario,
+            Texto texto
+        )
+        {
+            var c = new Comentario(
+                    hilo,
+                    usuario,
+                    texto,
+                    new InformacionDeComentario(
+                        Tag.Create("DSADASDD").Value,
+                        null,
+                        null
+                    )
+            );
+
+            return c;
+        }
     }
 
     public class ComentarioId : EntityId
@@ -100,13 +97,24 @@ namespace Domain.Comentarios
         public ComentarioId(Guid id) : base(id) { }
     }
 
+    public class InformacionDeComentario
+    {
+        public Tag Tag { get; private set; }
+        public TagUnico? TagUnico { get; private set; }
+        public Dados? Dados { get; private set; }
+
+        private InformacionDeComentario() { }
+        public InformacionDeComentario(Tag tag, TagUnico? tagUnico, Dados? dados)
+        {
+            Tag = tag;
+            TagUnico = tagUnico;
+            Dados = dados;
+        }
+    }
     public interface IComentariosRepository
     {
-        Task<Comentario?> GetComentarioById(ComentarioId id);
-        Task<bool> HaDenunciado(ComentarioId id, UsuarioId usuarioId);
         void Add(Denuncias.Denuncia denuncia);
-        Task<int> CantidadDeDestacados(HiloId hilo);
-        Task<RelacionDeComentario?> GetRelacionDeComentario(UsuarioId usuario, ComentarioId comentario);
+        Task<Comentario?> GetComentarioById(ComentarioId id);
     }
 
     static public class EncuestaFailures
@@ -141,6 +149,7 @@ namespace Domain.Comentarios
         public static readonly Error TagUnicoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
         public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
         public static readonly Error MaximaCantidadDeTaggueosSuperados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
+        public static readonly Error ValorDeDadosInvalidos = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
 
     }
 

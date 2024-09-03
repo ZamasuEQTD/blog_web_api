@@ -128,10 +128,6 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("Destacado")
-                        .HasColumnType("boolean")
-                        .HasColumnName("destacado");
-
                     b.Property<Guid>("Hilo")
                         .HasColumnType("uuid")
                         .HasColumnName("hilo_id");
@@ -143,6 +139,29 @@ namespace Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Informacion", "Domain.Comentarios.Comentario.Informacion#InformacionDeComentario", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int?>("Dados")
+                                .HasColumnType("integer")
+                                .HasColumnName("dados");
+
+                            b1.Property<string>("TagUnico")
+                                .HasColumnType("text")
+                                .HasColumnName("tag_unico");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("Tag", "Domain.Comentarios.Comentario.Informacion#InformacionDeComentario.Tag#Tag", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("Value")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("tag");
+                                });
+                        });
 
                     b.ComplexProperty<Dictionary<string, object>>("Texto", "Domain.Comentarios.Comentario.Texto#Texto", b1 =>
                         {
@@ -163,69 +182,6 @@ namespace Persistence.Migrations
                     b.ToTable("comentarios", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Comentarios.DenunciaDeComentario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("ComentarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("comentarios_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("DenuncianteId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("denunciante_id");
-
-                    b.Property<int>("Razon")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComentarioId");
-
-                    b.HasIndex("DenuncianteId");
-
-                    b.ToTable("denuncias_de_comentario", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Comentarios.RelacionDeComentario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("ComentarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("comentario_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Oculto")
-                        .HasColumnType("boolean")
-                        .HasColumnName("oculto");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("usuario_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComentarioId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("relaciones_de_comentarios", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Encuestas.Encuesta", b =>
                 {
                     b.Property<Guid>("Id")
@@ -240,39 +196,6 @@ namespace Persistence.Migrations
                     b.ToTable("encuestas", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Hilos.DenunciaDeHilo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("DenuncianteId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("denunciante_id");
-
-                    b.Property<Guid>("HiloId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("hilo_id");
-
-                    b.Property<int>("Razon")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DenuncianteId");
-
-                    b.HasIndex("HiloId");
-
-                    b.ToTable("denuncias_de_hilo", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Hilos.Hilo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -281,7 +204,7 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("AutorId")
                         .HasColumnType("uuid")
-                        .HasColumnName("autor_id");
+                        .HasColumnName("usuario_id");
 
                     b.Property<Guid>("Categoria")
                         .HasColumnType("uuid")
@@ -369,41 +292,48 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HiloId")
-                        .IsUnique();
+                    b.HasIndex("HiloId");
 
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("relaciones_de_hilo", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Stickies.Sticky", b =>
+            modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime?>("Conluye")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("concluye_at");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("Hilo")
+                    b.Property<Guid>("NotificadoId")
                         .HasColumnType("uuid")
-                        .HasColumnName("hilo_id");
+                        .HasColumnName("notificado_id");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("tipo_de_notificacion")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Hilo")
-                        .IsUnique();
+                    b.HasIndex("NotificadoId");
 
-                    b.ToTable("stickies", (string)null);
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("notificaciones", (string)null);
+
+                    b.HasDiscriminator<string>("tipo_de_notificacion").HasValue("Notificacion");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Usuarios.Usuario", b =>
@@ -435,6 +365,25 @@ namespace Persistence.Migrations
                     b.HasDiscriminator<int>("Rango");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
+                {
+                    b.HasBaseType("Domain.Notificaciones.Notificacion");
+
+                    b.Property<Guid>("ComentarioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("comentario_id");
+
+                    b.Property<Guid>("HiloId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("hilo_id");
+
+                    b.HasIndex("ComentarioId");
+
+                    b.HasIndex("HiloId");
+
+                    b.HasDiscriminator().HasValue("hilo_comentado");
                 });
 
             modelBuilder.Entity("Domain.Usuarios.Anonimo", b =>
@@ -488,36 +437,91 @@ namespace Persistence.Migrations
                         .HasForeignKey("Hilo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("Domain.Comentarios.DenunciaDeComentario", b =>
-                {
-                    b.HasOne("Domain.Comentarios.Comentario", null)
-                        .WithMany()
-                        .HasForeignKey("ComentarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.OwnsMany("Domain.Comentarios.DenunciaDeComentario", "Denuncias", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
 
-                    b.HasOne("Domain.Usuarios.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("DenuncianteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("comentario_id");
 
-            modelBuilder.Entity("Domain.Comentarios.RelacionDeComentario", b =>
-                {
-                    b.HasOne("Domain.Comentarios.Comentario", null)
-                        .WithMany()
-                        .HasForeignKey("ComentarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
 
-                    b.HasOne("Domain.Usuarios.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                            b1.Property<Guid>("DenuncianteId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("denunciante_id");
+
+                            b1.Property<int>("Razon")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Status")
+                                .HasColumnType("integer")
+                                .HasColumnName("status");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ComentarioId");
+
+                            b1.HasIndex("DenuncianteId");
+
+                            b1.ToTable("denuncias_de_comentario", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComentarioId");
+
+                            b1.HasOne("Domain.Usuarios.Usuario", null)
+                                .WithMany()
+                                .HasForeignKey("DenuncianteId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
+
+                    b.OwnsMany("Domain.Comentarios.RelacionDeComentario", "Relaciones", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("comentario_id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<bool>("Oculto")
+                                .HasColumnType("boolean")
+                                .HasColumnName("oculto");
+
+                            b1.Property<Guid>("UsuarioId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("usuario_id");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ComentarioId");
+
+                            b1.HasIndex("UsuarioId");
+
+                            b1.ToTable("relaciones_de_comentario", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComentarioId");
+
+                            b1.HasOne("Domain.Usuarios.Usuario", null)
+                                .WithMany()
+                                .HasForeignKey("UsuarioId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Denuncias");
+
+                    b.Navigation("Relaciones");
                 });
 
             modelBuilder.Entity("Domain.Encuestas.Encuesta", b =>
@@ -592,21 +596,6 @@ namespace Persistence.Migrations
                     b.Navigation("Votos");
                 });
 
-            modelBuilder.Entity("Domain.Hilos.DenunciaDeHilo", b =>
-                {
-                    b.HasOne("Domain.Usuarios.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("DenuncianteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Hilos.Hilo", null)
-                        .WithMany()
-                        .HasForeignKey("HiloId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Hilos.Hilo", b =>
                 {
                     b.HasOne("Domain.Usuarios.Usuario", null)
@@ -624,6 +613,109 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Encuestas.Encuesta", null)
                         .WithOne()
                         .HasForeignKey("Domain.Hilos.Hilo", "Encuesta");
+
+                    b.OwnsOne("Domain.Stickies.Sticky", "Sticky", b1 =>
+                        {
+                            b1.Property<Guid>("Hilo")
+                                .HasColumnType("uuid")
+                                .HasColumnName("hilo_id");
+
+                            b1.Property<DateTime?>("Conluye")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("concluye");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.HasKey("Hilo");
+
+                            b1.ToTable("stickies", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("Hilo");
+                        });
+
+                    b.OwnsMany("Domain.Hilos.ComentarioDestacado", "ComentarioDestacados", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("comentario_id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid>("HiloId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("hilo_id");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ComentarioId");
+
+                            b1.HasIndex("HiloId");
+
+                            b1.ToTable("comentarios_destacados", (string)null);
+
+                            b1.HasOne("Domain.Comentarios.Comentario", null)
+                                .WithMany()
+                                .HasForeignKey("ComentarioId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.WithOwner()
+                                .HasForeignKey("HiloId");
+                        });
+
+                    b.OwnsMany("Domain.Hilos.DenunciaDeHilo", "Denuncias", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid>("DenuncianteId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("denunciante_id");
+
+                            b1.Property<Guid>("HiloId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("hilo_id");
+
+                            b1.Property<int>("Razon")
+                                .HasColumnType("integer")
+                                .HasColumnName("razon");
+
+                            b1.Property<int>("Status")
+                                .HasColumnType("integer")
+                                .HasColumnName("status");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("DenuncianteId");
+
+                            b1.HasIndex("HiloId");
+
+                            b1.ToTable("denuncias_de_hilo", (string)null);
+
+                            b1.HasOne("Domain.Usuarios.Usuario", null)
+                                .WithMany()
+                                .HasForeignKey("DenuncianteId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.WithOwner()
+                                .HasForeignKey("HiloId");
+                        });
 
                     b.OwnsOne("Domain.Hilos.ValueObjects.ConfiguracionDeComentarios", "Configuracion", b1 =>
                         {
@@ -646,15 +738,21 @@ namespace Persistence.Migrations
                                 .HasForeignKey("HiloId");
                         });
 
+                    b.Navigation("ComentarioDestacados");
+
                     b.Navigation("Configuracion")
                         .IsRequired();
+
+                    b.Navigation("Denuncias");
+
+                    b.Navigation("Sticky");
                 });
 
             modelBuilder.Entity("Domain.Hilos.RelacionDeHilo", b =>
                 {
                     b.HasOne("Domain.Hilos.Hilo", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.Hilos.RelacionDeHilo", "HiloId")
+                        .WithMany()
+                        .HasForeignKey("HiloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -665,13 +763,37 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Stickies.Sticky", b =>
+            modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
-                    b.HasOne("Domain.Hilos.Hilo", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.Stickies.Sticky", "Hilo")
+                    b.HasOne("Domain.Usuarios.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("NotificadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Usuarios.Usuario", null)
+                        .WithMany("Notificaciones")
+                        .HasForeignKey("UsuarioId");
+                });
+
+            modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
+                {
+                    b.HasOne("Domain.Comentarios.Comentario", null)
+                        .WithMany()
+                        .HasForeignKey("ComentarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Hilos.Hilo", null)
+                        .WithMany()
+                        .HasForeignKey("HiloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Usuarios.Usuario", b =>
+                {
+                    b.Navigation("Notificaciones");
                 });
 #pragma warning restore 612, 618
         }

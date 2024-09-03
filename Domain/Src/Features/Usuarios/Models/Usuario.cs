@@ -1,5 +1,6 @@
 using Domain.Baneos;
 using Domain.Comentarios;
+using Domain.Notificaciones;
 using SharedKernel.Abstractions;
 
 namespace Domain.Usuarios
@@ -9,7 +10,8 @@ namespace Domain.Usuarios
         public Username Username { get; private set; }
         public string HashedPassword { get; private set; }
         public RangoDeUsuario Rango { get; set; }
-        protected Usuario() { }
+        public List<Notificacion> Notificaciones { get; private set; } = [];
+
         protected Usuario(
             Username username,
             string HashedPassword
@@ -18,11 +20,20 @@ namespace Domain.Usuarios
             this.Username = username;
             this.HashedPassword = HashedPassword;
         }
+        protected Usuario()
+        {
+
+        }
 
         public enum RangoDeUsuario
         {
             Anonimo,
             Moderador
+        }
+
+        public void Notificar(Notificacion notificacion)
+        {
+            Notificaciones.Add(notificacion);
         }
     }
 

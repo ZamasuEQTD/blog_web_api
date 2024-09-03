@@ -4,13 +4,15 @@ using SharedKernel.Abstractions;
 
 namespace Domain.Hilos
 {
-    public class RelacionDeHilo : Entity<InteraccionId>
+    public class RelacionDeHilo : Entity<RelacionId>
     {
         public HiloId HiloId { get; private set; }
         public UsuarioId UsuarioId { get; private set; }
         public bool Seguido { get; private set; }
         public bool Favorito { get; private set; }
         public bool Oculto { get; private set; }
+
+        private RelacionDeHilo() { }
 
         public RelacionDeHilo(HiloId hiloId, UsuarioId usuarioId)
         {
@@ -22,15 +24,15 @@ namespace Domain.Hilos
             this.Oculto = false;
         }
 
-        private void Seguir()
+        internal void Seguir()
         {
             this.Seguido = !Seguido;
         }
-        private void Ocultar()
+        internal void Ocultar()
         {
             this.Oculto = !Oculto;
         }
-        private void PonerEnFavoritos()
+        internal void PonerEnFavoritos()
         {
             this.Favorito = !Favorito;
         }
@@ -63,8 +65,9 @@ namespace Domain.Hilos
 
 
 
-    public class InteraccionId : EntityId
+    public class RelacionId : EntityId
     {
-        public InteraccionId(Guid id) : base(id) { }
+        private RelacionId() { }
+        public RelacionId(Guid id) : base(id) { }
     }
 }

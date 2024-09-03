@@ -2,7 +2,7 @@ using SharedKernel;
 
 namespace Domain.Comentarios.ValueObjects
 {
-    public class InformacionComentario : ValueObject
+    public class InformacionComentario
     {
         public Tag Tag { get; private set; }
         public Dados? Dados { get; private set; }
@@ -16,7 +16,6 @@ namespace Domain.Comentarios.ValueObjects
             this.Dados = dados;
             this.TagUnico = tagUnico;
         }
-        protected override IEnumerable<object> GetAtomicValues() => [Tag, Dados, TagUnico];
     }
 
 }

@@ -1,3 +1,4 @@
+using Domain.Notificaciones;
 using Domain.Usuarios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,8 +13,11 @@ namespace Persistence.EntityConfigurations
             builder.HasKey(h => h.Id);
 
             builder.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
             builder.Property(u => u.Username).HasConversion(u => u.Value, value => Username.Create(value).Value).HasColumnName("username");
             builder.Property(u => u.HashedPassword).HasColumnName("password");
+
+            builder.HasMany<Notificacion>().WithOne().HasForeignKey(n => n.NotificadoId);
 
             builder
             .HasDiscriminator(u => u.Rango)

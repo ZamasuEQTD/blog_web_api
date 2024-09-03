@@ -27,12 +27,15 @@ namespace Application.Comentarios
 
                 if (request.UltimoComentario is not null)
                 {
+                    DateTime? created_at = await connection.QueryFirstAsync<DateTime?>("");
 
-                    DateTime created_at = await connection.QueryFirstAsync<DateTime>("");
-                    builder = builder.Where("comentario.created_at < @created_at ::Date", new
+                    if (created_at is not null)
                     {
-                        created_at
-                    });
+                        builder = builder.Where("comentario.created_at < @created_at ::Date", new
+                        {
+                            created_at
+                        });
+                    }
                 }
 
                 SqlBuilder.Template template = builder.AddTemplate("");

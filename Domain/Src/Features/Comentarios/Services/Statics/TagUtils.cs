@@ -8,29 +8,29 @@ namespace Domain.Comentarios.Services
     {
         static private readonly string REGEX_STRING = ">>" + Tag.REGEX_STRING;
 
-        static public List<Tag> GetTags(string texto)
+        static public List<string> GetTags(string texto)
         {
-            List<Tag> tags = [];
+            List<string> tags = [];
 
             var matches = GetMatches(texto);
 
             foreach (Match match in matches)
             {
-                tags.Add(Tag.Create(match.Value.Substring(2)).Value);
+                tags.Add(match.Value.Substring(2));
             }
 
             return tags;
         }
 
-        static public HashSet<Tag> GetTagsUnicos(string texto)
+        static public HashSet<string> GetTagsUnicos(string texto)
         {
-            HashSet<Tag> tags = new HashSet<Tag>();
+            HashSet<string> tags = new HashSet<string>();
 
             var matches = GetMatches(texto);
 
             foreach (Match match in matches)
             {
-                tags.Add(Tag.Create(match.Value.Substring(2)).Value);
+                tags.Add(match.Value.Substring(2));
             }
 
             return tags;

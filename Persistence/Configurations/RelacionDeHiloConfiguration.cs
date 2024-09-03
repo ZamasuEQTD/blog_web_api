@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Configurations
 {
-    internal sealed class RelacionDeHiloConfiguration : IEntityTypeConfiguration<RelacionDeHilo>
+    public class RelacionDeHiloConfiguration : IEntityTypeConfiguration<RelacionDeHilo>
     {
         public void Configure(EntityTypeBuilder<RelacionDeHilo> builder)
         {
@@ -14,8 +14,8 @@ namespace Persistence.Configurations
             builder.HasKey(r => r.Id);
             builder.Property(r => r.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
-            builder.Property(r => r.HiloId).HasColumnName("hilo_id");
-            builder.HasOne<Hilo>().WithOne().HasForeignKey<RelacionDeHilo>(r => r.HiloId);
+            builder.Property(d => d.HiloId).HasColumnName("hilo_id");
+            builder.HasOne<Hilo>().WithMany().HasForeignKey(d => d.HiloId);
 
             builder.Property(r => r.UsuarioId).HasColumnName("usuario_id");
             builder.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
@@ -23,8 +23,6 @@ namespace Persistence.Configurations
             builder.Property(r => r.Seguido).HasColumnName("seguido");
             builder.Property(r => r.Favorito).HasColumnName("favorito");
             builder.Property(r => r.Oculto).HasColumnName("oculto");
-
         }
-
     }
 }

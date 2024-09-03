@@ -6,5 +6,11 @@ namespace Application.Comentarios.Commands
     {
         public Guid Hilo { get; set; }
         public string Texto { get; set; }
+        public ComentarHiloCommand(Guid hilo, string texto)
+        {
+            Hilo = hilo;
+            Texto = texto;
+        }
+
     }
 }

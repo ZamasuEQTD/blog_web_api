@@ -24,7 +24,6 @@ namespace Persistence.Configuration
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             services.AddScoped<IDBConnectionFactory, NpgsqlConnectionFactory>();
 
             services.AddScoped<IHilosRepository, HilosRepository>();
@@ -32,7 +31,7 @@ namespace Persistence.Configuration
             services.AddScoped<IUsuariosRepository, UsuariosRepository>();
             services.AddScoped<ICategoriasRepository, CategoriasRepository>();
             services.AddScoped<IComentariosRepository, ComentariosRepository>();
-            services.AddScoped<IEncuestasRepository, EncuestaRepository>();
+            services.AddScoped<IEncuestasRepository, EncuestasRepository>();
 
             return services;
         }

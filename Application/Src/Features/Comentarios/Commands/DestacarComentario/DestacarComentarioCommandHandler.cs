@@ -32,7 +32,10 @@ namespace Application.Comentarios.Commands
 
             if (hilo is null || comentario is null) return HilosFailures.NoEncontrado;
 
-            Result result = await comentario.Destacar(hilo, new(_user.UsuarioId), _comentariosRepository);
+            Result result = hilo.Destacar(
+                new(_user.UsuarioId),
+                comentario
+            );
 
             if (result.IsFailure) return result.Error;
 

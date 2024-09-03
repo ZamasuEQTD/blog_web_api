@@ -6,5 +6,12 @@ namespace Application.Comentarios.Commands
     {
         public Guid Hilo { get; set; }
         public Guid Comentario { get; set; }
+
+        public DestacarComentarioCommand(Guid hilo, Guid comentario)
+        {
+            Hilo = hilo;
+            Comentario = comentario;
+        }
+
     }
 }

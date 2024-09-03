@@ -5,8 +5,12 @@ namespace Domain.Comentarios.ValueObjects
 {
     public class TagUnico : ValueObject
     {
+        static public readonly int Lenght = 3;
         static public readonly string RegexExp = "^[A-Z0-9]{3}$";
         public string Value { get; private set; }
+        private TagUnico()
+        {
+        }
 
         private TagUnico(string value)
         {

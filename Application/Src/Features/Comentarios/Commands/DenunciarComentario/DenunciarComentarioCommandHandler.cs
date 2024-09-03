@@ -35,8 +35,8 @@ namespace Application.Comentarios.Commands
 
             if (comentario is null) return ComentariosFailures.NoEncontrado;
 
-            var result = await comentario.Denunciar(
-                _comentariosRepository,
+            var result = comentario.Denunciar(
+                hilo,
                 new(_context.UsuarioId)
             );
 

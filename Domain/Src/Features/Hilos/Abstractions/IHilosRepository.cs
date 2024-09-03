@@ -1,4 +1,4 @@
-using Domain.Stickies;
+using Domain.Comentarios;
 using Domain.Usuarios;
 
 namespace Domain.Hilos.Abstractions
@@ -6,11 +6,10 @@ namespace Domain.Hilos.Abstractions
     public interface IHilosRepository
     {
         void Add(Hilo hilo);
-        void Add(DenunciaDeHilo denuncia);
+        void Add(RelacionDeHilo relacion);
+
         Task<Hilo?> GetHiloById(HiloId id);
-        Task<bool> TieneStickyActivo(HiloId hiloId, DateTime now);
-        Task<bool> HaDenunciado(HiloId hiloId, UsuarioId usuarioId);
-        Task<List<DenunciaDeHilo>> GetDenuncias(HiloId id);
-        Task<Sticky?> GetStickyActivo(HiloId id, DateTime now);
+        Task<RelacionDeHilo?> GetRelacion(HiloId hiloId, UsuarioId id);
+        void Add(Comentario comentario);
     }
 }

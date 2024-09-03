@@ -1,32 +1,36 @@
 using Domain.Categorias;
 using Domain.Comentarios;
+using Domain.Comentarios.Services;
+using Domain.Comentarios.ValueObjects;
 using Domain.Encuestas;
-using Domain.Encuestas.Abstractions;
-using Domain.Hilos.Abstractions;
 using Domain.Hilos.ValueObjects;
 using Domain.Stickies;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
+using static Domain.Hilos.Hilo;
 
 namespace Domain.Hilos
 {
+
     public class Hilo : Entity<HiloId>
     {
         public readonly static int CANTIDAD_MAXIMA_DE_DESTACADOS = 5;
-        public UsuarioId AutorId { get; private set; }
-        public SubcategoriaId Categoria { get; private set; }
-        public EncuestaId? Encuesta { get; private set; }
+        public bool RecibirNotificaciones { get; private set; }
         public Titulo Titulo { get; private set; }
         public Descripcion Descripcion { get; private set; }
         public DateTime UltimoBump { get; private set; }
         public HiloStatus Status { get; private set; }
         public ConfiguracionDeComentarios Configuracion { get; private set; }
-        public bool RecibirNotificaciones { get; private set; }
+        public Sticky? Sticky { get; private set; }
+        public List<DenunciaDeHilo> Denuncias { get; private set; }
+        public List<ComentarioDestacado> ComentarioDestacados { get; private set; }
+        public UsuarioId AutorId { get; private set; }
+        public SubcategoriaId Categoria { get; private set; }
+        public EncuestaId? Encuesta { get; private set; }
         public bool Activo => Status == HiloStatus.Activo;
         public bool Eliminado => Status == HiloStatus.Eliminado;
         public bool Archivado => Status == HiloStatus.Archivado;
-        public bool EsAutor(UsuarioId usuario) => AutorId == usuario;
 
         private Hilo() { }
 
@@ -45,81 +49,157 @@ namespace Domain.Hilos
             Encuesta = encuesta;
             Titulo = titulo;
             Descripcion = descripcion;
+            RecibirNotificaciones = true;
             UltimoBump = DateTime.UtcNow;
             Configuracion = configuracion;
             Status = HiloStatus.Activo;
+            Denuncias = [];
+            ComentarioDestacados = [];
         }
 
-        public async Task<Result> Eliminar(
-            IHilosRepository hilosRepository,
-            DateTime now
+        public Result<Comentario> Comentar(
+            Texto texto,
+            UsuarioId usuarioId
         )
         {
+            if (!Activo) return HilosFailures.Inactivo;
 
-            if (Status == HiloStatus.Eliminado) return HilosFailures.YaEliminado;
+            var c = new Comentario(
+                Id,
+                usuarioId,
+                texto,
+                new InformacionDeComentario(
+                    TagsService.GenerarTag(),
+                    Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(Id, usuarioId) : null,
+                    Configuracion.Dados ? DadosService.Generar() : null
+                )
+            );
 
-            Status = HiloStatus.Eliminado;
+            return c;
+        }
 
-            Sticky? sticky = await hilosRepository.GetStickyActivo(Id, now);
+        public Result Eliminar(DateTime now)
+        {
+            if (Eliminado) return HilosFailures.YaEliminado;
 
-            if (sticky != null)
+            if (TieneStickyActivo(now))
             {
-                sticky.Eliminar();
+                Sticky!.Eliminar(now);
             }
 
-            foreach (var denuncia in await hilosRepository.GetDenuncias(Id))
+            foreach (var denuncia in Denuncias)
             {
                 denuncia.Desestimar();
             }
 
+            Status = HiloStatus.Eliminado;
+
             return Result.Success();
         }
 
-        public async Task<Result<DenunciaDeHilo>> Denunciar(
-            IHilosRepository hilosRepository,
-            UsuarioId usuarioId
-        )
+        public Result EstablecerSticky(DateTime now)
         {
-            if (await hilosRepository.HaDenunciado(Id, usuarioId)) return HilosFailures.YaHaDenunciado;
+            if (TieneStickyActivo(now)) return HilosFailures.YaTieneStickyActivo;
 
-            return new DenunciaDeHilo(usuarioId, Id);
+            this.Sticky = new Sticky(this.Id, null);
+
+            return Result.Success();
         }
 
-        public async Task<Result<Sticky>> EstablecerSticky(IHilosRepository hilosRepository, DateTime now, DateTime? concluye)
+        public Result EliminarSticky(DateTime now)
         {
-            if (await hilosRepository.TieneStickyActivo(this.Id, now)) return HilosFailures.YaTieneStickyActivo;
+            if (!TieneStickyActivo(now)) return HilosFailures.SinStickyActivo;
 
-            return new Sticky(
-                Id,
-                concluye
-            );
+            Sticky!.Eliminar(now);
+
+            return Result.Success();
         }
 
-        public Result CambiarRelacion(RelacionDeHilo relacion, RelacionDeHilo.Acciones accion)
+        public Result Denunciar(UsuarioId usuarioId)
+        {
+            if (HaDenunciado(usuarioId)) return HilosFailures.YaHaDenunciado;
+
+            Denuncias.Add(new DenunciaDeHilo(
+                usuarioId,
+                Id
+            ));
+
+            return Result.Success();
+        }
+
+        public Result Seguir(RelacionDeHilo relacion)
         {
             if (!Activo) return HilosFailures.Inactivo;
 
-            relacion.EjecutarAccion(accion);
+            relacion.Seguir();
 
             return Result.Success();
         }
 
-        public void Archivar()
+        public Result Ocultar(RelacionDeHilo relacion)
         {
-            Status = HiloStatus.Archivado;
+            if (!Activo) return HilosFailures.Inactivo;
+
+            relacion.Ocultar();
+
+            return Result.Success();
         }
 
+        public Result Destacar(UsuarioId usuarioId, Comentario comentario)
+        {
+            if (!EsAutor(usuarioId)) return HilosFailures.NoEsAutor;
+
+            if (!comentario.Activo) return ComentariosFailures.Inactivo;
+
+            if (EstaDestacado(comentario.Id))
+            {
+                DejarDeDestacarComentario(comentario.Id);
+
+                return Result.Success();
+            }
+
+            if (HaAlcandoMaximaCantidadDeDestacados) return ComentariosFailures.HaAlcanzadoMaximaCantidadDeDestacados;
+
+            DestacarComentario(comentario);
+
+            return Result.Success();
+        }
+
+
+        public Result Eliminar(Comentario comentario)
+        {
+            if (!Activo) return HilosFailures.Inactivo;
+
+            if (EstaDestacado(comentario.Id))
+            {
+                DejarDeDestacarComentario(comentario.Id);
+            }
+
+            comentario.Eliminar();
+
+            return Result.Success();
+        }
+
+        private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
+        private void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
+        private bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
+        bool HaAlcandoMaximaCantidadDeDestacados => ComentarioDestacados.Count == 5;
+        public bool EstaDestacado(ComentarioId comentarioId) => ComentarioDestacados.Any(c => c.ComentarioId == comentarioId);
+        public bool EsAutor(UsuarioId usuario) => AutorId == usuario;
+        public bool TieneStickyActivo(DateTime now) => Sticky is not null && !Sticky.Conluido(now);
         public enum HiloStatus
         {
             Activo,
             Eliminado,
             Archivado
         }
-
     }
 
     public class HiloId : EntityId
     {
+        private HiloId() { }
         public HiloId(Guid id) : base(id) { }
     }
+
+
 }

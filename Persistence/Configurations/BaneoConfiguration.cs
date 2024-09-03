@@ -7,8 +7,6 @@ namespace Persistence.Configurations
 {
     public class BaneoConfiguration : IEntityTypeConfiguration<Baneo>
     {
-
-
         public void Configure(EntityTypeBuilder<Baneo> builder)
         {
             builder.ToTable("baneos");

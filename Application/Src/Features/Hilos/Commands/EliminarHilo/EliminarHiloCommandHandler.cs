@@ -27,8 +27,7 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado;
 
-            var result = await hilo.Eliminar(
-                _hilosRepository,
+            var result = hilo.Eliminar(
                 _timeProvider.UtcNow
             );
 

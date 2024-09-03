@@ -31,11 +31,9 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado; ;
 
-            Sticky? sticky = await _hilosRepository.GetStickyActivo(hilo.Id, _timeProvider.UtcNow);
+            var result = hilo.EliminarSticky(_timeProvider.UtcNow);
 
-            if (sticky is null) return HilosFailures.SinStickyActivo;
-
-            sticky.Eliminar();
+            if (result.IsFailure) return result;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

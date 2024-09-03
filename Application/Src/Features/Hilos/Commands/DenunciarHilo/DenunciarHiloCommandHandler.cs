@@ -28,14 +28,11 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado;
 
-            Result<DenunciaDeHilo> result = await hilo.Denunciar(
-                _hilosRepository,
+            Result result = hilo.Denunciar(
                 new UsuarioId(_user.UsuarioId)
             );
 
             if (result.IsFailure) return result.Error;
-
-            _hilosRepository.Add(result.Value);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
