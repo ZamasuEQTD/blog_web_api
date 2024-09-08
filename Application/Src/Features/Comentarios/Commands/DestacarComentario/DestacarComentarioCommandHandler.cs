@@ -36,7 +36,6 @@ namespace Application.Comentarios.Commands
                 new(_user.UsuarioId),
                 comentario
             );
-
             if (result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync();

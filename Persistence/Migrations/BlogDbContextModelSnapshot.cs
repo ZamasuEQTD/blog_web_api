@@ -128,6 +128,10 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("Dados")
+                        .HasColumnType("integer")
+                        .HasColumnName("dados");
+
                     b.Property<Guid>("Hilo")
                         .HasColumnType("uuid")
                         .HasColumnName("hilo_id");
@@ -140,38 +144,19 @@ namespace Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Informacion", "Domain.Comentarios.Comentario.Informacion#InformacionDeComentario", b1 =>
-                        {
-                            b1.IsRequired();
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tag");
 
-                            b1.Property<int?>("Dados")
-                                .HasColumnType("integer")
-                                .HasColumnName("dados");
+                    b.Property<string>("TagUnico")
+                        .HasColumnType("text")
+                        .HasColumnName("tag_unico");
 
-                            b1.Property<string>("TagUnico")
-                                .HasColumnType("text")
-                                .HasColumnName("tag_unico");
-
-                            b1.ComplexProperty<Dictionary<string, object>>("Tag", "Domain.Comentarios.Comentario.Informacion#InformacionDeComentario.Tag#Tag", b2 =>
-                                {
-                                    b2.IsRequired();
-
-                                    b2.Property<string>("Value")
-                                        .IsRequired()
-                                        .HasColumnType("text")
-                                        .HasColumnName("tag");
-                                });
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("Texto", "Domain.Comentarios.Comentario.Texto#Texto", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("encuesta_id");
-                        });
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("texto");
 
                     b.HasKey("Id");
 

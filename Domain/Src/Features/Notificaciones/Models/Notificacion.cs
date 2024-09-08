@@ -33,6 +33,8 @@ namespace Domain.Notificaciones
             Leida,
             SinLeer
         }
+
+        public bool EsUsuarioNotificado(UsuarioId usuarioId) => this.NotificadoId == usuarioId;
     }
     public class NotificacionId : EntityId
     {

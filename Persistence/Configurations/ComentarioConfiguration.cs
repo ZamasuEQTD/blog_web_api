@@ -22,17 +22,13 @@ namespace Persistence.Configurations
             builder.Property(c => c.Hilo).HasColumnName("hilo_id");
             builder.HasOne<Hilo>().WithMany().HasForeignKey(c => c.Hilo);
 
-            builder.ComplexProperty(c => c.Texto).Property(t => t.Value).HasColumnName("encuesta_id");
+            builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value).HasColumnName("texto");
 
             builder.Property(c => c.Status).HasColumnName("status");
 
-
-            builder.ComplexProperty(c => c.Informacion, y =>
-            {
-                y.Property(c => c.TagUnico).HasConversion(id => id.Value, value => TagUnico.Create(value).Value).HasColumnName("tag_unico");
-                y.Property(c => c.Dados).HasConversion(id => id.Value, value => Dados.Create(value).Value).HasColumnName("dados");
-                y.ComplexProperty(i => i.Tag).Property(c => c.Value).HasColumnName("tag");
-            });
+            builder.Property(c => c.Tag).HasConversion(tag => tag.Value, value => Tag.Create(value).Value).HasColumnName("tag");
+            builder.Property(c => c.TagUnico).HasConversion(tagUnico => tagUnico.Value, value => TagUnico.Create(value).Value).HasColumnName("tag_unico");
+            builder.Property(c => c.Dados).HasConversion(dados => dados.Value, value => Dados.Create(value).Value).HasColumnName("dados");
 
             builder.Property(c => c.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
 

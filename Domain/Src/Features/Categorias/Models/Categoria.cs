@@ -1,3 +1,4 @@
+using Domain.Hilos.Events;
 using SharedKernel.Abstractions;
 
 namespace Domain.Categorias

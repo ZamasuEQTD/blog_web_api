@@ -18,7 +18,7 @@ namespace Domain.Comentarios.ValueObjects
 
         static public Result<Texto> Create(string value)
         {
-            if (value.Length > MIN || value.Length > MAX) return ComentariosFailures.LongitudDeTextoInvalido;
+            if (value.Length < MIN || value.Length > MAX) return ComentariosFailures.LongitudDeTextoInvalido;
 
             if (TagUtils.CantidadDeTags(value) > 5) return ComentariosFailures.MaximaCantidadDeTaggueosSuperados;
 

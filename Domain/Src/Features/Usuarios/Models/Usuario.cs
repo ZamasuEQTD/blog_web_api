@@ -10,7 +10,6 @@ namespace Domain.Usuarios
         public Username Username { get; private set; }
         public string HashedPassword { get; private set; }
         public RangoDeUsuario Rango { get; set; }
-        public List<Notificacion> Notificaciones { get; private set; } = [];
 
         protected Usuario(
             Username username,
@@ -22,18 +21,12 @@ namespace Domain.Usuarios
         }
         protected Usuario()
         {
-
         }
 
         public enum RangoDeUsuario
         {
             Anonimo,
             Moderador
-        }
-
-        public void Notificar(Notificacion notificacion)
-        {
-            Notificaciones.Add(notificacion);
         }
     }
 

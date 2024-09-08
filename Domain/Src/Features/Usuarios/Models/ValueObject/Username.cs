@@ -32,16 +32,4 @@ namespace Domain.Usuarios
             return [Value];
         }
     }
-
-    public static class UsuariosFailures
-    {
-        public static readonly Error UsernameOcupado = new Error("");
-        public static readonly Error UsernameTieneEspaciosEnBlanco = new Error("");
-        public static readonly Error LongitudDeUsernameInvalida = new Error("");
-        public static readonly Error LongitudDePasswordInvalida = new Error("");
-        public static readonly Error PasswordTieneEspaciosEnBlanco = new Error("");
-        public static readonly Error UsernameOrPasswordIncorrecta = new Error("");
-
-    }
-
 }

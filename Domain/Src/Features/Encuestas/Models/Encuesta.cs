@@ -1,4 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
+using Domain.Comentarios;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -20,6 +21,21 @@ namespace Domain.Encuestas
             this.Respuestas = respuestas;
             this.Votos = [];
         }
+
+        public Result Votar(UsuarioId usuarioId, RespuestaId respuestaId)
+        {
+            if (HaVotado(usuarioId)) return EncuestaFailures.YaHaVotado;
+
+            if (!ContieneRespuesta(respuestaId)) return EncuestaFailures.RespuestaInexistente;
+
+            Votos.Add(new Voto(
+                usuarioId,
+                respuestaId
+            ));
+
+            return Result.Success();
+        }
+
 
         static public Encuesta Create(
             List<Respuesta> respuestas

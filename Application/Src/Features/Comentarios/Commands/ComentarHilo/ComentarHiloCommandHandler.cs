@@ -6,7 +6,6 @@ using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
-using Domain.Usuarios.Abstractions;
 using SharedKernel;
 
 namespace Application.Comentarios.Commands

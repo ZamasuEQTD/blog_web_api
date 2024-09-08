@@ -32,7 +32,7 @@ namespace Application.Hilos.Queries
                         subcategoria.id AS Id,
                         subcategoria.nombre_corto AS Categoria
                     FROM hilos hilo
-                        JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
+                    JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                     /**where**/
                 ";
 

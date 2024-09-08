@@ -20,7 +20,9 @@ namespace Domain.Usuarios.ValueObjects
         static public Result<Password> Create(string value)
         {
             if (value.Length < MIN_LENGTH || value.Length > MAXIMO_LENGTH) return UsuariosFailures.LongitudDePasswordInvalida;
+
             if (StringUtils.ContieneEspaciosEnBlanco(value)) return UsuariosFailures.PasswordTieneEspaciosEnBlanco;
+
             return new Password()
             {
                 Value = value

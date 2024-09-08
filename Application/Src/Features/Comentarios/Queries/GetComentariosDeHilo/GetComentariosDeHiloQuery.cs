@@ -10,6 +10,7 @@ namespace Application.Comentarios
 
     public class GetComentarioResponse
     {
+        public bool EsOp { get; set; }
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Texto { get; set; }

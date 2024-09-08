@@ -3,7 +3,9 @@ using Domain.Comentarios;
 using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Encuestas;
+using Domain.Hilos.Events;
 using Domain.Hilos.ValueObjects;
+using Domain.Notificaciones;
 using Domain.Stickies;
 using Domain.Usuarios;
 using SharedKernel;
@@ -57,27 +59,6 @@ namespace Domain.Hilos
             ComentarioDestacados = [];
         }
 
-        public Result<Comentario> Comentar(
-            Texto texto,
-            UsuarioId usuarioId
-        )
-        {
-            if (!Activo) return HilosFailures.Inactivo;
-
-            var c = new Comentario(
-                Id,
-                usuarioId,
-                texto,
-                new InformacionDeComentario(
-                    TagsService.GenerarTag(),
-                    Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(Id, usuarioId) : null,
-                    Configuracion.Dados ? DadosService.Generar() : null
-                )
-            );
-
-            return c;
-        }
-
         public Result Eliminar(DateTime now)
         {
             if (Eliminado) return HilosFailures.YaEliminado;
@@ -97,11 +78,11 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result EstablecerSticky(DateTime now)
+        public Result EstablecerSticky(DateTime now, DateTime? concluye = null)
         {
             if (TieneStickyActivo(now)) return HilosFailures.YaTieneStickyActivo;
 
-            this.Sticky = new Sticky(this.Id, null);
+            this.Sticky = new Sticky(this.Id, concluye);
 
             return Result.Success();
         }
@@ -180,9 +161,31 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
+        public Result<Comentario> Comentar(
+            Texto texto,
+            UsuarioId usuarioId
+        )
+        {
+            if (!Activo) return HilosFailures.Inactivo;
+
+            var c = new Comentario(
+                Id,
+                usuarioId,
+                texto,
+                new InformacionDeComentario(
+                    TagsService.GenerarTag(),
+                    Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(Id, usuarioId) : null,
+                    Configuracion.Dados ? DadosService.Generar() : null
+                )
+            );
+
+            Raise(new HiloComentadoDomainEvent(Id, c.Id));
+
+            return c;
+        }
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
         private void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
-        private bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
+        public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
         bool HaAlcandoMaximaCantidadDeDestacados => ComentarioDestacados.Count == 5;
         public bool EstaDestacado(ComentarioId comentarioId) => ComentarioDestacados.Any(c => c.ComentarioId == comentarioId);
         public bool EsAutor(UsuarioId usuario) => AutorId == usuario;

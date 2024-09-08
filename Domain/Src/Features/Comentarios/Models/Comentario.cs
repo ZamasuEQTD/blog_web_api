@@ -11,7 +11,10 @@ namespace Domain.Comentarios
         public UsuarioId AutorId { get; private set; }
         public HiloId Hilo { get; private set; }
         public Texto Texto { get; private set; }
-        public InformacionDeComentario Informacion { get; private set; }
+        public Tag Tag { get; private set; }
+        public TagUnico? TagUnico { get; private set; }
+        public Dados? Dados { get; private set; }
+        public Colores Color { get; private set; }
         public List<DenunciaDeComentario> Denuncias { get; private set; }
         public List<RelacionDeComentario> Relaciones { get; private set; }
         public ComentarioStatus Status { get; private set; }
@@ -25,7 +28,10 @@ namespace Domain.Comentarios
             Hilo = hilo;
             Texto = texto;
             Status = ComentarioStatus.Activo;
-            Informacion = informacion;
+            Tag = informacion.Tag;
+            TagUnico = informacion.TagUnico;
+            Dados = informacion.Dados;
+            Color = Colores.Multi;
             Denuncias = [];
             Relaciones = [];
         }
@@ -70,24 +76,13 @@ namespace Domain.Comentarios
             return Result.Success();
         }
 
-        static public Comentario Create(
-            HiloId hilo,
-            UsuarioId usuario,
-            Texto texto
-        )
+        public enum Colores
         {
-            var c = new Comentario(
-                    hilo,
-                    usuario,
-                    texto,
-                    new InformacionDeComentario(
-                        Tag.Create("DSADASDD").Value,
-                        null,
-                        null
-                    )
-            );
-
-            return c;
+            Multi,
+            Invertido,
+            Rojo,
+            Amarillo,
+            Azul
         }
     }
 
@@ -115,6 +110,8 @@ namespace Domain.Comentarios
     {
         void Add(Denuncias.Denuncia denuncia);
         Task<Comentario?> GetComentarioById(ComentarioId id);
+        Task<Comentario?> GetComentarioByTag(HiloId hiloId, Tag tag);
+
     }
 
     static public class EncuestaFailures
@@ -141,16 +138,14 @@ namespace Domain.Comentarios
 
     static public class ComentariosFailures
     {
-        public static readonly Error NoEncontrado = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error Inactivo = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
-        public static readonly Error YaHaDenunciado = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
-        public static readonly Error HaAlcanzadoMaximaCantidadDeDestacados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error TagInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error TagUnicoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error MaximaCantidadDeTaggueosSuperados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-        public static readonly Error ValorDeDadosInvalidos = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Ya has denunciado el comentario");
-
+        public static readonly Error NoEncontrado = new Error("Comentarios.NoEncontrado", "El comentario no fue encontrado.");
+        public static readonly Error Inactivo = new Error("Comentarios.Inactivo", "El comentario está inactivo.");
+        public static readonly Error YaHaDenunciado = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado este comentario.");
+        public static readonly Error HaAlcanzadoMaximaCantidadDeDestacados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Has alcanzado la máxima cantidad de comentarios destacados.");
+        public static readonly Error TagInvalido = new Error("Comentarios.TagInvalido", "El tag proporcionado es inválido.");
+        public static readonly Error TagUnicoInvalido = new Error("Comentarios.TagUnicoInvalido", "El tag único proporcionado es inválido.");
+        public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.LongitudDeTextoInvalido", "La longitud del texto del comentario es inválida.");
+        public static readonly Error MaximaCantidadDeTaggueosSuperados = new Error("Comentarios.MaximaCantidadDeTaggueosSuperados", "Se ha superado la máxima cantidad de taggueos permitidos.");
+        public static readonly Error ValorDeDadosInvalidos = new Error("Comentarios.ValorDeDadosInvalidos", "El valor de los dados proporcionado es inválido.");
     }
-
 }

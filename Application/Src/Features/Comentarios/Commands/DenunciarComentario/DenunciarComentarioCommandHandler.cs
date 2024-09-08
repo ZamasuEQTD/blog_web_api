@@ -1,11 +1,9 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Hilos;
 using Domain.Comentarios;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
-using Domain.Usuarios;
 using SharedKernel;
 
 namespace Application.Comentarios.Commands

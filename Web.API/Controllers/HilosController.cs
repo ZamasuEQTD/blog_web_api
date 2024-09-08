@@ -11,7 +11,7 @@ namespace WebApi.Controllers
     {
         public HilosController(ISender sender) : base(sender) { }
 
-        [HttpPost("")]
+        [HttpPost("postear")]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {
             var result = await sender.Send(new PostearHiloCommand()

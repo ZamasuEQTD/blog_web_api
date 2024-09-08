@@ -16,4 +16,17 @@ namespace Domain.Notificaciones
             ComentarioId = comentarioId;
         }
     }
+
+    public class ComentarioRespondidoNotificacion : Notificacion
+    {
+        public HiloId HiloId { get; private set; }
+        public ComentarioId ComentarioId { get; private set; }
+        public ComentarioId ComentarioRespondidoId { get; private set; }
+        public ComentarioRespondidoNotificacion(UsuarioId usuarioId, HiloId hiloId, ComentarioId comentarioId, ComentarioId comentarioRespondidoId) : base(usuarioId)
+        {
+            HiloId = hiloId;
+            ComentarioId = comentarioId;
+            ComentarioRespondidoId = comentarioRespondidoId;
+        }
+    }
 }

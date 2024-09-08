@@ -1,8 +1,9 @@
+using Domain.Denuncias;
 using Domain.Usuarios;
 
 namespace Domain.Comentarios
 {
-    public class DenunciaDeComentario : Denuncias.Denuncia
+    public class DenunciaDeComentario : Denuncia
     {
         public ComentarioId ComentarioId { get; private set; }
         public RazonDeDenuncia Razon { get; private set; }

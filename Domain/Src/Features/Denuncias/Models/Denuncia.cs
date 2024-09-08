@@ -27,6 +27,8 @@ namespace Domain.Denuncias
             Activa,
             Destimada
         }
+
+        public bool Desestimada => Status == DenunciaStatus.Destimada;
     }
 
     public class DenunciaId : EntityId
