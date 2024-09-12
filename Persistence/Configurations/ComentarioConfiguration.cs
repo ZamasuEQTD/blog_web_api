@@ -29,6 +29,11 @@ namespace Persistence.Configurations
                 b.Property(c => c.Value).HasColumnName("status");
             });
 
+            builder.OwnsOne(c => c.Color, b =>
+            {
+                b.Property(c => c.Value).HasColumnName("color");
+            });
+
             builder.Property(c => c.Tag).HasConversion(tag => tag.Value, value => Tag.Create(value).Value).HasColumnName("tag");
             builder.Property(c => c.TagUnico).HasConversion(tagUnico => tagUnico.Value, value => TagUnico.Create(value).Value).HasColumnName("tag_unico");
             builder.Property(c => c.Dados).HasConversion(dados => dados.Value, value => Dados.Create(value).Value).HasColumnName("dados");

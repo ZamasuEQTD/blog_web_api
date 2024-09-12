@@ -1,4 +1,5 @@
 using Application.Categorias.Commands;
+using Application.Categorias.Queries;
 
 namespace IntegrationTests.Tests
 {
@@ -15,6 +16,12 @@ namespace IntegrationTests.Tests
             var command = new CrearCategoriaCommand("nombre", []);
 
             await Sender.Send(command);
+
+            var query = new GetCategoriasQuery();
+
+            var res = await Sender.Send(query);
+
+            if (res.IsFailure) { }
         }
     }
 }
