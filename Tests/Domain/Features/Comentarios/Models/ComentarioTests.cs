@@ -33,6 +33,7 @@ namespace Tests.Domain.Comentarios
                 Titulo.Create("TituloDeHilo").Value,
                 Descripcion.Create("").Value,
                 new UsuarioId(Guid.NewGuid()),
+                new(Guid.NewGuid()),
                 new SubcategoriaId(Guid.NewGuid()),
                 null,
                 new ConfiguracionDeComentarios(false, false)

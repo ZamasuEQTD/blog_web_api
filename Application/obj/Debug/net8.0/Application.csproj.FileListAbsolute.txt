@@ -30,5 +30,5 @@ C:\Users\f\Desktop\blog_api - copia\Application\bin\Debug\net8.0\Domain.dll
 C:\Users\f\Desktop\blog_api - copia\Application\bin\Debug\net8.0\SharedKernel.dll
 C:\Users\f\Desktop\blog_api - copia\Application\bin\Debug\net8.0\SharedKernel.pdb
 C:\Users\f\Desktop\blog_api - copia\Application\bin\Debug\net8.0\Domain.pdb
-C:\Users\f\Desktop\blog_api - copia\Application\obj\Debug\net8.0\Applicat.44B5EDA2.Up2Date
 C:\Users\f\Desktop\blog_api - copia\Application\obj\Debug\net8.0\ref\Application.dll
+C:\Users\f\Desktop\blog_api - copia\Application\obj\Debug\net8.0\Application.csproj.CopyComplete

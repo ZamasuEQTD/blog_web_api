@@ -3,8 +3,10 @@ using Domain.Comentarios;
 using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Encuestas;
+using Domain.Media;
 using Domain.Hilos.Events;
 using Domain.Hilos.ValueObjects;
+using Domain.Media;
 using Domain.Notificaciones;
 using Domain.Stickies;
 using Domain.Usuarios;
@@ -30,6 +32,7 @@ namespace Domain.Hilos
         public UsuarioId AutorId { get; private set; }
         public SubcategoriaId Categoria { get; private set; }
         public EncuestaId? Encuesta { get; private set; }
+        public MediaReferenceId PortadaId { get; private set; }
         public bool Activo => Status == HiloStatus.Activo;
         public bool Eliminado => Status == HiloStatus.Eliminado;
         public bool Archivado => Status == HiloStatus.Archivado;
@@ -40,6 +43,7 @@ namespace Domain.Hilos
             Titulo titulo,
             Descripcion descripcion,
             UsuarioId autor,
+            MediaReferenceId portada,
             SubcategoriaId subcategoria,
             EncuestaId? encuesta,
             ConfiguracionDeComentarios configuracion
@@ -50,6 +54,7 @@ namespace Domain.Hilos
             Categoria = subcategoria;
             Encuesta = encuesta;
             Titulo = titulo;
+            PortadaId = portada;
             Descripcion = descripcion;
             RecibirNotificaciones = true;
             UltimoBump = DateTime.UtcNow;
@@ -190,12 +195,6 @@ namespace Domain.Hilos
         public bool EstaDestacado(ComentarioId comentarioId) => ComentarioDestacados.Any(c => c.ComentarioId == comentarioId);
         public bool EsAutor(UsuarioId usuario) => AutorId == usuario;
         public bool TieneStickyActivo(DateTime now) => Sticky is not null && !Sticky.Conluido(now);
-        public enum HiloStatus
-        {
-            Activo,
-            Eliminado,
-            Archivado
-        }
     }
 
     public class HiloId : EntityId

@@ -37,14 +37,22 @@ namespace Domain.Encuestas
         }
 
 
-        static public Encuesta Create(
-            List<Respuesta> respuestas
+        static public Result<Encuesta> Create(
+            List<string> respuestas
         )
         {
+            List<Respuesta> _respuestas = [];
+
+            foreach (var r in respuestas)
+            {
+                _respuestas.Add(new Respuesta(r));
+            }
+
             return new Encuesta(
-                respuestas
+                _respuestas
             );
         }
+
     }
 
 

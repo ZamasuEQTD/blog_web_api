@@ -36,12 +36,6 @@ namespace Domain.Comentarios
             Relaciones = [];
         }
 
-        public enum ComentarioStatus
-        {
-            Activo,
-            Eliminado
-        }
-
         internal void Eliminar()
         {
             foreach (var denuncia in Denuncias)
@@ -74,15 +68,6 @@ namespace Domain.Comentarios
             relacion.Ocultar();
 
             return Result.Success();
-        }
-
-        public enum Colores
-        {
-            Multi,
-            Invertido,
-            Rojo,
-            Amarillo,
-            Azul
         }
     }
 

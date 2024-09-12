@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Media.Abstractions;
 
 namespace Application.Hilos.Commands
 {
@@ -11,6 +12,9 @@ namespace Application.Hilos.Commands
         public List<string> Encuesta { get; set; } = [];
         public required bool DadosActivados { get; set; }
         public required bool IdUnicoAtivado { get; set; }
+        public required IFile? File { get; set; }
+        public required string? Embed { get; set; }
     }
+
 
 }

@@ -34,5 +34,5 @@ C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraestruc
 C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraestructure.AssemblyInfoInputs.cache
 C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraestructure.AssemblyInfo.cs
 C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraestructure.csproj.CoreCompileInputs.cache
-C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraest.B0D41582.Up2Date
 C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\ref\Infraestructure.dll
+C:\Users\f\Desktop\blog_api - copia\Infraestructure\obj\Debug\net8.0\Infraestructure.csproj.CopyComplete

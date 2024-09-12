@@ -9,7 +9,6 @@ namespace Domain.Comentarios.ValueObjects
         static public readonly string REGEX_STRING = "[A-Z0-9]{8}";
         static private readonly string TAG_REGEX_STRING = $"^{REGEX_STRING}$";
         public string Value { get; private set; }
-
         private Tag() { }
         private Tag(string value)
         {

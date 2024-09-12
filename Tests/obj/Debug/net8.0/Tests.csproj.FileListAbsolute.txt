@@ -268,7 +268,6 @@ C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\Domain.pdb
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\Application.pdb
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\Infraestructure.pdb
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\SharedKernel.pdb
-C:\Users\f\Desktop\blog_api - copia\Tests\obj\Debug\net8.0\Tests.csproj.Up2Date
 C:\Users\f\Desktop\blog_api - copia\Tests\obj\Debug\net8.0\Tests.genruntimeconfig.cache
 C:\Users\f\Desktop\blog_api - copia\Tests\obj\Debug\net8.0\ref\Tests.dll
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\Dapper.dll
@@ -280,3 +279,4 @@ C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\xunit.abstractions.dl
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\xunit.assert.dll
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\xunit.core.dll
 C:\Users\f\Desktop\blog_api - copia\Tests\bin\Debug\net8.0\xunit.execution.dotnet.dll
+C:\Users\f\Desktop\blog_api - copia\Tests\obj\Debug\net8.0\Tests.csproj.CopyComplete

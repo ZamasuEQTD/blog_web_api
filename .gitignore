@@ -1,1 +1,14 @@
-Web.API/Media
+WebAPI/Media
+WebAPI/appsettings.Development.json
+WebAPI/appsettings.json
+
+WebAPI/obj
+WebAPI/bin
+
+Tests/obj
+Tests/bin
+
+SharedKernel/obj
+SharedKernel/bin
+
+obj

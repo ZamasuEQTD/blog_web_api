@@ -3,6 +3,7 @@ using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.ValueObjects;
+using Domain.Media;
 using Domain.Usuarios;
 using FluentAssertions;
 using Xunit;
@@ -19,6 +20,7 @@ namespace Tests.Domain.Hilos
                 Titulo.Create("TituloDeHilo").Value,
                 Descripcion.Create("fsafafasfafas").Value,
                 new UsuarioId(Guid.NewGuid()),
+                new MediaReferenceId(Guid.NewGuid()),
                 new SubcategoriaId(Guid.NewGuid()),
                 null,
                 new ConfiguracionDeComentarios(false, false)

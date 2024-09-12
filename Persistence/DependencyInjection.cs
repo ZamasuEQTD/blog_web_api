@@ -1,9 +1,11 @@
 using Application.Abstractions.Data;
+using Application.Hilos.Commands;
 using Domain.Baneos.Abstractions;
 using Domain.Categorias.Abstractions;
 using Domain.Comentarios;
 using Domain.Encuestas.Abstractions;
 using Domain.Hilos.Abstractions;
+using Domain.Notificaciones.Abstractions;
 using Domain.Usuarios.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +34,8 @@ namespace Persistence.Configuration
             services.AddScoped<ICategoriasRepository, CategoriasRepository>();
             services.AddScoped<IComentariosRepository, ComentariosRepository>();
             services.AddScoped<IEncuestasRepository, EncuestasRepository>();
+            services.AddScoped<INotificacionesRepository, NotificacionesRepository>();
+            services.AddScoped<IMediasRepository, MediasRepository>();
 
             return services;
         }

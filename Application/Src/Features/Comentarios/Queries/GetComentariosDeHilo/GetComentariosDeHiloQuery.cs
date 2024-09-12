@@ -10,12 +10,25 @@ namespace Application.Comentarios
 
     public class GetComentarioResponse
     {
-        public bool EsOp { get; set; }
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Texto { get; set; }
         public string Tag { get; set; }
         public string? TagUnico { get; set; }
         public string? Dados { get; set; }
+    }
+
+    public class GetComentarioRe
+    {
+        public Guid Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Texto { get; set; }
+    }
+
+    public class GetBanderasDeComentarioResponse
+    {
+        public string Tag { get; set; }
+        public string TagUnico { get; set; }
+        public string Dados { get; set; }
     }
 }

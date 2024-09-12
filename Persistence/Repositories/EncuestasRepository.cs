@@ -15,6 +15,8 @@ namespace Persistence.Repositories
             _context = context;
         }
 
+        public void Add(Encuesta encuesta) => _context.Add(encuesta);
+
         public Task<Encuesta> GetEncuestaById(EncuestaId id) => _context.Encuestas.FirstAsync(e => e.Id == id);
     }
 }

@@ -4,6 +4,7 @@ using Domain.Comentarios;
 using Domain.Denuncias;
 using Domain.Encuestas;
 using Domain.Hilos;
+using Domain.Media;
 using Domain.Stickies;
 using Domain.Usuarios;
 using MediatR;
@@ -21,7 +22,8 @@ namespace Persistence
         public DbSet<Encuesta> Encuestas { get; set; }
         public DbSet<RelacionDeHilo> Relaciones { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
-
+        public DbSet<MediaReference> MediaReferences { get; set; }
+        public DbSet<HashedMedia> Medias { get; set; }
         public BlogDbContext(DbContextOptions options, IMediator mediator) : base(options)
         {
             _mediator = mediator;

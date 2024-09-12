@@ -2,6 +2,7 @@ using Domain.Categorias;
 using Domain.Comentarios;
 using Domain.Encuestas;
 using Domain.Hilos;
+using Domain.Media;
 using Domain.Usuarios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -20,7 +21,10 @@ namespace Persistence.Configurations
 
             builder.Property(h => h.UltimoBump).HasColumnName("ultimo_bump");
 
-            builder.Property(h => h.Status).HasColumnName("status");
+            builder.OwnsOne(c => c.Status, b =>
+            {
+                b.Property(c => c.Value).HasColumnName("status");
+            });
 
             builder.Property(h => h.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
             builder.ComplexProperty(h => h.Titulo).Property(t => t.Value).HasColumnName("titulo");
@@ -31,6 +35,9 @@ namespace Persistence.Configurations
 
             builder.Property(h => h.Categoria).HasColumnName("subcategoria_id");
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h => h.Categoria);
+
+            builder.Property(r => r.PortadaId).HasColumnName("portada_id");
+            builder.HasOne<MediaReference>().WithMany().HasForeignKey(r => r.PortadaId);
 
             builder.Property(h => h.Encuesta).HasColumnName("encuesta_id");
             builder.HasOne<Encuesta>().WithOne().HasForeignKey<Hilo>(h => h.Encuesta);

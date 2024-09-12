@@ -125,6 +125,9 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("autor_id");
 
+                    b.Property<int>("Color")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -139,10 +142,6 @@ namespace Persistence.Migrations
                     b.Property<bool>("RecibirNotificaciones")
                         .HasColumnType("boolean")
                         .HasColumnName("recibir_notificaciones");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
 
                     b.Property<string>("Tag")
                         .IsRequired()
@@ -202,13 +201,13 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("encuesta_id");
 
+                    b.Property<Guid>("PortadaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("portada_id");
+
                     b.Property<bool>("RecibirNotificaciones")
                         .HasColumnType("boolean")
                         .HasColumnName("recibir_notificaciones");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
 
                     b.Property<DateTime>("UltimoBump")
                         .HasColumnType("timestamp with time zone")
@@ -242,6 +241,8 @@ namespace Persistence.Migrations
 
                     b.HasIndex("Encuesta")
                         .IsUnique();
+
+                    b.HasIndex("PortadaId");
 
                     b.ToTable("hilos", (string)null);
                 });
@@ -284,6 +285,66 @@ namespace Persistence.Migrations
                     b.ToTable("relaciones_de_hilo", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Media.HashedMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("hash");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("path");
+
+                    b.Property<string>("tipo_de_archivo")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Hash")
+                        .IsUnique();
+
+                    b.ToTable("media", (string)null);
+
+                    b.HasDiscriminator<string>("tipo_de_archivo").HasValue("HashedMedia");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Domain.Media.MediaReference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MediaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("media_id");
+
+                    b.Property<bool>("Spoiler")
+                        .HasColumnType("boolean")
+                        .HasColumnName("spoiler");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("media_references", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -300,9 +361,6 @@ namespace Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UsuarioId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("tipo_de_notificacion")
                         .IsRequired()
                         .HasMaxLength(21)
@@ -311,8 +369,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NotificadoId");
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("notificaciones", (string)null);
 
@@ -352,6 +408,25 @@ namespace Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Domain.Media.FileMedia", b =>
+                {
+                    b.HasBaseType("Domain.Media.HashedMedia");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("filename");
+
+                    b.HasDiscriminator().HasValue("FileMedia");
+                });
+
+            modelBuilder.Entity("Domain.Media.NetworkMedia", b =>
+                {
+                    b.HasBaseType("Domain.Media.HashedMedia");
+
+                    b.HasDiscriminator().HasValue("NetworkMedia");
+                });
+
             modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
                 {
                     b.HasBaseType("Domain.Notificaciones.Notificacion");
@@ -383,6 +458,57 @@ namespace Persistence.Migrations
                     b.HasBaseType("Domain.Usuarios.Usuario");
 
                     b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Domain.Media.Imagen", b =>
+                {
+                    b.HasBaseType("Domain.Media.FileMedia");
+
+                    b.Property<string>("Miniatura")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("text")
+                        .HasColumnName("miniatura");
+
+                    b.HasDiscriminator().HasValue("imagen");
+                });
+
+            modelBuilder.Entity("Domain.Media.Video", b =>
+                {
+                    b.HasBaseType("Domain.Media.FileMedia");
+
+                    b.Property<string>("Miniatura")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("text")
+                        .HasColumnName("miniatura");
+
+                    b.Property<string>("Previsulizacion")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("text")
+                        .HasColumnName("previsualizacion");
+
+                    b.HasDiscriminator().HasValue("video");
+                });
+
+            modelBuilder.Entity("Domain.Media.YoutubeVideo", b =>
+                {
+                    b.HasBaseType("Domain.Media.NetworkMedia");
+
+                    b.Property<string>("Miniatura")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("text")
+                        .HasColumnName("miniatura");
+
+                    b.Property<string>("Previsulizacion")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("text")
+                        .HasColumnName("previsualizacion");
+
+                    b.HasDiscriminator().HasValue("youtube");
                 });
 
             modelBuilder.Entity("Domain.Baneos.Baneo", b =>
@@ -504,9 +630,30 @@ namespace Persistence.Migrations
                                 .IsRequired();
                         });
 
+                    b.OwnsOne("Domain.Comentarios.ValueObjects.ComentarioStatus", "Status", b1 =>
+                        {
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("status");
+
+                            b1.HasKey("ComentarioId");
+
+                            b1.ToTable("comentarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComentarioId");
+                        });
+
                     b.Navigation("Denuncias");
 
                     b.Navigation("Relaciones");
+
+                    b.Navigation("Status")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Encuestas.Encuesta", b =>
@@ -598,6 +745,12 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Encuestas.Encuesta", null)
                         .WithOne()
                         .HasForeignKey("Domain.Hilos.Hilo", "Encuesta");
+
+                    b.HasOne("Domain.Media.MediaReference", null)
+                        .WithMany()
+                        .HasForeignKey("PortadaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsOne("Domain.Stickies.Sticky", "Sticky", b1 =>
                         {
@@ -723,12 +876,33 @@ namespace Persistence.Migrations
                                 .HasForeignKey("HiloId");
                         });
 
+                    b.OwnsOne("Domain.Hilos.ValueObjects.HiloStatus", "Status", b1 =>
+                        {
+                            b1.Property<Guid>("HiloId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("status");
+
+                            b1.HasKey("HiloId");
+
+                            b1.ToTable("hilos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HiloId");
+                        });
+
                     b.Navigation("ComentarioDestacados");
 
                     b.Navigation("Configuracion")
                         .IsRequired();
 
                     b.Navigation("Denuncias");
+
+                    b.Navigation("Status")
+                        .IsRequired();
 
                     b.Navigation("Sticky");
                 });
@@ -748,6 +922,15 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Media.MediaReference", b =>
+                {
+                    b.HasOne("Domain.Media.HashedMedia", null)
+                        .WithMany()
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
                     b.HasOne("Domain.Usuarios.Usuario", null)
@@ -755,10 +938,54 @@ namespace Persistence.Migrations
                         .HasForeignKey("NotificadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("Domain.Usuarios.Usuario", null)
-                        .WithMany("Notificaciones")
-                        .HasForeignKey("UsuarioId");
+            modelBuilder.Entity("Domain.Media.FileMedia", b =>
+                {
+                    b.OwnsOne("Domain.Media.ValueObjects.MediaSource", "Source", b1 =>
+                        {
+                            b1.Property<Guid>("FileMediaId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("media_source");
+
+                            b1.HasKey("FileMediaId");
+
+                            b1.ToTable("media");
+
+                            b1.WithOwner()
+                                .HasForeignKey("FileMediaId");
+                        });
+
+                    b.Navigation("Source")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Media.NetworkMedia", b =>
+                {
+                    b.OwnsOne("Domain.Media.ValueObjects.NetworkSource", "Source", b1 =>
+                        {
+                            b1.Property<Guid>("NetworkMediaId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("network_source");
+
+                            b1.HasKey("NetworkMediaId");
+
+                            b1.ToTable("media");
+
+                            b1.WithOwner()
+                                .HasForeignKey("NetworkMediaId");
+                        });
+
+                    b.Navigation("Source")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
@@ -774,11 +1001,6 @@ namespace Persistence.Migrations
                         .HasForeignKey("HiloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Usuarios.Usuario", b =>
-                {
-                    b.Navigation("Notificaciones");
                 });
 #pragma warning restore 612, 618
         }
