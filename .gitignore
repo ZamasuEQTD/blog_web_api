@@ -8,7 +8,26 @@ WebAPI/bin
 Tests/obj
 Tests/bin
 
+IntegrationTests/obj
+IntegrationTests/bin
+
+Infraestructure/obj
+Infraestructure/bin
+
 SharedKernel/obj
 SharedKernel/bin
 
+Persistence/obj
+Persistence/bin
+
+Application/obj
+Application/bin
+
+Domain/obj
+Domain/bin
+
 obj
+
+.vs
+.vscode
+

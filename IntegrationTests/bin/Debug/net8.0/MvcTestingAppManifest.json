@@ -1,8 +1,0 @@
-{
-  "Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\Application",
-  "Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\Domain",
-  "Infraestructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\Infraestructure",
-  "Persistence, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\Persistence",
-  "SharedKernel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\SharedKernel",
-  "WebApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\f\\Desktop\\blog_api - copia\\WebApi"
-}
