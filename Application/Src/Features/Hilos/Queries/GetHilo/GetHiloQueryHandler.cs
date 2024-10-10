@@ -23,12 +23,13 @@ namespace Application.Hilos.Queries
                 IEnumerable<GetHiloResponse> hilo = await connection.QueryAsync<GetHiloResponse>($@"
                     SELECT
                         hilo.id AS Id,
+                        COUNT(1) FILTER (WHERE c.hilo_id = h.id) as Comentarios,
                         hilo.titulo AS Titulo,
                         hilo.descripcion AS Descripcion,
                         hilo.autor_id AS AutorId,
                         hilo.created_at AS CreatedAt,
                         subcategoria.id AS Id,
-                        subcategoria.nombre_corto AS Categoria
+                        subcategoria.nombre_corto AS Categoria,
                     FROM hilos hilo
                     JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                     "

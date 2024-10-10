@@ -20,9 +20,14 @@ namespace Application.Configuration
             services.AddKeyedScoped<IFileProcesorsStrategy, GifProcesador>(FileType.Gif);
             services.AddKeyedScoped<IFileProcesorsStrategy, ImagenProcesor>(FileType.Imagen);
 
+            services.AddKeyedScoped<IEmbedProcesorStrategy, YoutubeEmbedProcesor>(NetworkSource.Youtube);
+
             services.AddScoped<IFileContextStrategy, FileContextStrategy>();
+            services.AddScoped<IEmbedContextProcesorStrategy, EmbedContextStrategy>();
 
             services.AddScoped<MediaProcesador>();
+            services.AddScoped<EmbedProcessor>();
+
             return services;
         }
     }

@@ -16,7 +16,9 @@ namespace Domain.Comentarios.ValueObjects
 
         protected override IEnumerable<object> GetAtomicValues()
         {
-            throw new NotImplementedException();
+            return new object[]{
+                this.Value
+            };
         }
     }
 }

@@ -28,28 +28,17 @@ namespace Application.Hilos.Queries
         {
             using (var connection = _connection.CreateConnection())
             {
-
-                List<object> stickies = [];
-
-                if (request.UltimoBump is null)
-                {
-                    string stickiesSql = @"
-                    ";
-
-                    await connection.QueryAsync(stickiesSql);
-                }
                 string sql = @"
                 SELECT
                     hilo.id AS Id,
                     hilo.titulo AS Titulo,
-                    hilo.descripcion AS Descripcion,
                     hilo.encuesta_id AS Encuesta,
                     hilo.autor_id AS Autor,
                     subcategoria.id AS Id,
                     subcategoria.nombre_corto AS Categoria
                     portada_reference.spoiler AS Spoiler,
                     portada.path,
-                    portada.miniatura
+                    portada.miniatura,
                     portada.tipo_de_archivo
                 FROM hilos hilo
                 JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
@@ -63,40 +52,43 @@ namespace Application.Hilos.Queries
 
                 if (request.Titulo is not null)
                 {
+                    //filtramos por titulo
                     builder = builder.Where("hilo.titulo ~ @titulo", new
                     {
                         titulo = request.Titulo
                     });
                 }
 
-                List<Guid> categorias_habilitadas;
-
                 if (request.Categoria is Guid categoria)
                 {
-                    categorias_habilitadas = [categoria];
+                    //filtramos por categoria
+                    builder = builder.Where("subcategoria.id =  @categoria", new
+                    {
+                        categoria
+                    });
                 }
                 else
                 {
-                    categorias_habilitadas = (await connection.QueryAsync<Guid>(@"
-                    SELECT
-                        id
-                    FROM subcategorias
-                    ")).ToList();
+                    //filtramos port categorias activas
+                    builder = builder.Where(@"subcategoria.id ANY(
+                        SELECT
+                            id
+                        FROM subcategorias
+                    )");
                 }
-
-                builder = builder.Where("subcategoria.id = ANY (@categorias_habilitadas)", new
-                {
-                    categorias_habilitadas
-                });
 
                 if (_user.IsLogged)
                 {
-                    builder = builder.Where("NOT (hilo.id = ANY (@hilos_bloqueados))", new
-                    {
-                        hilos_bloqueados = (await connection.QueryAsync<Guid>("")).ToList()
-                    });
+                    //si el usuario esta logueado, entonces filtramos sus hilos "ocultos"
+                    builder = builder.Where(@"NOT (hilo.id = ANY (
+                    SELECT
+                        r.hilo_id
+                    FROM relaciones_de_hilo
+                    WHERE r.oculto
+                    ))");
                 }
 
+                //Si existe un ultimo bump, entonces queremos los que tienen un bump menor a este
                 if (request.UltimoBump != DateTime.MinValue)
                 {
                     builder = builder.Where("hilo.ultimo_bump < @ultimo_bump ::date", new
@@ -112,15 +104,20 @@ namespace Application.Hilos.Queries
 
                 SqlBuilder.Template template = builder.AddTemplate(sql);
 
-                return (await connection.QueryAsync<GetPortadaHomeResponse>(template.RawSql, template.Parameters)).ToList();
+                IEnumerable<Portada> portadas = await connection.QueryAsync<Portada, Archivo, Portada>(
+                    template.RawSql,
+                    (portada, archivo) =>
+                    {
+                        portada.Archivo = archivo;
+                        return portada;
+                    },
+                    template.Parameters);
 
-                List<GetPortadaHome> portadas = [];
+                List<GetPortadaHomeResponse> responses = [
+                   .. PortadasMapper.ToResponses(portadas.ToList(),_user.Rango, false)
+                ];
 
-                portadas.Select(p => new GetPortada()
-                {
-                    Id = p.Id,
-                    Title = p.Title
-                });
+                return responses;
             }
         }
     }
@@ -133,16 +130,6 @@ namespace Application.Hilos.Queries
         public string Category { get; set; }
         public bool Spoiler { get; set; }
         public string Image { get; set; }
-    }
-
-    public class GetPortada
-    {
-        public Guid Id { get; set; }
-        public Guid? Autor { get; set; }
-        public GetImagenPortadaRespose Imagen { get; set; }
-        public bool Sticky { get; set; }
-        public string Title { get; set; }
-        public string Category { get; set; }
     }
 
     public class GetBanderasDePortadaResponse

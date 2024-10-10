@@ -12,6 +12,7 @@ namespace Domain.Media.ValueObjects
         }
 
         public static readonly NetworkSource Youtube = new NetworkSource("YTB");
+        public static readonly NetworkSource Desconocido = new NetworkSource("UNKNOW");
 
         protected override IEnumerable<object> GetAtomicValues()
         {

@@ -21,7 +21,7 @@ namespace Domain.Comentarios
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autor, Texto texto, InformacionDeComentario informacion)
+        public Comentario(HiloId hilo, UsuarioId autor, Texto texto, Colores color, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
             AutorId = autor;
@@ -31,7 +31,7 @@ namespace Domain.Comentarios
             Tag = informacion.Tag;
             TagUnico = informacion.TagUnico;
             Dados = informacion.Dados;
-            Color = Colores.Multi;
+            Color = color;
             Denuncias = [];
             Relaciones = [];
         }

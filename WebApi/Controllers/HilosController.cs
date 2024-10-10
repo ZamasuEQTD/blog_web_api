@@ -24,8 +24,8 @@ namespace WebApi.Controllers
                 DadosActivados = request.DadosActivados,
                 IdUnicoAtivado = request.IdUnicoAtivado,
                 Encuesta = request.Encuesta ?? [],
-                File = new FormFileImplementation(request.File),
-                Embed = request.Embed
+                File = request.File is not null ? new FormFileImplementation(request.File) : null,
+                Embed = request.Embed is not null ? new EmbedFile(request.Embed) : null
             });
 
             return result.IsSuccess ?

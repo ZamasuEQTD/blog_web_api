@@ -13,6 +13,7 @@ using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
 using static Domain.Hilos.Hilo;
+using Domain.Media.ValueObjects;
 
 namespace Domain.Hilos
 {
@@ -166,28 +167,7 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result<Comentario> Comentar(
-            Texto texto,
-            UsuarioId usuarioId
-        )
-        {
-            if (!Activo) return HilosFailures.Inactivo;
 
-            var c = new Comentario(
-                Id,
-                usuarioId,
-                texto,
-                new InformacionDeComentario(
-                    TagsService.GenerarTag(),
-                    Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(Id, usuarioId) : null,
-                    Configuracion.Dados ? DadosService.Generar() : null
-                )
-            );
-
-            Raise(new HiloComentadoDomainEvent(Id, c.Id));
-
-            return c;
-        }
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
         private void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
         public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);

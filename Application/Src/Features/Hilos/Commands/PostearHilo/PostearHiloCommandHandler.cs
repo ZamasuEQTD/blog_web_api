@@ -30,13 +30,14 @@ namespace Application.Hilos.Commands
             NetworkSource.Youtube
         ];
         private readonly MediaProcesador _mediaProcesador;
+        private readonly EmbedProcessor _embedProcessor;
         private readonly IHilosRepository _hilosRepository;
         private readonly IMediasRepository _mediasRepository;
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador)
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcessor embedProcessor)
         {
             _unitOfWork = unitOfWork;
             _user = user;
@@ -44,6 +45,7 @@ namespace Application.Hilos.Commands
             _mediasRepository = mediasRepository;
             _hilosRepository = hilosRepository;
             _mediaProcesador = mediaProcesador;
+            _embedProcessor = embedProcessor;
         }
 
         public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
@@ -83,8 +85,7 @@ namespace Application.Hilos.Commands
             }
             else if (request.Embed is not null)
             {
-                return new Error("Hilos.SinPortada");
-                // media = await _embedProcessor.Procesar(request.Embed);
+                media = await _embedProcessor.Procesar(request.Embed);
             }
             else return new Error("Hilos.SinPortada");
 

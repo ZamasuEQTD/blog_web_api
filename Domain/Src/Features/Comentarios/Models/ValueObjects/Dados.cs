@@ -26,7 +26,7 @@ namespace Domain.Comentarios.ValueObjects
             return new Dados(valor);
         }
 
-        static public bool ValorEsValido(int valor) => valor < MAX && valor > MIN;
+        static public bool ValorEsValido(int valor) => valor <= MAX && valor >= MIN;
         static public bool ValorEsInvalido(int valor) => !ValorEsValido(valor);
         protected override IEnumerable<object> GetAtomicValues()
         {

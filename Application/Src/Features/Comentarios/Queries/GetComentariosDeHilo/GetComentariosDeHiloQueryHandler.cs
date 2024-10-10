@@ -24,22 +24,18 @@ namespace Application.Comentarios
         {
             using (var connection = _connection.CreateConnection())
             {
-                bool hilo_activo = true;
-
-                if (hilo_activo) return HilosFailures.Inactivo;
-
                 string sql = @"
                     SELECT
-                        comentario.id,
-                        comentario.texto,
-                        comentario.autor_id,
-                        comentario.tag,
-                        comentario.dados,
-                        comentario.tag_unico,
-                        comentario.color
-                    FROM comentarios comentario
-                    JOIN comentarios_destacados destacado ON destacado.comentario_id = comentario.id
-                    ORDER BY comentario.created_at DESC
+                        c.id,
+                        c.texto,
+                        c.autor_id,
+                        c.tag,
+                        c.dados,
+                        c.tag_unico,
+                        c.color,
+                        c.recibir_notificaciones
+                    FROM comentarios c
+                    ORDER BY c.createdat DESC
                 ";
 
                 SqlBuilder builder = new SqlBuilder();
@@ -49,7 +45,7 @@ namespace Application.Comentarios
                     hilo = request.Hilo,
                 });
 
-                List<object> destacados = [];
+                List<GetComentarioQuery> destacados = [];
 
                 if (request.UltimoComentario is null)
                 {
@@ -58,21 +54,13 @@ namespace Application.Comentarios
                     SqlBuilder.Template destacados_template = destacados_builder.AddTemplate("");
 
                     await connection.QueryAsync(destacados_template.RawSql);
-
-
                 }
-
-                if (request.UltimoComentario is not null)
+                else
                 {
-                    DateTime? created_at = await connection.QueryFirstAsync<DateTime?>("");
-
-                    if (created_at is not null)
+                    builder = builder.Where("comentario.created_at < @created_at ::Date", new
                     {
-                        builder = builder.Where("comentario.created_at < @created_at ::Date", new
-                        {
-                            created_at
-                        });
-                    }
+                        created_at = request.UltimoComentario
+                    });
                 }
 
                 builder = builder.Where("comentario.status = @status", new
@@ -83,9 +71,39 @@ namespace Application.Comentarios
                 SqlBuilder.Template template = builder.AddTemplate("");
 
                 await connection.QueryAsync(template.RawSql, template.Parameters);
+
+                List<GetComentarioQuery> response = [];
+
+                List<GetComentarioResponse> comentarios = [
+                .. destacados.Select(x=> new GetComentarioResponse(){
+                    Id = x.Id,
+                    AutorId = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador? x.AutorId : null,
+                    CreatedAt = x.CreatedAt,
+                    Dados = x.Dados,
+                    Destacado = true,
+                    EsAutor = _user.IsLogged && _user.UsuarioId == x.AutorId,
+                    RecibirNotificaciones  = _user.IsLogged && _user.UsuarioId == x.AutorId? x.RecibirNotificaciones : null,
+                    Tag = x.Tag,
+                    TagUnico = x.TagUnico,
+                    Texto = x.Texto
+                }),
+                .. response.Select(x=>new GetComentarioResponse{
+                    Id = x.Id,
+                    AutorId = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador? x.AutorId : null,
+                    CreatedAt = x.CreatedAt,
+                    Dados = x.Dados,
+                    Destacado = false,
+                    EsAutor = _user.IsLogged && _user.UsuarioId == x.AutorId,
+                    RecibirNotificaciones  = _user.IsLogged && _user.UsuarioId == x.AutorId? x.RecibirNotificaciones : null,
+                    Tag = x.Tag,
+                    TagUnico = x.TagUnico,
+                    Texto = x.Texto
+                })
+                ];
+
+                return comentarios;
             }
 
-            throw new NotImplementedException();
         }
     }
 

@@ -1,25 +1,33 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Categorias;
+using Domain.Categorias.Abstractions;
 using Domain.Comentarios;
+using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Usuarios;
 using SharedKernel;
+using SharedKernel.Abstractions;
 
 namespace Application.Comentarios.Commands
 {
     public class ComentarHiloCommandHandler : ICommandHandler<ComentarHiloCommand>
     {
         private readonly IHilosRepository _hilosRepository;
+        private readonly ICategoriasRepository _categoriasRepository;
         private readonly IUserContext _userContext;
         private readonly IUnitOfWork _unitOfWork;
-        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, IUserContext userContext)
+        private readonly IDateTimeProvider _timeProvider;
+        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, IUserContext userContext, ICategoriasRepository categoriasRepository, IDateTimeProvider timeProvider)
         {
             _unitOfWork = unitOfWork;
             _hilosRepository = hilosRepository;
             _userContext = userContext;
+            _categoriasRepository = categoriasRepository;
+            _timeProvider = timeProvider;
         }
 
         public async Task<Result> Handle(ComentarHiloCommand request, CancellationToken cancellationToken)
@@ -34,14 +42,26 @@ namespace Application.Comentarios.Commands
 
             if (texto.IsFailure) return texto.Error;
 
-            var c = hilo.Comentar(
+            Comentario c = new Comentario(
+                hilo.Id,
+                new UsuarioId(_userContext.UsuarioId),
                 texto.Value,
-                new UsuarioId(_userContext.UsuarioId)
+                ColorService.GenerarColor(
+                    hilo.Categoria,
+                    await _categoriasRepository.GetSubcategoriasParanormales(),
+                    _timeProvider.UtcNow
+                ),
+                new InformacionDeComentario(
+                    TagsService.GenerarTag(),
+                    hilo.Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(
+                        hilo.Id,
+                        new UsuarioId(_userContext.UsuarioId)
+                    ) : null,
+                    hilo.Configuracion.Dados ? DadosService.Generar() : null
+                )
             );
 
-            if (c.IsFailure) return c.Error;
-
-            _hilosRepository.Add(c.Value);
+            _hilosRepository.Add(c);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

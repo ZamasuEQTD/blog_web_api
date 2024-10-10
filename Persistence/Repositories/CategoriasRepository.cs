@@ -1,5 +1,6 @@
 using Domain.Categorias;
 using Domain.Categorias.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
@@ -15,5 +16,7 @@ namespace Persistence.Repositories
         public void Add(Categoria categoria) => _context.Add(categoria);
 
         public void Add(Subcategoria categoria) => _context.Add(categoria);
+
+        public Task<List<SubcategoriaId>> GetSubcategoriasParanormales() => _context.Subcategorias.Select(s => s.Id).ToListAsync();
     }
 }

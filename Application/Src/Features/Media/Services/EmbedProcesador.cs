@@ -8,13 +8,13 @@ namespace Application.Medias.Services
     public class EmbedProcessor
     {
         private readonly IHasherCalculator _hasher;
-        private readonly IEmbedProcesorStrategy _procesor;
+        private readonly IEmbedContextProcesorStrategy _procesor;
         private readonly IMediasRepository _repository;
-        public EmbedProcessor(IHasherCalculator hasher, IEmbedProcesorStrategy procesor, IMediasRepository repository)
+        public EmbedProcessor(IHasherCalculator hasher, IMediasRepository repository, IEmbedContextProcesorStrategy procesor)
         {
             _hasher = hasher;
-            _procesor = procesor;
             _repository = repository;
+            _procesor = procesor;
         }
 
         public async Task<HashedMedia> Procesar(IEmbedFile embed)
@@ -25,7 +25,11 @@ namespace Application.Medias.Services
 
             if (media is not null) return media;
 
-            return await _procesor.Procesar(new(embed.Url, hash));
+            NetworkMedia m = await _procesor.Procesar(embed.Source, new(embed.Url, hash));
+
+            _repository.Add(m);
+
+            return m;
         }
     }
 }

@@ -38,9 +38,4 @@ namespace Domain.Comentarios.Services
         static private readonly Random _random = new Random();
         static public Dados Generar() => Dados.Create(_random.Next(Dados.MIN, Dados.MAX)).Value;
     }
-
-    static public class ColorService
-    {
-
-    }
 }

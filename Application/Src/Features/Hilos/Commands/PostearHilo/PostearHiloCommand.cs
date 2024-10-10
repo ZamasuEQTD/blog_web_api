@@ -13,7 +13,7 @@ namespace Application.Hilos.Commands
         public required bool DadosActivados { get; set; }
         public required bool IdUnicoAtivado { get; set; }
         public required IFile? File { get; set; }
-        public required string? Embed { get; set; }
+        public required IEmbedFile? Embed { get; set; }
     }
 
 
