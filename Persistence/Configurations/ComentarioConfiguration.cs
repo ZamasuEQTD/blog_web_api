@@ -1,6 +1,7 @@
 using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
+using Domain.Media;
 using Domain.Usuarios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -22,6 +23,9 @@ namespace Persistence.Configurations
             builder.Property(c => c.Hilo).HasColumnName("hilo_id");
             builder.HasOne<Hilo>().WithMany().HasForeignKey(c => c.Hilo);
 
+            builder.Property(c => c.MediaReferenceId).HasColumnName("media");
+            builder.HasOne<MediaReference>().WithMany().HasForeignKey(c => c.MediaReferenceId);
+
             builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value).HasColumnName("texto");
 
             builder.OwnsOne(c => c.Status, b =>
@@ -39,6 +43,20 @@ namespace Persistence.Configurations
             builder.Property(c => c.Dados).HasConversion(dados => dados.Value, value => Dados.Create(value).Value).HasColumnName("dados");
 
             builder.Property(c => c.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
+
+            builder.OwnsMany(c => c.Respuestas, y =>
+            {
+                y.ToTable("respuestas_comentarios");
+
+                y.HasKey(c => c.Id);
+                y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
+                y.Property(c => c.RespondidoId).HasColumnName("comentario_respondido_id");
+                y.WithOwner().HasForeignKey(c => c.RespondidoId);
+
+                y.Property(c => c.RespuestaId).HasColumnName("respuesta_id");
+                y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.RespuestaId);
+            });
 
             builder.OwnsMany(c => c.Denuncias, y =>
             {

@@ -28,9 +28,9 @@ namespace Domain.Comentarios.Services
 
             foreach (var rule in rules)
             {
-                if (rule.matches(colors))
+                if (rule.Matches(colors))
                 {
-                    rule.apply(colors);
+                    rule.Apply(colors);
                 }
             }
 
@@ -40,8 +40,8 @@ namespace Domain.Comentarios.Services
 
     public interface IRule<E>
     {
-        bool matches(E input);
-        void apply(E input);
+        bool Matches(E input);
+        void Apply(E input);
     }
 
     public interface IColoresRule : IRule<List<WeightValue<Colores>>> { }
@@ -58,12 +58,12 @@ namespace Domain.Comentarios.Services
             this.subcategoria = subcategoria;
         }
 
-        public void apply(List<WeightValue<Colores>> input)
+        public void Apply(List<WeightValue<Colores>> input)
         {
             input.Add(new WeightValue<Colores>(2, Colores.Black));
         }
 
-        public bool matches(List<WeightValue<Colores>> input)
+        public bool Matches(List<WeightValue<Colores>> input)
         {
             return subcategorias.Contains(subcategoria) && EsHoraParanormal();
         }

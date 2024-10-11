@@ -45,6 +45,7 @@ namespace Application.Comentarios.Commands
             Comentario c = new Comentario(
                 hilo.Id,
                 new UsuarioId(_userContext.UsuarioId),
+                null,
                 texto.Value,
                 ColorService.GenerarColor(
                     hilo.Categoria,
@@ -60,6 +61,8 @@ namespace Application.Comentarios.Commands
                     hilo.Configuracion.Dados ? DadosService.Generar() : null
                 )
             );
+
+            hilo.Comentar(c);
 
             _hilosRepository.Add(c);
 

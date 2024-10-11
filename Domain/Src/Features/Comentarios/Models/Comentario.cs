@@ -1,5 +1,6 @@
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
+using Domain.Media.ValueObjects;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -12,28 +13,29 @@ namespace Domain.Comentarios
         public HiloId Hilo { get; private set; }
         public Texto Texto { get; private set; }
         public Tag Tag { get; private set; }
+        public MediaReferenceId? MediaReferenceId { get; private set; }
         public TagUnico? TagUnico { get; private set; }
         public Dados? Dados { get; private set; }
         public Colores Color { get; private set; }
-        public List<DenunciaDeComentario> Denuncias { get; private set; }
-        public List<RelacionDeComentario> Relaciones { get; private set; }
+        public List<DenunciaDeComentario> Denuncias { get; private set; } = [];
+        public List<RelacionDeComentario> Relaciones { get; private set; } = [];
+        public List<Respuesta> Respuestas { get; private set; } = [];
         public ComentarioStatus Status { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autor, Texto texto, Colores color, InformacionDeComentario informacion)
+        public Comentario(HiloId hilo, UsuarioId autor, MediaReferenceId? mediaReferenceId, Texto texto, Colores color, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
             AutorId = autor;
             Hilo = hilo;
+            MediaReferenceId = mediaReferenceId;
             Texto = texto;
             Status = ComentarioStatus.Activo;
             Tag = informacion.Tag;
             TagUnico = informacion.TagUnico;
             Dados = informacion.Dados;
             Color = color;
-            Denuncias = [];
-            Relaciones = [];
         }
 
         internal void Eliminar()
@@ -44,6 +46,14 @@ namespace Domain.Comentarios
             }
 
             Status = ComentarioStatus.Eliminado;
+        }
+
+        public void AgregarRespuesta(ComentarioId respuesta)
+        {
+            if (Activo)
+            {
+                Respuestas.Add(new Respuesta(Id, respuesta));
+            }
         }
 
         public Result Denunciar(Hilo hilo, UsuarioId usuarioId)
@@ -103,7 +113,6 @@ namespace Domain.Comentarios
     {
         public static readonly Error YaHaVotado = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
         public static readonly Error RespuestaInexistente = new Error("Comentarios.YaHaDenunciado", "Ya has denunciado el comentario");
-
     }
 
 

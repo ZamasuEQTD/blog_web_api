@@ -1,10 +1,14 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Categorias.Queries;
 using Dapper;
+using Domain.Categorias;
+using Domain.Comentarios.Services;
 using Domain.Hilos.ValueObjects;
 using SharedKernel;
 using SharedKernel.Abstractions;
+using static Dapper.SqlBuilder;
 
 namespace Application.Hilos.Queries
 {
@@ -30,117 +34,221 @@ namespace Application.Hilos.Queries
             {
                 string sql = @"
                 SELECT
-                    hilo.id AS Id,
-                    hilo.titulo AS Titulo,
-                    hilo.encuesta_id AS Encuesta,
-                    hilo.autor_id AS Autor,
-                    subcategoria.id AS Id,
-                    subcategoria.nombre_corto AS Categoria
-                    portada_reference.spoiler AS Spoiler,
+                    hilo.id,
+                    hilo.titulo,
+                    hilo.usuario_id AS autor,
+                    hilo.encuesta_id AS encuesta,
+                    hilo.dados,
+                    hilo.id_unico_activado AS idunico,
+                    subcategoria.nombre_corto AS nombredecategoria,
+                    subcategoria.id AS subcategoriaid,
+                    portada_reference.spoiler,
                     portada.path,
+                    portada.hash,
                     portada.miniatura,
                     portada.tipo_de_archivo
                 FROM hilos hilo
                 JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                 JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
-                JOIN medias portada ON portada.id = portada_reference.media_id
+                JOIN media portada ON portada.id = portada_reference.media_id
                 /**where**/
-                ORDER BY DESC hilo.ultimo_bump
+ 			    ORDER BY hilo.ultimo_bump DESC;
                 ";
 
-                SqlBuilder builder = new SqlBuilder();
-
-                if (request.Titulo is not null)
+                FiltrosDePortadas filtros = new FiltrosDePortadas()
                 {
-                    //filtramos por titulo
-                    builder = builder.Where("hilo.titulo ~ @titulo", new
-                    {
-                        titulo = request.Titulo
-                    });
-                }
+                    Categoria = request.Categoria,
+                    Titulo = request.Titulo,
+                    UltimoBump = request.UltimoBump
+                };
 
-                if (request.Categoria is Guid categoria)
-                {
-                    //filtramos por categoria
-                    builder = builder.Where("subcategoria.id =  @categoria", new
-                    {
-                        categoria
-                    });
-                }
-                else
-                {
-                    //filtramos port categorias activas
-                    builder = builder.Where(@"subcategoria.id ANY(
-                        SELECT
-                            id
-                        FROM subcategorias
-                    )");
-                }
+                HilosSQLBuilder portadas_builder = new HilosSQLBuilder(filtros);
 
-                if (_user.IsLogged)
-                {
-                    //si el usuario esta logueado, entonces filtramos sus hilos "ocultos"
-                    builder = builder.Where(@"NOT (hilo.id = ANY (
-                    SELECT
-                        r.hilo_id
-                    FROM relaciones_de_hilo
-                    WHERE r.oculto
-                    ))");
-                }
-
-                //Si existe un ultimo bump, entonces queremos los que tienen un bump menor a este
-                if (request.UltimoBump != DateTime.MinValue)
-                {
-                    builder = builder.Where("hilo.ultimo_bump < @ultimo_bump ::date", new
-                    {
-                        ultimo_bump = (DateTime)request.UltimoBump!
-                    });
-                }
-
-                builder = builder.Where("h.status == @status", new
-                {
-                    status = HiloStatus.Activo.Value
-                });
-
-                SqlBuilder.Template template = builder.AddTemplate(sql);
-
-                IEnumerable<Portada> portadas = await connection.QueryAsync<Portada, Archivo, Portada>(
-                    template.RawSql,
-                    (portada, archivo) =>
-                    {
-                        portada.Archivo = archivo;
-                        return portada;
-                    },
-                    template.Parameters);
-
-                List<GetPortadaHomeResponse> responses = [
-                   .. PortadasMapper.ToResponses(portadas.ToList(),_user.Rango, false)
+                List<IPortadaRule> rules = [
+                    new FiltrarPorTituloRule(),
+                    new FiltrarPorCategoriaRule(),
+                    new FiltrarPorCategoriasActivasRule(),
+                    new FiltrarPortadasOcultasDeUsuarioRule(_user),
+                    new FiltrarPorUltimoBumpRule()
                 ];
 
-                return responses;
+                foreach (var rule in rules)
+                {
+                    if (rule.Matches(portadas_builder))
+                    {
+                        rule.Apply(portadas_builder);
+                    }
+                }
+
+
+                Template portadas_template = portadas_builder.AddTemplate(sql);
+                var por = await connection.QueryAsync<PortadaResponse>(portadas_template.RawSql, portadas_template.Parameters);
+
+                List<GetPortadaHomeResponse> portadas = [];
+
+                foreach (var portada in por)
+                {
+                    portadas.Add(new GetPortadaHomeResponse()
+                    {
+                        Id = portada.Id,
+                        Titulo = portada.Titulo,
+                        Autor = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador ? portada.Autor : null,
+                        EsNuevo = (_timeProvider.UtcNow - portada.CreatedAt).Minutes < 20,
+                        Spoiler = portada.Spoiler,
+                        Miniatura = portada.Hash,
+                        Subcategoria = new GetSubcategoria()
+                        {
+                            Id = portada.SubcategoriaId,
+                            Nombre = portada.NombreDeCategoria
+                        },
+                        Banderas = new GetBanderas()
+                        {
+                            Dados = portada.Dados,
+                            Encuesta = portada.Encuesta is not null,
+                            IdUnico = portada.IdUnico
+                        },
+
+                    });
+                }
+
+                return portadas;
             }
         }
     }
 
-    public class GetPortadaHome
+
+    public class FiltrosDePortadas
     {
-        public Guid Id { get; set; }
-        public Guid Autor { get; set; }
-        public string Title { get; set; }
-        public string Category { get; set; }
-        public bool Spoiler { get; set; }
-        public string Image { get; set; }
+        public Guid? Categoria { get; set; }
+        public string? Titulo { get; set; }
+        public DateTime? UltimoBump { get; set; }
     }
 
-    public class GetBanderasDePortadaResponse
+    public interface IPortadaRule : IRule<HilosSQLBuilder> { }
+
+    public class FiltrarPorTituloRule : IPortadaRule
     {
-        public bool Dados { get; set; }
-        public bool IdUnico { get; set; }
+        public void Apply(HilosSQLBuilder input)
+        {
+            input.PorTitulo(input.Filtros.Titulo!);
+        }
+
+        public bool Matches(HilosSQLBuilder input) => input.Filtros.Titulo is not null;
     }
 
-    public class GetImagenPortadaRespose
+    public class FiltrarPorCategoriaRule : IPortadaRule
     {
-        public bool Spoiler { get; set; }
-        public string Imagen { get; set; }
+        public void Apply(HilosSQLBuilder input) => input.PorCategoria((Guid)input.Filtros.Categoria!);
+
+        public bool Matches(HilosSQLBuilder input) => input.Filtros.Categoria.HasValue;
+    }
+
+    public class FiltrarPorCategoriasActivasRule : IPortadaRule
+    {
+        public void Apply(HilosSQLBuilder input)
+        {
+            input.PorCategoriasActivas();
+        }
+
+        public bool Matches(HilosSQLBuilder input) => input.Filtros.Categoria.HasValue;
+    }
+    public class FiltrarPortadasOcultasDeUsuarioRule : IPortadaRule
+    {
+
+        private readonly IUserContext _context;
+
+        public FiltrarPortadasOcultasDeUsuarioRule(IUserContext context)
+        {
+            _context = context;
+        }
+
+        public void Apply(HilosSQLBuilder input)
+        {
+            input.RemoverOcultosPorUsuario(_context.UsuarioId);
+        }
+
+        public bool Matches(HilosSQLBuilder input) => _context.IsLogged;
+    }
+
+    public class FiltrarPorUltimoBumpRule : IPortadaRule
+    {
+        public void Apply(HilosSQLBuilder input)
+        {
+            input.PorUltimoBump((DateTime)input.Filtros.UltimoBump!);
+        }
+
+        public bool Matches(HilosSQLBuilder input) => input.Filtros.UltimoBump != DateTime.MinValue;
+    }
+
+    public class HilosSQLBuilder : SqlBuilder
+    {
+        public FiltrosDePortadas Filtros { get; private set; }
+
+        public HilosSQLBuilder(FiltrosDePortadas filtros)
+        {
+            Filtros = filtros;
+        }
+
+        public HilosSQLBuilder PorTitulo(string titulo)
+        {
+            Where("hilo.titulo ~ @titulo", new
+            {
+                titulo
+            });
+
+            return this;
+        }
+
+        public HilosSQLBuilder PorCategoria(Guid categoria)
+        {
+
+            Where("subcategoria.id =  @categoria", new
+            {
+                categoria
+            });
+
+            return this;
+        }
+
+        public HilosSQLBuilder PorCategoriasActivas()
+        {
+            Where(@"subcategoria.id IN (
+                SELECT
+                    id
+                FROM subcategorias
+            )");
+
+            return this;
+        }
+
+        public HilosSQLBuilder PorUltimoBump(DateTime bump)
+        {
+            Where("hilo.ultimo_bump < @bump ::date", new
+            {
+                bump
+            });
+            return this;
+        }
+
+        public HilosSQLBuilder RemoverOcultosPorUsuario(Guid usuario)
+        {
+            Where(@"NOT hilo.id IN (
+                        SELECT
+                             r.hilo_id
+                        FROM relaciones_de_hilo
+                        WHERE r.oculto AND r.usuario_id = @usuario
+                    )", new
+            {
+                usuario
+            });
+
+            return this;
+        }
+        public HilosSQLBuilder SoloStickies()
+        {
+            Where("EXISTS (SELECT 1 FROM stickies s WHERE hilo.id = s.hilo_id)");
+
+            return this;
+        }
     }
 }

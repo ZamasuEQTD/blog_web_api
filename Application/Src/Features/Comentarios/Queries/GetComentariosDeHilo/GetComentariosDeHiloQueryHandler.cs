@@ -26,15 +26,15 @@ namespace Application.Comentarios
             {
                 string sql = @"
                     SELECT
-                        c.id,
-                        c.texto,
-                        c.autor_id,
-                        c.tag,
-                        c.dados,
-                        c.tag_unico,
-                        c.color,
-                        c.recibir_notificaciones
-                    FROM comentarios c
+                        comentario.id,
+                        comentario.texto,
+                        comentario.autor_id,
+                        comentario.tag,
+                        comentario.dados,
+                        comentario.tag_unico,
+                        comentario.color,
+                        comentario.recibir_notificaciones
+                    FROM comentarios comentario
                     ORDER BY c.createdat DESC
                 ";
 
@@ -49,7 +49,7 @@ namespace Application.Comentarios
 
                 if (request.UltimoComentario is null)
                 {
-                    var destacados_builder = builder.Join("comentarios_destacados destacado ON destacado.comentario_id = comentario.id");
+                    var destacados_builder = builder.Where("EXISTS (SELECT 1 FROM comentarios_destacados destacado WHERE destacado.id = comentario.id)");
 
                     SqlBuilder.Template destacados_template = destacados_builder.AddTemplate("");
 

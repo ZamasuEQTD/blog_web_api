@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using Application.Abstractions.Messaging;
+using Application.Categorias.Queries;
 using static Domain.Usuarios.Usuario;
 
 namespace Application.Hilos.Queries
@@ -9,85 +11,46 @@ namespace Application.Hilos.Queries
         public DateTime? UltimoBump { get; set; }
         public Guid? Categoria { get; set; }
     }
-    public class Portada
+
+    public class PortadaResponse
     {
         public Guid Id { get; set; }
-        public Guid Autor { get; set; }
-        public Guid? Encuesta { get; set; }
         public string Titulo { get; set; }
-        public string Categoria { get; set; }
+        public Guid Autor { get; set; }
+        public Guid SubcategoriaId { get; set; }
+        public string NombreDeCategoria { get; set; }
+        public Guid? Encuesta { get; set; }
+        public bool Dados { get; set; }
+        public bool IdUnico { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Hash { get; set; }
         public bool Spoiler { get; set; }
-        public bool DadosActivos { get; set; }
-        public bool IdUnicoActivado { get; set; }
-        public Archivo Archivo { get; set; }
     }
-    public class Archivo
-    {
-        public Guid Id { get; set; }
-        public string Path { get; set; }
-        public string Miniatura { get; set; }
-        public string TipoDeArchivo { get; set; }
-    }
+
     public class GetPortadaHomeResponse
     {
         public Guid Id { get; set; }
-        public GetPortadaMiniaturaHomeResponse Miniatura { get; set; }
-        public GetPortadaBanderasHomeResponse Banderas { get; set; }
-        public bool Destacado { get; set; }
         public string Titulo { get; set; }
-        public string Categoria { get; set; }
         public Guid? Autor { get; set; }
+        public bool Spoiler { get; set; }
+        public string Miniatura { get; set; }
+        [JsonPropertyName("es_nuevo")]
+        public bool EsNuevo { get; set; }
+        public GetSubcategoria Subcategoria { get; set; }
+        public GetBanderas Banderas { get; set; }
     }
 
-    public class GetPortadaBanderasHomeResponse
+    public class GetSubcategoria
     {
-        public bool DadosActivos { get; set; }
-        public bool TieneEncuesta { get; set; }
-        public bool IdUnicoActivado { get; set; }
+        public Guid Id { get; set; }
+        public string Nombre { get; set; }
     }
 
-    public class GetPortadaMiniaturaHomeResponse
+    public class GetBanderas
     {
-        public bool EsSpoiler { get; set; }
-        public string Url { get; set; }
-    }
-
-    static class PortadasMapper
-    {
-        static public List<GetPortadaHomeResponse> ToResponses(List<Portada> portadas, RangoDeUsuario? rango, bool destacado) => portadas.Select(x => ToResponse(x, rango, destacado)).ToList();
-        static public GetPortadaHomeResponse ToResponse(Portada portada, RangoDeUsuario? rango, bool destacado)
-        {
-            return new GetPortadaHomeResponse()
-            {
-                Id = portada.Id,
-                Autor = rango is not null && rango == RangoDeUsuario.Moderador ? portada.Autor : null,
-                Categoria = portada.Categoria,
-                Titulo = portada.Titulo,
-                Destacado = destacado,
-                Banderas = new GetPortadaBanderasHomeResponse()
-                {
-                    DadosActivos = portada.DadosActivos,
-                    IdUnicoActivado = portada.IdUnicoActivado,
-                    TieneEncuesta = portada.Encuesta is not null
-                },
-                Miniatura = new GetPortadaMiniaturaHomeResponse()
-                {
-                    EsSpoiler = portada.Spoiler,
-                    Url = ArchivoMapper.ToMiniaturaUrl(portada.Archivo)
-                }
-            };
-        }
-    }
-
-    static class ArchivoMapper
-    {
-
-        static public string ToMiniaturaUrl(Archivo archivo)
-        {
-
-            if (archivo.TipoDeArchivo == "youtube") return archivo.Miniatura;
-
-            return $"/media/backgrounds/{archivo.Id}";
-        }
+        public bool Dados { get; set; }
+        [JsonPropertyName("id_unico")]
+        public bool IdUnico { get; set; }
+        public bool Encuesta { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace Domain.Hilos
         public ConfiguracionDeComentarios Configuracion { get; private set; }
         public Sticky? Sticky { get; private set; }
         public List<DenunciaDeHilo> Denuncias { get; private set; }
+        public List<Comentario> Comentarios { get; private set; } = [];
         public List<ComentarioDestacado> ComentarioDestacados { get; private set; }
         public UsuarioId AutorId { get; private set; }
         public SubcategoriaId Categoria { get; private set; }
@@ -152,6 +153,22 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
+        public void Comentar(Comentario comentario)
+        {
+            Comentarios.Add(comentario);
+
+            List<string> tags = TagUtils.GetTags(comentario.Texto.Value); ;
+
+            foreach (var tag in tags)
+            {
+                Comentario? respondido = Comentarios.FirstOrDefault(c => c.Tag == Tag.Create(tag).Value);
+
+                if (respondido is not null)
+                {
+                    respondido.AgregarRespuesta(comentario.Id);
+                }
+            }
+        }
 
         public Result Eliminar(Comentario comentario)
         {
@@ -166,7 +183,6 @@ namespace Domain.Hilos
 
             return Result.Success();
         }
-
 
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
         private void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();

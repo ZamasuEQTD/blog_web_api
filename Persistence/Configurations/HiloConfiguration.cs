@@ -36,6 +36,8 @@ namespace Persistence.Configurations
             builder.Property(h => h.Categoria).HasColumnName("subcategoria_id");
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h => h.Categoria);
 
+            builder.HasMany<Comentario>().WithOne().HasForeignKey(c => c.Hilo);
+
             builder.Property(r => r.PortadaId).HasColumnName("portada_id");
             builder.HasOne<MediaReference>().WithMany().HasForeignKey(r => r.PortadaId);
 

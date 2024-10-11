@@ -1,4 +1,5 @@
 using Application.Comentarios.Commands;
+using Infraestructure.Media;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
@@ -28,12 +29,14 @@ namespace WebApi.Controllers
         [HttpPost("comentar-hilo/:hilo")]
         public async Task<IResult> ComentarHilo(
             [FromQuery] Guid hilo,
-            [FromBody] ComentarHiloRequest request
+            [FromForm] ComentarHiloRequest request
         )
         {
             var result = await sender.Send(new ComentarHiloCommand(
                 hilo,
-                request.Texto
+                request.Texto,
+                request.EmbedFile is not null ? new EmbedFile(request.EmbedFile!) : null,
+                request.File is not null ? new FormFileImplementation(request.File!) : null
             ));
 
             return result.IsSuccess ?
@@ -46,5 +49,7 @@ namespace WebApi.Controllers
     public class ComentarHiloRequest
     {
         public string Texto { get; set; }
+        public string? EmbedFile { get; set; }
+        public IFormFile File { get; set; }
     }
 }
