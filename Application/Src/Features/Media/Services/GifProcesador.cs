@@ -18,13 +18,12 @@ namespace Application.Medias.Services
         {
             using Stream stream = _GifVideoPrevisualizadorProcesador.GenerarStream(@params.Media);
 
-            var miniatura = await _miniaturaProcesor.Procesar(stream);
+            await _miniaturaProcesor.Procesar(stream, @params.Media);
 
             return new Gif(
                 @params.Hash,
                 @params.Media,
-                @params.File,
-                miniatura
+                @params.File
             );
         }
     }

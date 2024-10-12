@@ -19,6 +19,8 @@ namespace Persistence.Configurations
                 y.HasKey(r => r.Id);
                 y.Property(r => r.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
+                y.WithOwner().HasForeignKey("encuesta_id");
+
                 y.Property(r => r.Contenido).HasColumnName("contenido");
             });
 
@@ -32,7 +34,6 @@ namespace Persistence.Configurations
                 y.HasOne<Usuario>().WithMany().HasForeignKey(v => v.VotanteId);
 
                 y.Property(r => r.RespuestaId).HasConversion(id => id.Value, value => new(value)).HasColumnName("respuesta_id");
-
             });
         }
     }

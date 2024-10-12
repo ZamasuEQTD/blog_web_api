@@ -19,7 +19,6 @@ namespace Application.Categorias.Queries
     {
         public Guid Id { get; set; }
         public string Nombre { get; set; }
-        internal string ImagePath { get; set; }
-        public string Imagen => "prueba";
+        public string Imagen => $"/static/media/images/subcategorias/{Nombre}.jpeg";
     }
 }

@@ -23,6 +23,8 @@ namespace Application.Hilos.Queries
         public bool Dados { get; set; }
         public bool IdUnico { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string TipoDeArchivo { get; set; }
+        public string Path { get; set; }
         public string Hash { get; set; }
         public bool Spoiler { get; set; }
     }

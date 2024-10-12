@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -12,9 +13,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241011233615_Ssixkty")]
+    partial class Ssixkty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,8 +206,7 @@ namespace Persistence.Migrations
                         .HasColumnName("subcategoria_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("Encuesta")
                         .HasColumnType("uuid")
@@ -703,6 +705,33 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Encuestas.Encuesta", b =>
                 {
+                    b.OwnsMany("Domain.Encuestas.Respuesta", "Respuestas", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Contenido")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("contenido");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid>("EncuestaId")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("EncuestaId");
+
+                            b1.ToTable("respuestas", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("EncuestaId");
+                        });
+
                     b.OwnsMany("Domain.Encuestas.Voto", "Votos", b1 =>
                         {
                             b1.Property<Guid>("Id")
@@ -739,33 +768,6 @@ namespace Persistence.Migrations
                                 .HasForeignKey("VotanteId")
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
-                        });
-
-                    b.OwnsMany("Domain.Encuestas.Respuesta", "Respuestas", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("Contenido")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("contenido");
-
-                            b1.Property<DateTime>("CreatedAt")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid?>("encuesta_id")
-                                .HasColumnType("uuid");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("encuesta_id");
-
-                            b1.ToTable("respuestas", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("encuesta_id");
                         });
 
                     b.Navigation("Respuestas");

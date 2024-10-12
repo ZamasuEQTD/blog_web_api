@@ -6,7 +6,6 @@ using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Application.Behaviors;
 using FluentValidation;
-using Domain;
 using Persistence.Configuration;
 using WebApi.Extensions;
 using WebApi.Configuration;
@@ -58,8 +57,9 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
-           Path.Combine(builder.Environment.ContentRootPath, "Media")),
-    RequestPath = "/Media"
+        Path.Combine(builder.Environment.ContentRootPath, "Media")
+    ),
+    RequestPath = "/media"
 });
 
 app.UseHttpsRedirection();

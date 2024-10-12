@@ -4,6 +4,6 @@ namespace Application.Medias.Abstractions
     {
         string ThumbnailFolder { get; }
         string FilesFolder { get; }
-        string VistasPrevias { get; }
+        string Previsualizaciones { get; }
     }
 }

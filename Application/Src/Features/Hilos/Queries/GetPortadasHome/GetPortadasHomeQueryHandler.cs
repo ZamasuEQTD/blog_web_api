@@ -6,6 +6,7 @@ using Dapper;
 using Domain.Categorias;
 using Domain.Comentarios.Services;
 using Domain.Hilos.ValueObjects;
+using Domain.Media.Services;
 using SharedKernel;
 using SharedKernel.Abstractions;
 using static Dapper.SqlBuilder;
@@ -45,8 +46,7 @@ namespace Application.Hilos.Queries
                     portada_reference.spoiler,
                     portada.path,
                     portada.hash,
-                    portada.miniatura,
-                    portada.tipo_de_archivo
+                    portada.tipo_de_archivo as tipodearchivo
                 FROM hilos hilo
                 JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                 JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
@@ -80,14 +80,24 @@ namespace Application.Hilos.Queries
                     }
                 }
 
-
                 Template portadas_template = portadas_builder.AddTemplate(sql);
+
                 var por = await connection.QueryAsync<PortadaResponse>(portadas_template.RawSql, portadas_template.Parameters);
 
                 List<GetPortadaHomeResponse> portadas = [];
 
                 foreach (var portada in por)
                 {
+                    string miniatura;
+                    if (portada.TipoDeArchivo == "youtube")
+                    {
+                        miniatura = YoutubeService.GetVideoThumbnailFromUrl(portada.Path);
+                    }
+                    else
+                    {
+                        miniatura = "/media/thumbnails/" + portada.Hash + ".jpeg";
+                    }
+
                     portadas.Add(new GetPortadaHomeResponse()
                     {
                         Id = portada.Id,
@@ -95,7 +105,7 @@ namespace Application.Hilos.Queries
                         Autor = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador ? portada.Autor : null,
                         EsNuevo = (_timeProvider.UtcNow - portada.CreatedAt).Minutes < 20,
                         Spoiler = portada.Spoiler,
-                        Miniatura = portada.Hash,
+                        Miniatura = miniatura,
                         Subcategoria = new GetSubcategoria()
                         {
                             Id = portada.SubcategoriaId,
@@ -107,7 +117,6 @@ namespace Application.Hilos.Queries
                             Encuesta = portada.Encuesta is not null,
                             IdUnico = portada.IdUnico
                         },
-
                     });
                 }
 
@@ -234,9 +243,9 @@ namespace Application.Hilos.Queries
         {
             Where(@"NOT hilo.id IN (
                         SELECT
-                             r.hilo_id
-                        FROM relaciones_de_hilo
-                        WHERE r.oculto AND r.usuario_id = @usuario
+                            hilo_id
+                        FROM relaciones_de_hilo  
+                        WHERE  oculto AND  usuario_id = @usuario
                     )", new
             {
                 usuario

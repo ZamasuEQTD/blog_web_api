@@ -16,11 +16,12 @@ namespace Application.Medias.Services
 
         public async Task<FileMedia> Procesar(FileProcesorParams @params)
         {
+            await _miniaturaProcesor.Procesar(@params.Media, @params.Hash);
+
             return new Imagen(
                 @params.Hash,
                 @params.Media,
-                @params.File,
-                await _miniaturaProcesor.Procesar(@params.Media)
+                @params.File
             );
         }
     }

@@ -4,6 +4,7 @@ using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.ValueObjects;
 using Domain.Media;
+using Domain.Media.ValueObjects;
 using Domain.Usuarios;
 using FluentAssertions;
 using Xunit;

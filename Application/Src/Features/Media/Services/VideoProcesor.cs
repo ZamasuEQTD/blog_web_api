@@ -18,16 +18,14 @@ namespace Application.Medias.Services
 
         public async Task<FileMedia> Procesar(FileProcesorParams @params)
         {
-            var previsulizacion = await GifVideoPrevisualizadorProcesador.Procesar(@params.Media);
+            var previsulizacion = await GifVideoPrevisualizadorProcesador.Procesar(@params.Media, @params.Hash);
 
-            var miniatura = await miniaturaProcesor.Procesar(previsulizacion);
+            await miniaturaProcesor.Procesar(previsulizacion, @params.Hash);
 
             return new Video(
                 @params.Hash,
                 @params.Media,
-                @params.File,
-                miniatura,
-                previsulizacion
+                @params.File
             );
         }
     }
@@ -44,9 +42,9 @@ namespace Application.Medias.Services
             _videoPrevisualizadorGenerador = videoPrevisualizadorGenerador;
         }
 
-        public async Task<string> Procesar(string path)
+        public async Task<string> Procesar(string path, string hash)
         {
-            string previsualizacion_path = _folderProvider.VistasPrevias + "/" + Guid.NewGuid() + ".png";
+            string previsualizacion_path = _folderProvider.Previsualizaciones + "/" + hash + ".png";
 
             using Stream vista_previa = _videoPrevisualizadorGenerador.GenerarDesdeVideo(path);
 
@@ -69,9 +67,9 @@ namespace Application.Medias.Services
             _folderProvider = folderProvider;
         }
 
-        public async Task<string> Procesar(string imagen)
+        public async Task<string> Procesar(string imagen, string hash)
         {
-            string miniatura_path = _folderProvider.ThumbnailFolder + "/" + Guid.NewGuid() + ".jpeg";
+            string miniatura_path = _folderProvider.ThumbnailFolder + "/" + hash + ".jpeg";
 
             using Stream resized = await _resizer.Resize(
                 imagen,
@@ -84,9 +82,9 @@ namespace Application.Medias.Services
             return miniatura_path;
         }
 
-        public async Task<string> Procesar(Stream stream)
+        public async Task<string> Procesar(Stream stream, string hash)
         {
-            string miniatura_path = _folderProvider.ThumbnailFolder + "/" + Guid.NewGuid() + ".jpeg";
+            string miniatura_path = _folderProvider.ThumbnailFolder + "/" + hash + ".jpeg";
 
             using Stream resized = await _resizer.Resize(
                 stream,

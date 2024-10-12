@@ -17,7 +17,9 @@ namespace Tests.Domain.Comentarios
             _comentario = new Comentario(
                 new HiloId(Guid.NewGuid()),
                 new UsuarioId(Guid.NewGuid()),
+                null,
                 Texto.Create("una tipa rapaz").Value,
+                Colores.Amarillo,
                 new InformacionDeComentario(
                     Tag.Create("12345678").Value,
                     null,

@@ -67,15 +67,12 @@ namespace Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Video> builder)
         {
-            builder.Property(e => e.Miniatura).HasColumnName("miniatura");
-            builder.Property(e => e.Previsulizacion).HasColumnName("previsualizacion");
         }
     }
     public class ImagenConfiguration : IEntityTypeConfiguration<Imagen>
     {
         public void Configure(EntityTypeBuilder<Imagen> builder)
         {
-            builder.Property(e => e.Miniatura).HasColumnName("miniatura");
         }
     }
 
@@ -83,8 +80,6 @@ namespace Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<YoutubeVideo> builder)
         {
-            builder.Property(e => e.Previsulizacion).HasColumnName("previsualizacion");
-            builder.Property(e => e.Miniatura).HasColumnName("miniatura");
         }
     }
 }

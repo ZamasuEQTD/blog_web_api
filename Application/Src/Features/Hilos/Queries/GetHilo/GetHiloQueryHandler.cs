@@ -1,7 +1,9 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Categorias.Queries;
 using Dapper;
+using Domain.Comentarios;
 using SharedKernel;
 
 namespace Application.Hilos.Queries
@@ -20,46 +22,97 @@ namespace Application.Hilos.Queries
         {
             using (var connection = _connection.CreateConnection())
             {
-                IEnumerable<GetHiloResponse> hilo = await connection.QueryAsync<GetHiloResponse>($@"
+                GetHiloResponse? hilo = null;
+
+                using (var query = await connection.QueryMultipleAsync(@"
                     SELECT
-                        hilo.id AS Id,
-                        COUNT(1) FILTER (WHERE c.hilo_id = h.id) as Comentarios,
-                        hilo.titulo AS Titulo,
-                        hilo.descripcion AS Descripcion,
-                        hilo.autor_id AS AutorId,
-                        hilo.created_at AS CreatedAt,
-                        subcategoria.id AS Id,
-                        subcategoria.nombre_corto AS Categoria,
+                        hilo.id,
+                        hilo.titulo,
+                        hilo.descripcion,
+                        hilo.usuario_id as autorid,
+                        hilo.created_at as createdat,
+                        (
+	                    SELECT
+	                    	count(c.id)
+	                    FROM comentarios c
+	                    WHERE c.hilo_id = hilo.id
+	                    ) AS comentarios,
+                        subcategoria.id AS subcategoriaid,
+                        subcategoria.nombre_corto AS nombresubcategoria,
+                        portada_reference.spoiler,
+                        portada.path,
+                        portada.hash,
+                        portada.tipo_de_archivo as tipodearchivo
                     FROM hilos hilo
                     JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
-                    "
-                );
-
-                GetHiloResponse response = hilo.First();
-
-                response.EsOp = _context.IsLogged && response.Id == response.AutorId;
-
-                if (response.EncuestaId is not null)
+                    JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
+                    JOIN media portada ON portada.id = portada_reference.media_id
+                    WHERE hilo.id = @hilo;
+                    SELECT
+                        r.id,
+                        r.encuesta_id as encuestaid,
+                        r.contenido,
+                        (
+                            SELECT
+                                COUNT(v.id)
+                            FROM votos v
+                            WHERE r.id = v.id
+                        ) as  votos
+                    FROM respuestas r
+                    LEFT JOIN hilos h ON h.encuesta_id = r.encuesta_id
+                    WHERE h.id = @hilo;
+                ", new
                 {
-                    var encuesta = await connection.QueryAsync<GetEncuestaResponse>("...");
+                    hilo = request.Hilo
+                }))
+                {
+                    var hilo_query = query.Read<HiloResponse>();
 
-                    GetEncuestaResponse encuesta_response = encuesta.First();
+                    var encuesta_query = query.Read<RespuestaResponse>();
 
-                    encuesta_response.OpcionVotada = _context.IsLogged ? (await connection.QueryAsync<Guid>(@"
-                        SELECT
-                            respuesta.id
-                        FROM votos voto
-                        JOIN respuestas respuesta ON voto.encuesta_id = respuesta.encuesta_id
-                        WHERE voto.votante_id = @suarioId
-                    ", new
+                    var hilo_response = hilo_query.FirstOrDefault();
+
+                    if (hilo_response is null) return HilosFailures.NoEncontrado;
+
+                    GetEncuestaResponse? encuesta = null;
+
+                    if (encuesta_query.Any())
                     {
-                        _context.UsuarioId
-                    })).FirstOrDefault() : null;
+                        encuesta = new GetEncuestaResponse()
+                        {
+                            Id = encuesta_query.First().EncuestaId,
+                            Opciones = encuesta_query.Select(x => new GetOpcionResponse()
+                            {
+                                Id = x.Id,
+                                Nombre = x.Contenido,
+                                Votos = x.Votos
+                            }).ToList()
+                        };
+                    }
 
-                    response.Encuesta = encuesta.First();
+                    hilo = new GetHiloResponse()
+                    {
+                        Id = hilo_response.Id,
+                        Titulo = hilo_response.Titulo,
+                        Descripcion = hilo_response.Descripcion,
+                        EsOp = _context.IsLogged && hilo_response.AutorId == _context.UsuarioId,
+                        CreatedAt = hilo_response.CreatedAt,
+                        Encuesta = encuesta,
+                        Subcategoria = new GetSubcategoriaResponse()
+                        {
+                            Id = hilo_response.SubcategoriaId,
+                            Nombre = hilo_response.NombreDeCategoria
+                        },
+                        Media = new GetMediaResponse()
+                        {
+                            Tipo = hilo_response.TipoDeArchivo,
+                            Previsualizacion = hilo_response.TipoDeArchivo == "video" ? $"/media/previsualizaciones/{hilo_response.Hash}.png" : null,
+                            Url = hilo_response.TipoDeArchivo != "youtube" ? $"/media/files/{Path.GetFileName(hilo_response.Path)}" : hilo_response.Path
+                        }
+                    };
+
+                    return hilo;
                 }
-
-                return response;
             }
         }
     }

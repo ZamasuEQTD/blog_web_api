@@ -12,9 +12,7 @@ namespace Application.Medias.Services
         {
             return new YoutubeVideo(
                  @params.Hash,
-                 @params.Url,
-                 YoutubeService.GetVideoThumbnailFromUrl(@params.Url),
-                 YoutubeService.GetVideoThumbnailFromUrl(@params.Url)
+                 @params.Url
              );
         }
     }

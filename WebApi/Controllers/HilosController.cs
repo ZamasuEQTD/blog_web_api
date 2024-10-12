@@ -96,6 +96,20 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+        [HttpGet("/hilos/:hilo")]
+        public async Task<IResult> GetHilo([FromQuery] Guid hilo)
+        {
+            var result = await sender.Send(new GetHiloQuery()
+            {
+                Hilo = hilo
+            });
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
         [HttpGet("hilos/portadas")]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {

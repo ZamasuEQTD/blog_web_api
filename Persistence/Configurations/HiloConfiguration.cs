@@ -44,6 +44,8 @@ namespace Persistence.Configurations
             builder.Property(h => h.Encuesta).HasColumnName("encuesta_id");
             builder.HasOne<Encuesta>().WithOne().HasForeignKey<Hilo>(h => h.Encuesta);
 
+            builder.Property(h => h.CreatedAt).HasColumnName("created_at");
+
             builder.OwnsOne(h => h.Configuracion, conf =>
             {
                 conf.Property(c => c.Dados).HasColumnName("dados");
