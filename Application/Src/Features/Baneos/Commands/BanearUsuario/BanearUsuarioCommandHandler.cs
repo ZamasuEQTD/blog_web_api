@@ -31,8 +31,10 @@ namespace Application.Bneos.Commands
 
             if (usuario is not Anonimo anon) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
 
-            Baneo baneo = anon.Banear(
+            Baneo baneo = new(
                 new(_context.UsuarioId),
+                anon.Id,
+                DateTime.MinValue,
                 request.Mensaje
             );
 

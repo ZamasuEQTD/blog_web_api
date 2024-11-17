@@ -5,6 +5,7 @@ using Domain.Baneos.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
 using SharedKernel;
+using SharedKernel.Abstractions;
 
 namespace Application.Bneos.Commands
 {
@@ -13,8 +14,9 @@ namespace Application.Bneos.Commands
         private readonly IBaneosRepository _baneosRepository;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IDateTimeProvider _time;
 
-        public DesbanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository)
+        public DesbanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider time)
         {
             _unitOfWork = unitOfWork;
             _usuariosRepository = usuariosRepository;
@@ -25,11 +27,11 @@ namespace Application.Bneos.Commands
         {
             Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.Usuario));
 
-            if (usuario is not Anonimo) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
+            if (usuario is not Anonimo) return Result.Success();
 
-            foreach (var baneo in await _baneosRepository.GetBaneos(new UsuarioId(request.Usuario)))
+            foreach (var baneo in await _baneosRepository.GetBaneos(usuario.Id))
             {
-                baneo.Eliminar();
+                baneo.Eliminar(_time.UtcNow);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -13,7 +13,8 @@ namespace WebApi.Configuration
         }
         public void Configure(JwtOptions options)
         {
-            _configuration.GetSection(SectionName).Bind(options);
+            IConfigurationSection section = _configuration.GetSection(SectionName);
+            section.Bind(options);
         }
     }
 }

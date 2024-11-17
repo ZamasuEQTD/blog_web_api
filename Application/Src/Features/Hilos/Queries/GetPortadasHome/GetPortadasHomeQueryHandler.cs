@@ -1,11 +1,8 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Categorias.Queries;
 using Dapper;
-using Domain.Categorias;
 using Domain.Comentarios.Services;
-using Domain.Hilos.ValueObjects;
 using Domain.Media.Services;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -37,6 +34,7 @@ namespace Application.Hilos.Queries
                 SELECT
                     hilo.id,
                     hilo.titulo,
+                    hilo.ultimo_bump as ultimobump,
                     hilo.usuario_id AS autor,
                     hilo.encuesta_id AS encuesta,
                     hilo.dados,
@@ -82,13 +80,14 @@ namespace Application.Hilos.Queries
 
                 Template portadas_template = portadas_builder.AddTemplate(sql);
 
-                var por = await connection.QueryAsync<PortadaResponse>(portadas_template.RawSql, portadas_template.Parameters);
+                var responses = await connection.QueryAsync<PortadaResponse>(portadas_template.RawSql, portadas_template.Parameters);
 
                 List<GetPortadaHomeResponse> portadas = [];
 
-                foreach (var portada in por)
+                foreach (var portada in responses)
                 {
                     string miniatura;
+
                     if (portada.TipoDeArchivo == "youtube")
                     {
                         miniatura = YoutubeService.GetVideoThumbnailFromUrl(portada.Path);
@@ -106,6 +105,8 @@ namespace Application.Hilos.Queries
                         EsNuevo = (_timeProvider.UtcNow - portada.CreatedAt).Minutes < 20,
                         Spoiler = portada.Spoiler,
                         Miniatura = miniatura,
+                        UltimoBump = portada.UltimoBump,
+                        EsOp = _user.IsLogged && _user.UsuarioId == portada.Autor,
                         Subcategoria = new GetSubcategoria()
                         {
                             Id = portada.SubcategoriaId,
