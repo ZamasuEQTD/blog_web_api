@@ -59,9 +59,16 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.ContentRootPath, "Media")
     ),
+
     RequestPath = "/media"
 });
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Static")
+    ),
+    RequestPath = "/Static"
+});
 app.UseHttpsRedirection();
 
 app.UseRouting();
