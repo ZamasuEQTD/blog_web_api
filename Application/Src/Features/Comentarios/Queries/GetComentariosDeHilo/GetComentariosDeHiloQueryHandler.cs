@@ -35,7 +35,7 @@ namespace Application.Comentarios
                         comentario.color,
                         comentario.recibir_notificaciones
                     FROM comentarios comentario
-                    ORDER BY c.createdat DESC
+                    ORDER BY comentario.createdat DESC
                 ";
 
                 SqlBuilder builder = new SqlBuilder();
@@ -110,5 +110,22 @@ namespace Application.Comentarios
     public class GetComentario
     {
         public string Texto { get; set; }
+    }
+
+    public class ComentariosBuilder
+    {
+        SqlBuilder builder = new SqlBuilder();
+    
+        ComentariosBuilder PorHilo(string hilo){}
+
+        ComentariosBuilder OrdenarPorCreacion(){}
+
+        ComentariosBuilder SoloDestacados(){}
+
+        ComentariosBuilder SoloActivos(){}
+
+        ComentariosBuilder FiltrarCreadosMenores(DateTime creacion){}
+
+        ComentariosBuilder FiltrarIds(List<string> ids){}
     }
 }
