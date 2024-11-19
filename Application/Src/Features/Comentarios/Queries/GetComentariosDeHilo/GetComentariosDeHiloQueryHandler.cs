@@ -1,6 +1,7 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Comentarios.Queries.GetComentariosDeHilo.Builder;
 using Dapper;
 using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
@@ -28,51 +29,59 @@ namespace Application.Comentarios
                     SELECT
                         comentario.id,
                         comentario.texto,
-                        comentario.autor_id,
+                        comentario.autor_id as autorid,
                         comentario.tag,
                         comentario.dados,
-                        comentario.tag_unico,
+                        comentario.tag_unico as tagunico,
                         comentario.color,
-                        comentario.recibir_notificaciones
+                        comentario.recibir_notificaciones as recibirnotificaciones
                     FROM comentarios comentario
-                    ORDER BY comentario.createdat DESC
+                    /**Order**/
+                    /**Where**/
                 ";
 
-                SqlBuilder builder = new SqlBuilder();
+                ComentariosBuilder comentariosBuilder = new ComentariosBuilder();
 
-                builder.Where("comentario.hilo_id = @hilo", new
+                List<IRule<ComentariosBuilder>> rules = [
+                    new FiltrarPorHiloRule(request.Hilo),
+                    new OrdenarPorCreacionRule(),
+                    new FiltrarPorStatusRule(ComentarioStatus.Activo),
+                    new FiltrarPorCreacionRule(request.UltimoComentario),
+                ];
+
+                foreach (var rule in rules)
                 {
-                    hilo = request.Hilo,
-                });
+                    if (rule.IsRuleApplicable(comentariosBuilder)) rule.ApplyRule(comentariosBuilder);
+                }   
 
+                
                 List<GetComentarioQuery> destacados = [];
 
                 if (request.UltimoComentario is null)
                 {
-                    var destacados_builder = builder.Where("EXISTS (SELECT 1 FROM comentarios_destacados destacado WHERE destacado.id = comentario.id)");
+                    ComentariosBuilder destacadosBuilder = new ComentariosBuilder();
 
-                    SqlBuilder.Template destacados_template = destacados_builder.AddTemplate("");
+                    List<IRule<ComentariosBuilder>> destacadosRules = [
+                        new FiltrarPorHiloRule(request.Hilo),
+                        new OrdenarPorCreacionRule(),
+                        new SoloDestacadosRule()
+                    ];
+
+                    foreach (var rule in destacadosRules)
+                    {
+                        if (rule.IsRuleApplicable(destacadosBuilder)) rule.ApplyRule(destacadosBuilder);
+                    }
+
+                    SqlBuilder.Template destacados_template = destacadosBuilder.builder.AddTemplate(sql);
 
                     await connection.QueryAsync(destacados_template.RawSql);
                 }
-                else
-                {
-                    builder = builder.Where("comentario.created_at < @created_at ::Date", new
-                    {
-                        created_at = request.UltimoComentario
-                    });
-                }
+               
+                SqlBuilder.Template template = comentariosBuilder.builder.AddTemplate(sql);
 
-                builder = builder.Where("comentario.status = @status", new
-                {
-                    status = ComentarioStatus.Activo.Value
-                });
+                IEnumerable<GetComentarioDBResponse> response = await connection.QueryAsync<GetComentarioDBResponse>(template.RawSql, template.Parameters);
 
-                SqlBuilder.Template template = builder.AddTemplate("");
-
-                await connection.QueryAsync(template.RawSql, template.Parameters);
-
-                List<GetComentarioQuery> response = [];
+                
 
                 List<GetComentarioResponse> comentarios = [
                 .. destacados.Select(x=> new GetComentarioResponse(){
@@ -107,25 +116,17 @@ namespace Application.Comentarios
         }
     }
 
-    public class GetComentario
+    public class GetComentarioDBResponse
     {
+        public Guid Id { get; set; }
+        public Guid AutorId { get; set; }
+        public DateTime CreatedAt { get; set; }
         public string Texto { get; set; }
-    }
-
-    public class ComentariosBuilder
-    {
-        SqlBuilder builder = new SqlBuilder();
-    
-        ComentariosBuilder PorHilo(string hilo){}
-
-        ComentariosBuilder OrdenarPorCreacion(){}
-
-        ComentariosBuilder SoloDestacados(){}
-
-        ComentariosBuilder SoloActivos(){}
-
-        ComentariosBuilder FiltrarCreadosMenores(DateTime creacion){}
-
-        ComentariosBuilder FiltrarIds(List<string> ids){}
+        public bool Destacado { get; set; }
+        public string Tag { get; set; }
+        public string? TagUnico { get; set; }
+        public string Color { get; set; }
+        public string? Dados { get; set; }
+        public bool RecibirNotificaciones { get; set; }
     }
 }
