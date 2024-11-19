@@ -29,6 +29,8 @@ namespace Application.Hilos.Queries
                         hilo.id,
                         hilo.titulo,
                         hilo.descripcion,
+                        hilo.dados,
+                        hilo.id_unico_activado as idunico,
                         hilo.usuario_id as autorid,
                         hilo.created_at as createdat,
                         (
@@ -38,7 +40,7 @@ namespace Application.Hilos.Queries
 	                    WHERE c.hilo_id = hilo.id
 	                    ) AS comentarios,
                         subcategoria.id AS subcategoriaid,
-                        subcategoria.nombre_corto AS nombresubcategoria,
+                        subcategoria.nombre AS nombre,
                         portada_reference.spoiler,
                         portada.path,
                         portada.hash,
@@ -98,17 +100,25 @@ namespace Application.Hilos.Queries
                         EsOp = _context.IsLogged && hilo_response.AutorId == _context.UsuarioId,
                         CreatedAt = hilo_response.CreatedAt,
                         Encuesta = encuesta,
+                        Banderas = new BanderasResponse() {
+                            Dados = hilo_response.Dados,
+                            IdUnico = hilo_response.IdUnico
+                        },
                         Subcategoria = new GetSubcategoriaResponse()
                         {
                             Id = hilo_response.SubcategoriaId,
-                            Nombre = hilo_response.NombreDeCategoria
+                            Nombre = hilo_response.Nombre
                         },
-                        Media = new GetMediaResponse()
-                        {
-                            Tipo = hilo_response.TipoDeArchivo,
-                            Previsualizacion = hilo_response.TipoDeArchivo == "video" ? $"/media/previsualizaciones/{hilo_response.Hash}.png" : null,
-                            Url = hilo_response.TipoDeArchivo != "youtube" ? $"/media/files/{Path.GetFileName(hilo_response.Path)}" : hilo_response.Path
+                        Media = new MediaSpoileable<GetMediaResponse>() {
+                            Spoiler = hilo_response.Spoiler,
+                            Media = new GetMediaResponse()
+                            {
+                                Tipo = hilo_response.TipoDeArchivo,
+                                Previsualizacion = hilo_response.TipoDeArchivo == "video" ? $"/media/previsualizaciones/{hilo_response.Hash}.png" : null,
+                                Url = hilo_response.TipoDeArchivo != "youtube" ? $"/media/files/{Path.GetFileName(hilo_response.Path)}" : hilo_response.Path
+                            }
                         }
+
                     };
 
                     return hilo;

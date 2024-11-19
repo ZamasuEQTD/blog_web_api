@@ -23,6 +23,7 @@ namespace Application.Hilos.Queries
         public bool Dados { get; set; }
         public bool IdUnico { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime UltimoBump { get; set; }
         public string TipoDeArchivo { get; set; }
         public string Path { get; set; }
         public string Hash { get; set; }
@@ -36,6 +37,11 @@ namespace Application.Hilos.Queries
         public Guid? Autor { get; set; }
         public bool Spoiler { get; set; }
         public string Miniatura { get; set; }
+        [JsonPropertyName("ultimo_bump")]
+        public DateTime UltimoBump { get; set; }
+        [JsonPropertyName("es_op")]
+        public bool EsOp { get; set; }
+
         [JsonPropertyName("es_nuevo")]
         public bool EsNuevo { get; set; }
         public GetSubcategoria Subcategoria { get; set; }

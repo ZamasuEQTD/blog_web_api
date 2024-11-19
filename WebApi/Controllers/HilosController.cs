@@ -96,8 +96,9 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpGet("/hilos/:hilo")]
-        public async Task<IResult> GetHilo([FromQuery] Guid hilo)
+        [HttpGet("/hilos/{hilo}")]
+        [ProducesResponseType(typeof(GetHiloResponse), StatusCodes.Status200OK)]
+        public async Task<IResult> GetHilo(Guid hilo)
         {
             var result = await sender.Send(new GetHiloQuery()
             {
@@ -111,6 +112,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("hilos/portadas")]
+        [ProducesResponseType(typeof(GetPortadaHomeResponse), StatusCodes.Status200OK)]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {
             var result = await sender.Send(

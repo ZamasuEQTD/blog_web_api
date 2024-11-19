@@ -44,14 +44,6 @@ namespace Domain.Usuarios
             Rango = RangoDeUsuario.Anonimo;
         }
 
-        public Baneo Banear(UsuarioId moderador, string mensaje)
-        {
-            return new Baneo(
-                moderador,
-                Id,
-                mensaje
-            );
-        }
     }
 
     public class Moderador : Usuario

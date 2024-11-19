@@ -1,3 +1,4 @@
+using Application.Comentarios;
 using Application.Comentarios.Commands;
 using Infraestructure.Media;
 using MediatR;
@@ -7,11 +8,27 @@ using WebApi.Infraestructure;
 
 namespace WebApi.Controllers
 {
+    
     public class ComentariosController : ApiController
     {
         public ComentariosController(ISender sender) : base(sender)
         {
         }
+
+        [HttpGet("comentarios/hilo/{hilo}")]
+        public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery] DateTime? ultimoComentario)
+        {
+            var result = await sender.Send(new GetComentariosDeHiloQuery(){
+                Hilo = hilo,
+                UltimoComentario = ultimoComentario
+            });
+
+            return result.IsSuccess ?
+            Results.Ok(result)
+            :
+            result.HandleFailure();
+        }
+
         [HttpPost(":hilo/destacar/:comentario")]
         public async Task<IResult> Destacar(Guid hilo, Guid comentario)
         {
