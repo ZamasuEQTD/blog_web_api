@@ -28,6 +28,7 @@ namespace Application.Hilos.Queries
         public string Path { get; set; }
         public string Hash { get; set; }
         public bool Spoiler { get; set; }
+        public bool Sticky { get; set; }
     }
 
     public class GetPortadaHomeResponse
@@ -44,6 +45,8 @@ namespace Application.Hilos.Queries
 
         [JsonPropertyName("es_nuevo")]
         public bool EsNuevo { get; set; }
+        [JsonPropertyName("es_sticky")]
+        public bool EsSticky {get;set;}
         public GetSubcategoria Subcategoria { get; set; }
         public GetBanderas Banderas { get; set; }
     }

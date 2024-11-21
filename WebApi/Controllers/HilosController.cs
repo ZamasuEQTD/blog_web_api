@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 using WebApi.Infraestructure;
-
+using WebApi.Atributos;
 namespace WebApi.Controllers
 {
     public class HilosController : ApiController
@@ -13,6 +13,7 @@ namespace WebApi.Controllers
         public HilosController(ISender sender) : base(sender) { }
 
         [HttpPost("postear")]
+        [TypeFilter(typeof(SinBaneo))]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {
             var result = await sender.Send(new PostearHiloCommand()
