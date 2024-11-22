@@ -42,19 +42,18 @@ namespace Application.Hilos.Queries
                         portada_reference.spoiler,
                         portada.path,
                         portada.hash,
-                        portada.tipo_de_archivo as tipodearchivo
+                        portada.tipo_de_archivo as tipodearchivo,
                         false as sticky
                     FROM hilos hilo
                     JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                     JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
                     JOIN media portada ON portada.id = portada_reference.media_id
                     /**where**/
- 			        ORDER BY hilo.ultimo_bump DESC;
                 ";
  
                 SqlBuilder portadas_builder = new SqlBuilder();
 
-                if(request.UltimoBump is not null) {
+                if(request.UltimoBump != DateTime.MinValue) {
                     portadas_builder.Where($"portada.ultimo_bump < {request.UltimoBump}");
                 }
 
@@ -81,7 +80,7 @@ namespace Application.Hilos.Queries
 
                 string? stickies_sql = null;
 
-                if(request.UltimoBump is null){
+                if(request.UltimoBump == DateTime.MinValue){
                     stickies_sql = $@"
                     SELECT
                         hilo.id,
@@ -96,23 +95,26 @@ namespace Application.Hilos.Queries
                         portada_reference.spoiler,
                         portada.path,
                         portada.hash,
-                        portada.tipo_de_archivo as tipodearchivo
+                        portada.tipo_de_archivo as tipodearchivo,
                         true as sticky
                     FROM hilos hilo
                     JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
                     JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
                     JOIN media portada ON portada.id = portada_reference.media_id
                     JOIN stickies sticky ON hilo.id = sticky.hilo_id
- 			        WHERE sticky.concluye > {_time.UtcNow}
-                    ORDER BY sticky.created_at DESC;
                 ";
                 }
                 SqlBuilder.Template template = portadas_builder.AddTemplate(sql);
 
-                IEnumerable<PortadaResponse> response =  await connection.QueryAsync<PortadaResponse>(
-                    (stickies_sql is not null? $"{stickies_sql} \nUNION\n" : "")
+
+                string raw_sql = (stickies_sql is not null? $"{stickies_sql} \nUNION\n" : "")
                         +
-                    template.RawSql
+                    template.RawSql;
+                
+                Console.Write(raw_sql);
+                
+                IEnumerable<PortadaResponse> response =  await connection.QueryAsync<PortadaResponse>(
+                raw_sql    
                 );
                 
                 List<GetPortadaHomeResponse> portadas = [];

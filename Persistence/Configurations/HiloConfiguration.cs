@@ -58,8 +58,6 @@ namespace Persistence.Configurations
 
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
-                y.Property(c => c.Conluye).HasColumnName("concluye");
-
                 y.Property(c => c.Hilo).HasColumnName("hilo_id");
                 y.WithOwner().HasForeignKey(s => s.Hilo);
             });

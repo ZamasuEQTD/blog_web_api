@@ -66,13 +66,13 @@ namespace Domain.Hilos
             ComentarioDestacados = [];
         }
 
-        public Result Eliminar(DateTime now)
+        public Result Eliminar( )
         {
             if (Eliminado) return HilosFailures.YaEliminado;
 
-            if (TieneStickyActivo(now))
+            if (TieneStickyActivo( ))
             {
-                Sticky!.Eliminar(now);
+                Sticky = null;
             }
 
             foreach (var denuncia in Denuncias)
@@ -85,20 +85,20 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result EstablecerSticky(DateTime now, DateTime? concluye = null)
+        public Result EstablecerSticky( )
         {
-            if (TieneStickyActivo(now)) return HilosFailures.YaTieneStickyActivo;
+            if (TieneStickyActivo( )) return HilosFailures.YaTieneStickyActivo;
 
-            this.Sticky = new Sticky(this.Id, concluye);
+            this.Sticky = new Sticky(this.Id);
 
             return Result.Success();
         }
 
-        public Result EliminarSticky(DateTime now)
+        public Result EliminarSticky( )
         {
-            if (!TieneStickyActivo(now)) return HilosFailures.SinStickyActivo;
+            if (!TieneStickyActivo( )) return HilosFailures.SinStickyActivo;
 
-            Sticky!.Eliminar(now);
+            this.Sticky = null;
 
             return Result.Success();
         }
@@ -190,7 +190,7 @@ namespace Domain.Hilos
         bool HaAlcandoMaximaCantidadDeDestacados => ComentarioDestacados.Count == 5;
         public bool EstaDestacado(ComentarioId comentarioId) => ComentarioDestacados.Any(c => c.ComentarioId == comentarioId);
         public bool EsAutor(UsuarioId usuario) => AutorId == usuario;
-        public bool TieneStickyActivo(DateTime now) => Sticky is not null && !Sticky.Conluido(now);
+        public bool TieneStickyActivo( ) => Sticky is not null;
     }
 
     public class HiloId : EntityId

@@ -113,7 +113,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("hilos/portadas")]
-        [ProducesResponseType(typeof(GetPortadaHomeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<GetPortadaHomeResponse>), StatusCodes.Status200OK)]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {
             var result = await sender.Send(

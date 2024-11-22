@@ -25,7 +25,7 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado;
 
-            Result result = hilo.EstablecerSticky(DateTime.UtcNow);
+            Result result = hilo.EstablecerSticky();
 
             if (result.IsFailure) return result.Error;
 

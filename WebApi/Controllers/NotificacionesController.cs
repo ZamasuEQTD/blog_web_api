@@ -3,16 +3,16 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
+using WebApi.Infraestructure;
 
 namespace WebApi.Controllers
 {
-    [ApiController]
     [Authorize]
-    public class NotificacionesController : Controller
+    public class NotificacionesController :  Controller
     {
         private readonly ISender _sender;
 
-        public NotificacionesController(ISender sender)
+        public NotificacionesController(ISender sender)  
         {
             _sender = sender;
         }

@@ -31,7 +31,7 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado; ;
 
-            var result = hilo.EliminarSticky(_timeProvider.UtcNow);
+            var result = hilo.EliminarSticky( );
 
             if (result.IsFailure) return result;
 
