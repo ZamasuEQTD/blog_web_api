@@ -7,7 +7,9 @@ namespace Application.Abstractions
     {
         bool IsLogged { get; }
         Guid UsuarioId { get; }
-        Usuario.RangoDeUsuario Rango { get; }
+        Rango Rango { get; }
+        string Username { get; }
+        string Moderador { get; }
     }
 }
 

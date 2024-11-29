@@ -29,12 +29,16 @@ namespace Application.Hilos.Queries
             using (var connection = _connection.CreateConnection())
             {
                 string sql = @"
+                    (
                     SELECT
                         hilo.id,
                         hilo.titulo,
                         hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
+                        hilo.autor_nombre AS autornombre,
+                        hilo.rango_corto AS rangocorto,
+                        hilo.rango AS rango,
                         hilo.encuesta_id AS encuesta,
                         hilo.dados,
                         hilo.id_unico_activado AS idunico,
@@ -50,21 +54,24 @@ namespace Application.Hilos.Queries
                     JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
                     JOIN media portada ON portada.id = portada_reference.media_id
                     /**where**/
+                    ORDER BY hilo.ultimo_bump DESC
+                    LIMIT 20
+                    )
                     ORDER BY sticky DESC, ultimobump DESC
                 ";
  
                 SqlBuilder portadas_builder = new SqlBuilder();
 
                 if(request.UltimoBump != DateTime.MinValue) {
-                    portadas_builder.Where($"portada.ultimo_bump < {request.UltimoBump}");
+                    portadas_builder.Where($"portada.ultimo_bump < '{request.UltimoBump}'::timestamptz");
                 }
 
                 if(request.Titulo is not null){
-                    portadas_builder.Where($"hilo.titulo ~ {request.Titulo}");
+                    portadas_builder.Where($"hilo.titulo ~ '{request.Titulo}'");
                 }
 
                 if(request.Categoria is not null ){
-                    portadas_builder.Where($"hilo.subcategoria_id = {request.Categoria}");
+                    portadas_builder.Where($"hilo.subcategoria_id = '{request.Categoria}'");
                 }
 
                 if(_user.IsLogged){
@@ -90,6 +97,9 @@ namespace Application.Hilos.Queries
                         hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
+                        hilo.autor_nombre AS autornombre,
+                        hilo.rango_corto AS rangocorto,
+                        hilo.rango AS rango,
                         hilo.encuesta_id AS encuesta,
                         hilo.dados,
                         hilo.id_unico_activado AS idunico,
@@ -139,11 +149,17 @@ namespace Application.Hilos.Queries
                     {
                         Id = portada.Id,
                         Titulo = portada.Titulo,
-                        Autor = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador ? portada.Autor : null,
+                        AutorId = _user.IsLogged && _user.Rango ==  Domain.Usuarios.RangoDeUsuario.Moderador? portada.Autor : null,
                         EsNuevo = _time.UtcNow.Subtract(portada.CreatedAt).TotalMinutes < 20,
                         Spoiler = portada.Spoiler,
                         Miniatura = miniatura,
                         UltimoBump = portada.UltimoBump,
+                        Autor = new GetAutor()
+                        {
+                            Nombre = portada.AutorNombre,
+                            RangoCorto = portada.RangoCorto,
+                            Rango = portada.Rango
+                        },
                         EsOp = _user.IsLogged && _user.UsuarioId == portada.Autor,
                         EsSticky = portada.Sticky,
                         Subcategoria = new GetSubcategoria()

@@ -2,7 +2,9 @@ using Application.Comentarios;
 using Application.Comentarios.Commands;
 using Infraestructure.Media;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Atributos;
 using WebApi.Extensions;
 using WebApi.Infraestructure;
 
@@ -44,9 +46,10 @@ namespace WebApi.Controllers
             :
             result.HandleFailure();
         }
-
+        [Authorize]
+        [TypeFilter(typeof(SinBaneo))]
         [HttpPost("comentar-hilo/{hilo}")]
-        public async Task<IResult> ComentarHilo(
+        public async Task<IResult> Comentar(
             [FromRoute] Guid hilo,
             [FromForm] ComentarHiloRequest request
         )

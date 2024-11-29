@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class ThirdMigration : Migration
+    public partial class fifth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +14,26 @@ namespace Persistence.Migrations
                 name: "FK_respuestas_encuestas_encuesta_id",
                 table: "respuestas");
 
-            migrationBuilder.DropColumn(
-                name: "concluye",
-                table: "stickies");
+            migrationBuilder.AddColumn<string>(
+                name: "autor_nombre",
+                table: "hilos",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "rango",
+                table: "hilos",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "rango_corto",
+                table: "hilos",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_respuestas_encuestas_encuesta_id",
@@ -34,11 +50,17 @@ namespace Persistence.Migrations
                 name: "FK_respuestas_encuestas_encuesta_id",
                 table: "respuestas");
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "concluye",
-                table: "stickies",
-                type: "timestamp with time zone",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "autor_nombre",
+                table: "hilos");
+
+            migrationBuilder.DropColumn(
+                name: "rango",
+                table: "hilos");
+
+            migrationBuilder.DropColumn(
+                name: "rango_corto",
+                table: "hilos");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_respuestas_encuestas_encuesta_id",

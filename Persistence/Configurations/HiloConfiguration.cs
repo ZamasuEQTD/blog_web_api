@@ -52,6 +52,20 @@ namespace Persistence.Configurations
                 conf.Property(c => c.IdUnicoActivado).HasColumnName("id_unico_activado");
             });
 
+            builder.OwnsOne(h => h.Autor, b =>
+            {
+                b.Property(c => c.Nombre).HasColumnName("autor_nombre");
+                b.OwnsOne(c => c.Rango, r =>
+                {
+                    r.OwnsOne(r => r.Rango, r =>
+                    {
+                        r.Property(r => r.Nombre).HasColumnName("rango");
+                    });
+
+                    r.Property(r => r.RangoCorto).HasColumnName("rango_corto");
+                });
+            });
+
             builder.OwnsOne(h => h.Sticky, y =>
             {
                 y.ToTable("stickies");

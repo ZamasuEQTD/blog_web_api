@@ -396,8 +396,10 @@ namespace Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password");
 
-                    b.Property<int>("Rango")
-                        .HasColumnType("integer");
+                    b.Property<string>("Rango")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("rango");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -408,7 +410,7 @@ namespace Persistence.Migrations
 
                     b.ToTable("usuarios", (string)null);
 
-                    b.HasDiscriminator<int>("Rango");
+                    b.HasDiscriminator<string>("Rango");
 
                     b.UseTphMappingStrategy();
                 });
@@ -455,14 +457,14 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Usuarios.Usuario");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue("Anonimo");
                 });
 
             modelBuilder.Entity("Domain.Usuarios.Moderador", b =>
                 {
                     b.HasBaseType("Domain.Usuarios.Usuario");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue("Moderador");
                 });
 
             modelBuilder.Entity("Domain.Media.Imagen", b =>
@@ -531,6 +533,66 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Media.MediaReference", null)
                         .WithMany()
                         .HasForeignKey("MediaReferenceId");
+
+                    b.OwnsOne("Domain.Usuarios.Autor", "Autor", b1 =>
+                        {
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Nombre")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("autor_nombre");
+
+                            b1.HasKey("ComentarioId");
+
+                            b1.ToTable("comentarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComentarioId");
+
+                            b1.OwnsOne("Domain.Usuarios.RangoDeUsuario", "Rango", b2 =>
+                                {
+                                    b2.Property<Guid>("AutorComentarioId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("RangoCorto")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("rango_corto");
+
+                                    b2.HasKey("AutorComentarioId");
+
+                                    b2.ToTable("comentarios");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("AutorComentarioId");
+
+                                    b2.OwnsOne("Domain.Usuarios.Rango", "Rango", b3 =>
+                                        {
+                                            b3.Property<Guid>("RangoDeUsuarioAutorComentarioId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Nombre")
+                                                .IsRequired()
+                                                .HasColumnType("text")
+                                                .HasColumnName("rango");
+
+                                            b3.HasKey("RangoDeUsuarioAutorComentarioId");
+
+                                            b3.ToTable("comentarios");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("RangoDeUsuarioAutorComentarioId");
+                                        });
+
+                                    b2.Navigation("Rango")
+                                        .IsRequired();
+                                });
+
+                            b1.Navigation("Rango")
+                                .IsRequired();
+                        });
 
                     b.OwnsMany("Domain.Comentarios.DenunciaDeComentario", "Denuncias", b1 =>
                         {
@@ -683,6 +745,9 @@ namespace Persistence.Migrations
                                 .OnDelete(DeleteBehavior.Cascade)
                                 .IsRequired();
                         });
+
+                    b.Navigation("Autor")
+                        .IsRequired();
 
                     b.Navigation("Color")
                         .IsRequired();
@@ -893,6 +958,66 @@ namespace Persistence.Migrations
                                 .HasForeignKey("HiloId");
                         });
 
+                    b.OwnsOne("Domain.Usuarios.Autor", "Autor", b1 =>
+                        {
+                            b1.Property<Guid>("HiloId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Nombre")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("autor_nombre");
+
+                            b1.HasKey("HiloId");
+
+                            b1.ToTable("hilos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HiloId");
+
+                            b1.OwnsOne("Domain.Usuarios.RangoDeUsuario", "Rango", b2 =>
+                                {
+                                    b2.Property<Guid>("AutorHiloId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("RangoCorto")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("rango_corto");
+
+                                    b2.HasKey("AutorHiloId");
+
+                                    b2.ToTable("hilos");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("AutorHiloId");
+
+                                    b2.OwnsOne("Domain.Usuarios.Rango", "Rango", b3 =>
+                                        {
+                                            b3.Property<Guid>("RangoDeUsuarioAutorHiloId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Nombre")
+                                                .IsRequired()
+                                                .HasColumnType("text")
+                                                .HasColumnName("rango");
+
+                                            b3.HasKey("RangoDeUsuarioAutorHiloId");
+
+                                            b3.ToTable("hilos");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("RangoDeUsuarioAutorHiloId");
+                                        });
+
+                                    b2.Navigation("Rango")
+                                        .IsRequired();
+                                });
+
+                            b1.Navigation("Rango")
+                                .IsRequired();
+                        });
+
                     b.OwnsOne("Domain.Hilos.ValueObjects.ConfiguracionDeComentarios", "Configuracion", b1 =>
                         {
                             b1.Property<Guid>("HiloId")
@@ -931,6 +1056,9 @@ namespace Persistence.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("HiloId");
                         });
+
+                    b.Navigation("Autor")
+                        .IsRequired();
 
                     b.Navigation("ComentarioDestacados");
 

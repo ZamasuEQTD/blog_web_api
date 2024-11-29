@@ -29,13 +29,18 @@ namespace Application.Hilos.Queries
         public string Hash { get; set; }
         public bool Spoiler { get; set; }
         public bool Sticky { get; set; }
+        public string AutorNombre { get; set; }
+        public string RangoCorto { get; set; }
+        public string Rango { get; set; }
     }
 
     public class GetPortadaHomeResponse
     {
         public Guid Id { get; set; }
         public string Titulo { get; set; }
-        public Guid? Autor { get; set; }
+        [JsonPropertyName("autor_id")]
+        public Guid? AutorId { get; set; }
+        public GetAutor Autor { get; set; }
         public bool Spoiler { get; set; }
         public string Miniatura { get; set; }
         [JsonPropertyName("ultimo_bump")]
@@ -63,5 +68,13 @@ namespace Application.Hilos.Queries
         [JsonPropertyName("id_unico")]
         public bool IdUnico { get; set; }
         public bool Encuesta { get; set; }
+    }
+
+    public class GetAutor
+    {
+        public string Nombre { get; set; }
+        [JsonPropertyName("rango_corto")]
+        public string RangoCorto { get; set; }
+        public string Rango { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace Domain.Comentarios
     public class Comentario : Entity<ComentarioId>
     {
         public UsuarioId AutorId { get; private set; }
+        public Autor Autor { get; private set; }
         public HiloId Hilo { get; private set; }
         public Texto Texto { get; private set; }
         public Tag Tag { get; private set; }
@@ -24,10 +25,11 @@ namespace Domain.Comentarios
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autor, MediaReferenceId? mediaReferenceId, Texto texto, Colores color, InformacionDeComentario informacion)
+        public Comentario(HiloId hilo, UsuarioId autorId, Autor autor, MediaReferenceId? mediaReferenceId, Texto texto, Colores color, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
-            AutorId = autor;
+            AutorId = autorId;
+            Autor = autor;
             Hilo = hilo;
             MediaReferenceId = mediaReferenceId;
             Texto = texto;

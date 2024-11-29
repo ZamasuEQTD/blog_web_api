@@ -22,6 +22,7 @@ namespace Domain.Hilos
     {
         public readonly static int CANTIDAD_MAXIMA_DE_DESTACADOS = 5;
         public bool RecibirNotificaciones { get; private set; }
+        public Autor Autor { get; private set; }
         public Titulo Titulo { get; private set; }
         public Descripcion Descripcion { get; private set; }
         public DateTime UltimoBump { get; private set; }
@@ -44,7 +45,8 @@ namespace Domain.Hilos
         public Hilo(
             Titulo titulo,
             Descripcion descripcion,
-            UsuarioId autor,
+            Autor autor,
+            UsuarioId autorId,
             MediaReferenceId portada,
             SubcategoriaId subcategoria,
             EncuestaId? encuesta,
@@ -52,7 +54,8 @@ namespace Domain.Hilos
         )
         {
             Id = new HiloId(Guid.NewGuid());
-            AutorId = autor;
+            Autor = autor;
+            AutorId = autorId;
             Categoria = subcategoria;
             Encuesta = encuesta;
             Titulo = titulo;
@@ -198,11 +201,5 @@ namespace Domain.Hilos
     {
         private HiloId() { }
         public HiloId(Guid id) : base(id) { }
-    }
-
-    public class Autor {
-        public string Nombre {get; set;}
-        public string Rango {get; set;}
-        public string RangoCorto {get; set;}
     }
 }

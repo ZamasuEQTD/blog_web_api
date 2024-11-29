@@ -13,9 +13,9 @@ namespace Infraestructure
             .Identity?
             .IsAuthenticated ??
         throw new ApplicationException("User context is unavailable");
-
-        public Guid UsuarioId => Guid.Parse(context.HttpContext.User.Claims.FirstOrDefault(s => s.Type == "UserId").Value);
-
-        public Usuario.RangoDeUsuario Rango => Usuario.RangoDeUsuario.Moderador;
+        public Guid UsuarioId => Guid.Parse(context.HttpContext!.User.Claims.FirstOrDefault(s => s.Type == "user_id")!.Value);
+        public string Username => context.HttpContext!.User.Identity!.Name!;
+        public Rango Rango => Rango.FromNombre(context.HttpContext!.User.Claims.FirstOrDefault(s => s.Type == "rango")!.Value);
+        public string Moderador => context.HttpContext!.User.Claims.FirstOrDefault(s => s.Type == "moderador")!.Value;
     }
 }

@@ -38,6 +38,20 @@ namespace Persistence.Configurations
                 b.Property(c => c.Value).HasColumnName("color");
             });
 
+            builder.OwnsOne(c => c.Autor, b =>
+            {
+                b.Property(c => c.Nombre).HasColumnName("autor_nombre");
+                b.OwnsOne(c => c.Rango, r =>
+                {
+                    r.OwnsOne(r => r.Rango, r =>
+                    {
+                        r.Property(r => r.Nombre).HasColumnName("rango");
+                    });
+
+                    r.Property(r => r.RangoCorto).HasColumnName("rango_corto");
+                });
+            });
+
             builder.Property(c => c.Tag).HasConversion(tag => tag.Value, value => Tag.Create(value).Value).HasColumnName("tag");
             builder.Property(c => c.TagUnico).HasConversion(tagUnico => tagUnico.Value, value => TagUnico.Create(value).Value).HasColumnName("tag_unico");
             builder.Property(c => c.Dados).HasConversion(dados => dados.Value, value => Dados.Create(value).Value).HasColumnName("dados");

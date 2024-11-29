@@ -18,11 +18,13 @@ namespace Infraestructure.Authentication
         public string Generar(Usuario usuario)
         {
             var claims = new Claim[]{
-                new ("UserId", usuario.Id.Value.ToString()),
-                new ("rango", usuario.Rango.ToString()),
+                new ("user_id", usuario.Id.Value.ToString()),
+                new ("rango", usuario.Rango.Nombre),
                 new (JwtRegisteredClaimNames.Name, usuario.Username.Value),
-
             };
+
+            if(usuario is Moderador mod) claims = claims.Append(new ("moderador", mod.NombreModerador)).ToArray();
+           
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
                 SecurityAlgorithms.HmacSha256

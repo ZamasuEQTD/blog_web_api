@@ -13,8 +13,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20241010222137_Sixkty")]
-    partial class Sixkty
+    [Migration("20241129174824_Ssssklksixkty")]
+    partial class Ssssklksixkty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("Concluye")
+                    b.Property<DateTime?>("Concluye")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("concluye");
 
@@ -40,17 +40,12 @@ namespace Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Mensaje")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("mensaje");
 
                     b.Property<Guid>("ModeradorId")
                         .HasColumnType("uuid")
                         .HasColumnName("moderador_id");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
 
                     b.Property<Guid>("UsuarioBaneadoId")
                         .HasColumnType("uuid")
@@ -129,7 +124,8 @@ namespace Persistence.Migrations
                         .HasColumnName("autor_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int?>("Dados")
                         .HasColumnType("integer")
@@ -206,7 +202,8 @@ namespace Persistence.Migrations
                         .HasColumnName("subcategoria_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid?>("Encuesta")
                         .HasColumnType("uuid")
@@ -402,8 +399,10 @@ namespace Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password");
 
-                    b.Property<int>("Rango")
-                        .HasColumnType("integer");
+                    b.Property<string>("Rango")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("rango");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -414,7 +413,7 @@ namespace Persistence.Migrations
 
                     b.ToTable("usuarios", (string)null);
 
-                    b.HasDiscriminator<int>("Rango");
+                    b.HasDiscriminator<string>("Rango");
 
                     b.UseTphMappingStrategy();
                 });
@@ -461,25 +460,19 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Usuarios.Usuario");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue("Anonimo");
                 });
 
             modelBuilder.Entity("Domain.Usuarios.Moderador", b =>
                 {
                     b.HasBaseType("Domain.Usuarios.Usuario");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue("Moderador");
                 });
 
             modelBuilder.Entity("Domain.Media.Imagen", b =>
                 {
                     b.HasBaseType("Domain.Media.FileMedia");
-
-                    b.Property<string>("Miniatura")
-                        .IsRequired()
-                        .ValueGeneratedOnUpdateSometimes()
-                        .HasColumnType("text")
-                        .HasColumnName("miniatura");
 
                     b.HasDiscriminator().HasValue("imagen");
                 });
@@ -488,36 +481,12 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Media.FileMedia");
 
-                    b.Property<string>("Miniatura")
-                        .IsRequired()
-                        .ValueGeneratedOnUpdateSometimes()
-                        .HasColumnType("text")
-                        .HasColumnName("miniatura");
-
-                    b.Property<string>("Previsulizacion")
-                        .IsRequired()
-                        .ValueGeneratedOnUpdateSometimes()
-                        .HasColumnType("text")
-                        .HasColumnName("previsualizacion");
-
                     b.HasDiscriminator().HasValue("video");
                 });
 
             modelBuilder.Entity("Domain.Media.YoutubeVideo", b =>
                 {
                     b.HasBaseType("Domain.Media.NetworkMedia");
-
-                    b.Property<string>("Miniatura")
-                        .IsRequired()
-                        .ValueGeneratedOnUpdateSometimes()
-                        .HasColumnType("text")
-                        .HasColumnName("miniatura");
-
-                    b.Property<string>("Previsulizacion")
-                        .IsRequired()
-                        .ValueGeneratedOnUpdateSometimes()
-                        .HasColumnType("text")
-                        .HasColumnName("previsualizacion");
 
                     b.HasDiscriminator().HasValue("youtube");
                 });
@@ -685,6 +654,66 @@ namespace Persistence.Migrations
                                 .HasForeignKey("ComentarioId");
                         });
 
+                    b.OwnsOne("Domain.Usuarios.Autor", "Autor", b1 =>
+                        {
+                            b1.Property<Guid>("ComentarioId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Nombre")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("autor_nombre");
+
+                            b1.HasKey("ComentarioId");
+
+                            b1.ToTable("comentarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComentarioId");
+
+                            b1.OwnsOne("Domain.Usuarios.RangoDeUsuario", "Rango", b2 =>
+                                {
+                                    b2.Property<Guid>("AutorComentarioId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("RangoCorto")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("rango_corto");
+
+                                    b2.HasKey("AutorComentarioId");
+
+                                    b2.ToTable("comentarios");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("AutorComentarioId");
+
+                                    b2.OwnsOne("Domain.Usuarios.Rango", "Rango", b3 =>
+                                        {
+                                            b3.Property<Guid>("RangoDeUsuarioAutorComentarioId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Nombre")
+                                                .IsRequired()
+                                                .HasColumnType("text")
+                                                .HasColumnName("rango");
+
+                                            b3.HasKey("RangoDeUsuarioAutorComentarioId");
+
+                                            b3.ToTable("comentarios");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("RangoDeUsuarioAutorComentarioId");
+                                        });
+
+                                    b2.Navigation("Rango")
+                                        .IsRequired();
+                                });
+
+                            b1.Navigation("Rango")
+                                .IsRequired();
+                        });
+
                     b.OwnsMany("Domain.Comentarios.Respuesta", "Respuestas", b1 =>
                         {
                             b1.Property<Guid>("Id")
@@ -720,6 +749,9 @@ namespace Persistence.Migrations
                                 .IsRequired();
                         });
 
+                    b.Navigation("Autor")
+                        .IsRequired();
+
                     b.Navigation("Color")
                         .IsRequired();
 
@@ -735,33 +767,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Encuestas.Encuesta", b =>
                 {
-                    b.OwnsMany("Domain.Encuestas.Respuesta", "Respuestas", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("Contenido")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("contenido");
-
-                            b1.Property<DateTime>("CreatedAt")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("EncuestaId")
-                                .HasColumnType("uuid");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("EncuestaId");
-
-                            b1.ToTable("respuestas", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("EncuestaId");
-                        });
-
                     b.OwnsMany("Domain.Encuestas.Voto", "Votos", b1 =>
                         {
                             b1.Property<Guid>("Id")
@@ -800,6 +805,33 @@ namespace Persistence.Migrations
                                 .IsRequired();
                         });
 
+                    b.OwnsMany("Domain.Encuestas.Respuesta", "Respuestas", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Contenido")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("contenido");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<Guid?>("encuesta_id")
+                                .HasColumnType("uuid");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("encuesta_id");
+
+                            b1.ToTable("respuestas", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("encuesta_id");
+                        });
+
                     b.Navigation("Respuestas");
 
                     b.Navigation("Votos");
@@ -835,10 +867,6 @@ namespace Persistence.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("hilo_id");
 
-                            b1.Property<DateTime?>("Conluye")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("concluye");
-
                             b1.Property<DateTime>("CreatedAt")
                                 .HasColumnType("timestamp with time zone");
 
@@ -865,7 +893,8 @@ namespace Persistence.Migrations
                                 .HasColumnName("comentario_id");
 
                             b1.Property<DateTime>("CreatedAt")
-                                .HasColumnType("timestamp with time zone");
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("created_at");
 
                             b1.Property<Guid>("HiloId")
                                 .HasColumnType("uuid")

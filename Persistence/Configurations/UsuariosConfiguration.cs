@@ -19,10 +19,16 @@ namespace Persistence.EntityConfigurations
 
             builder.HasMany<Notificacion>().WithOne().HasForeignKey(n => n.NotificadoId);
 
-            builder
-            .HasDiscriminator(u => u.Rango)
-            .HasValue<Moderador>(Usuario.RangoDeUsuario.Moderador)
-            .HasValue<Anonimo>(Usuario.RangoDeUsuario.Anonimo);
+            builder.Property(u => u.Rango).HasConversion(r => r.Nombre, n => Rango.FromNombre(n)).HasColumnName("rango");
+            
+            builder.HasDiscriminator(u => u.Rango)
+            .HasValue<Moderador>(Rango.Moderador)
+            .HasValue<Anonimo>(Rango.Anonimo);
+
+            //builder
+            //.HasDiscriminator(u => u.Rango)
+            //.HasValue<Moderador>(Usuario.RangoDeUsuario.Moderador)
+            //.HasValue<Anonimo>(Usuario.RangoDeUsuario.Anonimo);
         }
     }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Fourth : Migration
+    public partial class Ssssklksixkty : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,8 +47,6 @@ namespace Persistence.Migrations
                     tipo_de_archivo = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     filename = table.Column<string>(type: "text", nullable: true),
                     media_source = table.Column<string>(type: "text", nullable: true),
-                    miniatura = table.Column<string>(type: "text", nullable: true),
-                    previsualizacion = table.Column<string>(type: "text", nullable: true),
                     network_source = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -64,7 +62,7 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     username = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
-                    Rango = table.Column<int>(type: "integer", nullable: false),
+                    rango = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -99,18 +97,17 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     contenido = table.Column<string>(type: "text", nullable: false),
-                    EncuestaId = table.Column<Guid>(type: "uuid", nullable: false),
+                    encuesta_id = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_respuestas", x => x.id);
                     table.ForeignKey(
-                        name: "FK_respuestas_encuestas_EncuestaId",
-                        column: x => x.EncuestaId,
+                        name: "FK_respuestas_encuestas_encuesta_id",
+                        column: x => x.encuesta_id,
                         principalTable: "encuestas",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -140,9 +137,8 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     moderador_id = table.Column<Guid>(type: "uuid", nullable: false),
                     usuario_baneado_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    concluye = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    mensaje = table.Column<string>(type: "text", nullable: false),
+                    concluye = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    mensaje = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -205,7 +201,7 @@ namespace Persistence.Migrations
                     portada_id = table.Column<Guid>(type: "uuid", nullable: false),
                     descripcion = table.Column<string>(type: "text", nullable: false),
                     titulo = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,25 +237,40 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     autor_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    autor_nombre = table.Column<string>(type: "text", nullable: false),
+                    rango = table.Column<string>(type: "text", nullable: false),
+                    rango_corto = table.Column<string>(type: "text", nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
                     texto = table.Column<string>(type: "text", nullable: false),
                     tag = table.Column<string>(type: "text", nullable: false),
+                    media = table.Column<Guid>(type: "uuid", nullable: true),
                     tag_unico = table.Column<string>(type: "text", nullable: true),
                     dados = table.Column<int>(type: "integer", nullable: true),
-                    Color = table.Column<int>(type: "integer", nullable: false),
+                    color = table.Column<string>(type: "text", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
                     recibir_notificaciones = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    HiloId = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_comentarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_comentarios_hilos_HiloId",
+                        column: x => x.HiloId,
+                        principalTable: "hilos",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_comentarios_hilos_hilo_id",
                         column: x => x.hilo_id,
                         principalTable: "hilos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_comentarios_media_references_media",
+                        column: x => x.media,
+                        principalTable: "media_references",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_comentarios_usuarios_autor_id",
                         column: x => x.autor_id,
@@ -330,7 +341,6 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    concluye = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     id = table.Column<Guid>(type: "uuid", nullable: true)
                 },
@@ -352,7 +362,7 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     comentario_id = table.Column<Guid>(type: "uuid", nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -461,6 +471,32 @@ namespace Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "respuestas_comentarios",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    comentario_respondido_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    respuesta_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_respuestas_comentarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_respuestas_comentarios_comentarios_comentario_respondido_id",
+                        column: x => x.comentario_respondido_id,
+                        principalTable: "comentarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_respuestas_comentarios_comentarios_respuesta_id",
+                        column: x => x.respuesta_id,
+                        principalTable: "comentarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_baneos_moderador_id",
                 table: "baneos",
@@ -480,6 +516,16 @@ namespace Persistence.Migrations
                 name: "IX_comentarios_hilo_id",
                 table: "comentarios",
                 column: "hilo_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentarios_HiloId",
+                table: "comentarios",
+                column: "HiloId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentarios_media",
+                table: "comentarios",
+                column: "media");
 
             migrationBuilder.CreateIndex(
                 name: "IX_comentarios_destacados_comentario_id",
@@ -579,9 +625,19 @@ namespace Persistence.Migrations
                 column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_respuestas_EncuestaId",
+                name: "IX_respuestas_encuesta_id",
                 table: "respuestas",
-                column: "EncuestaId");
+                column: "encuesta_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_respuestas_comentarios_comentario_respondido_id",
+                table: "respuestas_comentarios",
+                column: "comentario_respondido_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_respuestas_comentarios_respuesta_id",
+                table: "respuestas_comentarios",
+                column: "respuesta_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_subcategorias_categoria_id",
@@ -625,6 +681,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "respuestas");
+
+            migrationBuilder.DropTable(
+                name: "respuestas_comentarios");
 
             migrationBuilder.DropTable(
                 name: "stickies");

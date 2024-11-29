@@ -1,6 +1,7 @@
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Comentarios.Commands;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
 using Domain.Categorias;
@@ -36,7 +37,6 @@ namespace Application.Hilos.Commands
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
-
         public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcessor embedProcessor)
         {
             _unitOfWork = unitOfWork;
@@ -99,6 +99,7 @@ namespace Application.Hilos.Commands
             Hilo hilo = new Hilo(
                titulo.Value,
                descripcion.Value,
+               new Autor(_user.Rango == Rango.Moderador ? _user.Username : "Anonimo", _user.Rango.ToRangoDeUsuario()),
                new UsuarioId(_user.UsuarioId),
                reference.Id,
                new SubcategoriaId(request.Subcategoria),
@@ -123,6 +124,4 @@ namespace Application.Hilos.Commands
         void Add(HashedMedia media);
         void Add(MediaReference reference);
     }
-
-
 }
