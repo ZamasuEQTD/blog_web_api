@@ -18,7 +18,7 @@ namespace Application.Medias.Services
         {
             using Stream stream = _GifVideoPrevisualizadorProcesador.GenerarStream(@params.Media);
 
-            await _miniaturaProcesor.Procesar(stream, @params.Media);
+            await _miniaturaProcesor.Procesar(stream, @params.Hash);
 
             return new Gif(
                 @params.Hash,

@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Baneos;
 
 namespace Application.Bneos.Commands
 {
@@ -6,6 +7,6 @@ namespace Application.Bneos.Commands
     {
         public Guid UsuarioId { get; set; }
         public string? Mensaje { get; set; }
-        public int? Duracion   { get; set; }
+        public DuracionBaneo? Duracion   { get; set; }
     }   
 }

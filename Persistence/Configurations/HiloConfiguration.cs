@@ -74,6 +74,8 @@ namespace Persistence.Configurations
 
                 y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.ComentarioId);
                 y.Property(c => c.ComentarioId).HasColumnName("comentario_id");
+
+                y.Property(c => c.CreatedAt).HasColumnName("created_at");
             });
 
 

@@ -44,6 +44,7 @@ namespace Persistence.Configurations
 
             builder.Property(c => c.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
 
+            builder.Property(c => c.CreatedAt).HasColumnName("created_at");
             builder.OwnsMany(c => c.Respuestas, y =>
             {
                 y.ToTable("respuestas_comentarios");

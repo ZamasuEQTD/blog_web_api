@@ -15,10 +15,10 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("api/auth/login")]
-        public async Task<IResult> Login(LoginRequest request)
+        public async Task<IResult> Login([FromBody] LoginRequest request)
         {
             var command = new LoginCommand(
-                request.UserName,
+                request.Username,
                 request.Password
             );
 
@@ -32,10 +32,10 @@ namespace WebApi.Controllers
 
 
         [HttpPost("api/auth/registro")]
-        public async Task<IResult> Registro(RegistroRequest request)
+        public async Task<IResult> Registro([FromBody] RegistroRequest request)
         {
             var command = new RegistroCommand(
-                request.UserName,
+                request.Username,
                 request.Password
             );
 
@@ -49,12 +49,12 @@ namespace WebApi.Controllers
 
         public class LoginRequest
         {
-            public string UserName { get; set; }
+            public string Username { get; set; }
             public string Password { get; set; }
         }
         public class RegistroRequest
         {
-            public string UserName { get; set; }
+            public string Username { get; set; }
             public string Password { get; set; }
         }
     }

@@ -153,11 +153,11 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public void Comentar(Comentario comentario)
+        public void Comentar(Comentario comentario, DateTime now)
         {
             Comentarios.Add(comentario);
 
-            List<string> tags = TagUtils.GetTags(comentario.Texto.Value); ;
+            List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
 
             foreach (var tag in tags)
             {
@@ -168,6 +168,7 @@ namespace Domain.Hilos
                     respondido.AgregarRespuesta(comentario.Id);
                 }
             }
+            this.UltimoBump = now;
         }
 
         public Result Eliminar(Comentario comentario)
@@ -199,5 +200,9 @@ namespace Domain.Hilos
         public HiloId(Guid id) : base(id) { }
     }
 
-
+    public class Autor {
+        public string Nombre {get; set;}
+        public string Rango {get; set;}
+        public string RangoCorto {get; set;}
+    }
 }

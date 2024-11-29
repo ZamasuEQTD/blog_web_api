@@ -1,4 +1,5 @@
 using Application.Bneos.Commands;
+using Domain.Baneos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
@@ -15,8 +16,8 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPost("api/baneos")]
-        public async Task<IResult> BanearUsuario(BanearUsuarioRequest request)
+        [HttpPost("api/baneos/banear")]
+        public async Task<IResult> BanearUsuario([FromBody] BanearUsuarioRequest request)
         {
             var command = new BanearUsuarioCommand(){
                 UsuarioId = request.UsuarioId,
@@ -33,7 +34,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpDelete("api/baneos")]
+        [HttpDelete("api/baneos/desbanear/usuario/{usuario}")]
         public async Task<IResult> DesbanearUsuario(Guid usuario)  
         {
             var command = new DesbanearUsuarioCommand(){
@@ -53,6 +54,6 @@ namespace WebApi.Controllers
     {
         public Guid UsuarioId { get; set; }
         public string? Mensaje { get; set; }
-        public int? Duracion { get; set; }
+        public DuracionBaneo Duracion { get; set; }
     }
 }

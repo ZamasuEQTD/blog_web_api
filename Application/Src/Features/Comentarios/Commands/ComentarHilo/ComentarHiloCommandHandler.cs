@@ -62,7 +62,7 @@ namespace Application.Comentarios.Commands
                 )
             );
 
-            hilo.Comentar(c);
+            hilo.Comentar(c, _timeProvider.UtcNow);
 
             _hilosRepository.Add(c);
 

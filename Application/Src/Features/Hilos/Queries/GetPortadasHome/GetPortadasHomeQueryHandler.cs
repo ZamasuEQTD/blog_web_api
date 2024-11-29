@@ -32,6 +32,7 @@ namespace Application.Hilos.Queries
                     SELECT
                         hilo.id,
                         hilo.titulo,
+                        hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
                         hilo.encuesta_id AS encuesta,
@@ -49,6 +50,7 @@ namespace Application.Hilos.Queries
                     JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
                     JOIN media portada ON portada.id = portada_reference.media_id
                     /**where**/
+                    ORDER BY sticky DESC, ultimobump DESC
                 ";
  
                 SqlBuilder portadas_builder = new SqlBuilder();
@@ -85,6 +87,7 @@ namespace Application.Hilos.Queries
                     SELECT
                         hilo.id,
                         hilo.titulo,
+                        hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
                         hilo.encuesta_id AS encuesta,
@@ -137,7 +140,7 @@ namespace Application.Hilos.Queries
                         Id = portada.Id,
                         Titulo = portada.Titulo,
                         Autor = _user.IsLogged && _user.Rango == Domain.Usuarios.Usuario.RangoDeUsuario.Moderador ? portada.Autor : null,
-                        EsNuevo = (_time.UtcNow - portada.CreatedAt).Minutes < 20,
+                        EsNuevo = _time.UtcNow.Subtract(portada.CreatedAt).TotalMinutes < 20,
                         Spoiler = portada.Spoiler,
                         Miniatura = miniatura,
                         UltimoBump = portada.UltimoBump,

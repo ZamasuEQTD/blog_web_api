@@ -1,6 +1,7 @@
 using Domain.Baneos;
 using Domain.Comentarios;
 using Domain.Notificaciones;
+using SharedKernel;
 using SharedKernel.Abstractions;
 
 namespace Domain.Usuarios
@@ -21,12 +22,6 @@ namespace Domain.Usuarios
         }
         protected Usuario()
         {
-        }
-
-        public enum RangoDeUsuario
-        {
-            Anonimo,
-            Moderador
         }
     }
 
@@ -53,5 +48,22 @@ namespace Domain.Usuarios
             this.Id = id;
             this.Rango = RangoDeUsuario.Moderador;
         }
+    }
+
+    public class RangoDeUsuario : ValueObject
+    {
+        public string Rango { get; set; }
+        public string RangoCorto { get; set; }
+
+        private RangoDeUsuario() { }
+
+        protected override IEnumerable<object> GetAtomicValues()
+        {
+            return new object[] { Rango, RangoCorto };
+        }
+
+        public static RangoDeUsuario Anonimo = new RangoDeUsuario { Rango = "Anonimo", RangoCorto = "ANON" };
+        public static RangoDeUsuario Moderador = new RangoDeUsuario { Rango = "Moderador", RangoCorto = "MOD" };
+        public static RangoDeUsuario Owner = new RangoDeUsuario { Rango = "Owner", RangoCorto = "MOD" };
     }
 }

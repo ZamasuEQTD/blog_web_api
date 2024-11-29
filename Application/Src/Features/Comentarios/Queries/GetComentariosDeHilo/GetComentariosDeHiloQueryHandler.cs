@@ -24,6 +24,7 @@ namespace Application.Comentarios
                 string sql = @"
                     SELECT
                         comentario.id,
+                        comentario.created_at as createdat,
                         comentario.texto,
                         comentario.autor_id as autorid,
                         comentario.tag,
@@ -31,15 +32,19 @@ namespace Application.Comentarios
                         comentario.tag_unico as tagunico,
                         comentario.color,
                         comentario.recibir_notificaciones as recibirnotificaciones,
-                        false as destacado
+                        NULL as destacado_at,  
+                        FALSE as destacado,
+                        autor.nombre,
+                        autor.rango,
+                        autor.rango_corto as rangocorto
                     FROM comentarios comentario
-                    /**Order**/
+                    JOIN usuarios autor ON comentario.autor_id = autor.id
                     /**Where**/
+                    ORDER BY createdat DESC, destacado_at DESC
                 ";
 
                 SqlBuilder comentarios_builder = new SqlBuilder()
-                .Where($"comentario.hilo_id = {request.Hilo}")
-                .OrderBy("comentario.created_at DESC");
+                .Where($"comentario.hilo_id = '{request.Hilo}'");
 
                 if(_user.IsLogged){
                     comentarios_builder.Where(
@@ -47,7 +52,7 @@ namespace Application.Comentarios
                             SELECT 
                                 interaccion.id
                             FROM interacion_comentario
-                            WHERE interacion.usuario_id = {_user.UsuarioId} AND interaccion.oculto
+                            WHERE interacion.usuario_id = '{_user.UsuarioId}' AND interaccion.oculto
                         )"
                     );
                 }
@@ -58,6 +63,7 @@ namespace Application.Comentarios
                     destacados_sql = $@"
                     SELECT
                         comentario.id,
+                        comentario.created_at as createdat,
                         comentario.texto,
                         comentario.autor_id as autorid,
                         comentario.tag,
@@ -65,11 +71,12 @@ namespace Application.Comentarios
                         comentario.tag_unico as tagunico,
                         comentario.color,
                         comentario.recibir_notificaciones as recibirnotificaciones,
-                        true as destacado
+                        destacado.created_at as destacado_at,
+                        TRUE as destacado
                     FROM comentarios comentario
                     JOIN comentarios_destacados destacado ON comentario.id = destacado.comentario_id
-                    WHERE comentario.hilo_id = {request.Hilo}
-                    ORDER BY destacado.created_at DESC
+                    JOIN usuarios autor ON comentario.autor_id = autor.id
+                    WHERE comentario.hilo_id = '{request.Hilo}'
                     ";
                 } 
                 else {
@@ -83,7 +90,20 @@ namespace Application.Comentarios
                 );
 
                 List<GetComentarioResponse> comentarios = response.Select((c)=> new GetComentarioResponse(){
-                    Id = c.Id
+                    Id = c.Id,
+                    CreatedAt = c.CreatedAt,
+                    Texto = c.Texto,
+                    AutorId = _user.IsLogged?  c.AutorId:null  ,
+                    Tag = c.Tag,
+                    TagUnico = c.TagUnico,
+                    Dados = c.Dados,
+                    Color = c.Color,
+                    RecibirNotificaciones = c.RecibirNotificaciones,
+                    Autor =   new GetComentarioAutorResponse(){
+                        Nombre = c.Nombre,
+                        Rango = c.Rango,
+                        RangoCorto = c.RangoCorto
+                    }  
                 }).ToList();
 
                 return comentarios;
@@ -105,5 +125,8 @@ namespace Application.Comentarios
         public string Color { get; set; }
         public string? Dados { get; set; }
         public bool RecibirNotificaciones { get; set; }
+        public string Nombre { get; set; }
+        public string Rango { get; set; }
+        public string RangoCorto { get; set; }
     }
 }

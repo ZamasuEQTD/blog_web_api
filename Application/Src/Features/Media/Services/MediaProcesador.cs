@@ -34,7 +34,10 @@ namespace Application.Medias.Services
 
             string media_path = _folderProvider.FilesFolder + "/" + Guid.NewGuid() + file.Extension;
 
+            Console.WriteLine("\n\n"  + media_path + "\n\n");
+
             await _fileService.GuardarArchivo(stream, media_path);
+            Console.WriteLine("\n\n"  + "Guardado" + "\n\n");
 
             HashedMedia m = await _proccessor.Execute(
                 file.Type,

@@ -22,8 +22,8 @@ namespace Application.Categorias.Queries
             SELECT
                 c.nombre AS Nombre,
                 s.id AS Id,
-                s.nombre AS Nombre,
-                s.id as Id
+                s.id as Id,
+                s.nombre AS Nombre
             FROM categorias c
             LEFT JOIN subcategorias s ON s.categoria_id = c.id
             ";

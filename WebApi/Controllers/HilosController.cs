@@ -8,12 +8,13 @@ using WebApi.Infraestructure;
 using WebApi.Atributos;
 namespace WebApi.Controllers
 {
+
+    [Route("hilos")]
     public class HilosController : ApiController
     {
         public HilosController(ISender sender) : base(sender) { }
 
         [HttpPost("postear")]
-        [TypeFilter(typeof(SinBaneo))]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {
             var result = await sender.Send(new PostearHiloCommand()
@@ -35,7 +36,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpDelete("eliminar/:hilo")]
+        [HttpDelete("eliminar/{hilo}")]
         public async Task<IResult> Eliminar(Guid hilo)
         {
             var result = await sender.Send(new EliminarHiloCommand(hilo));
@@ -47,7 +48,7 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPost("establecer-sticky/:hilo")]
+        [HttpPost("establecer-sticky/{hilo}")]
         public async Task<IResult> EstablecerSticky(Guid hilo)
         {
             var result = await sender.Send(new EstablecerStickyCommand(hilo));
@@ -58,7 +59,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpDelete("eliminar-sticky/:hilo")]
+        [HttpDelete("eliminar-sticky/{hilo}")]
         public async Task<IResult> EliminarSticky(Guid hilo)
         {
             var result = await sender.Send(new EliminarStickyCommand(hilo));
@@ -69,7 +70,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpPost("denunciar/:hilo")]
+        [HttpPost("denunciar/{hilo}")]
         public async Task<IResult> Denunciar(Guid hilo)
         {
             var result = await sender.Send(new DenunciarHiloCommand(hilo));
@@ -81,7 +82,7 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPost("seguir/:hilo")]
+        [HttpPost("seguir/{hilo}")]
         public async Task<IResult> Seguir(Guid hilo)
         {
             var result = await sender.Send(
@@ -97,7 +98,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpGet("/hilos/{hilo}")]
+        [HttpGet("{hilo}")]
         [ProducesResponseType(typeof(GetHiloResponse), StatusCodes.Status200OK)]
         public async Task<IResult> GetHilo(Guid hilo)
         {
@@ -112,7 +113,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpGet("hilos/portadas")]
+        [HttpGet("portadas")]
         [ProducesResponseType(typeof(List<GetPortadaHomeResponse>), StatusCodes.Status200OK)]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {

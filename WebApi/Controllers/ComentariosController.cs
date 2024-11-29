@@ -9,13 +9,15 @@ using WebApi.Infraestructure;
 namespace WebApi.Controllers
 {
     
+    [Route("comentarios")]
     public class ComentariosController : ApiController
     {
         public ComentariosController(ISender sender) : base(sender)
         {
         }
 
-        [HttpGet("comentarios/hilo/{hilo}")]
+        [HttpGet("hilo/{hilo}")]
+        [ProducesResponseType(typeof(IEnumerable<GetComentarioResponse>), StatusCodes.Status200OK)]
         public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery] DateTime? ultimoComentario)
         {
             var result = await sender.Send(new GetComentariosDeHiloQuery(){
@@ -29,7 +31,7 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }
 
-        [HttpPost(":hilo/destacar/:comentario")]
+        [HttpPost("hilo/{hilo}/destacar/{comentario}")]
         public async Task<IResult> Destacar(Guid hilo, Guid comentario)
         {
             var result = await sender.Send(new DestacarComentarioCommand(
@@ -43,9 +45,9 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }
 
-        [HttpPost("comentar-hilo/:hilo")]
+        [HttpPost("comentar-hilo/{hilo}")]
         public async Task<IResult> ComentarHilo(
-            [FromQuery] Guid hilo,
+            [FromRoute] Guid hilo,
             [FromForm] ComentarHiloRequest request
         )
         {

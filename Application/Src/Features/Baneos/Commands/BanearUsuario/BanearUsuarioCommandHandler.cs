@@ -7,6 +7,7 @@ using Domain.Baneos.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
 using SharedKernel;
+using SharedKernel.Abstractions;
 
 namespace Application.Bneos.Commands
 {
@@ -16,13 +17,14 @@ namespace Application.Bneos.Commands
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
-
-        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository)
+        private readonly IDateTimeProvider _timeProvider;
+        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider timeProvider)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _usuariosRepository = usuariosRepository;
             _baneosRepository = baneosRepository;
+            _timeProvider = timeProvider;
         }
 
         public async Task<Result> Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
@@ -31,10 +33,25 @@ namespace Application.Bneos.Commands
 
             if (usuario is not Anonimo anon) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
 
+            DateTime? finalizacion = null;
+
+            switch(request.Duracion) {
+                case DuracionBaneo.CincoMinutos:
+                    finalizacion = _timeProvider.UtcNow.AddMinutes(5);
+                    break;
+                case DuracionBaneo.UnaSemana:
+                    finalizacion = _timeProvider.UtcNow.AddDays(7);
+                    break;
+                case DuracionBaneo.UnMes:
+                    finalizacion = _timeProvider.UtcNow.AddMonths(1);
+                    break;
+            }
+
+
             Baneo baneo = new(
                 new(_context.UsuarioId),
                 anon.Id,
-                DateTime.MinValue,
+                finalizacion,
                 request.Mensaje
             );
 

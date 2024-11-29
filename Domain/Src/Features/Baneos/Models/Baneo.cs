@@ -24,12 +24,18 @@ namespace Domain.Baneos
         {
             Concluye = now;
         }
-
-       
     }
 
     public class BaneoId : EntityId
     {
         public BaneoId(Guid id) : base(id) { }
+    }
+
+    public enum DuracionBaneo
+    {
+        CincoMinutos,
+        UnaSemana,
+        UnMes,
+        Permanente
     }
 }

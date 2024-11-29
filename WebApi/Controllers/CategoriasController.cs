@@ -13,7 +13,7 @@ namespace WebApi.Controllers
         {
         }
 
-        [HttpGet("")]
+        [HttpGet("categorias")]
         public async Task<IResult> GetCategorias()
         {
             var result = await sender.Send(new GetCategoriasQuery());

@@ -19,6 +19,7 @@ namespace Infraestructure.Authentication
         {
             var claims = new Claim[]{
                 new ("UserId", usuario.Id.Value.ToString()),
+                new ("rango", usuario.Rango.ToString()),
                 new (JwtRegisteredClaimNames.Name, usuario.Username.Value),
 
             };
