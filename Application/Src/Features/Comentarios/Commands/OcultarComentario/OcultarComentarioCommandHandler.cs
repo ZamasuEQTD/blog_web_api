@@ -34,11 +34,11 @@ namespace Application.Comentarios.Commands
 
             if (comentario is null) return ComentariosFailures.NoEncontrado;
 
-            // RelacionDeComentario? relacion = await _comentariosRepository.GetRelacionDeComentario(new(_context.UsuarioId), new(request.Comentario));
+            // ComentarioInterracion? relacion = await _comentariosRepository.GetComentarioInterracion(new(_context.UsuarioId), new(request.Comentario));
 
             // if (relacion is null)
             // {
-            //     relacion = new RelacionDeComentario(
+            //     relacion = new ComentarioInterracion(
             //         comentario.Id,
             //         new(_context.UsuarioId)
             //     );

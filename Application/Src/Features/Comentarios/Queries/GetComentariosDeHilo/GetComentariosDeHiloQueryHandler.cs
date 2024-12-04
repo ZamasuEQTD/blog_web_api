@@ -31,16 +31,16 @@ namespace Application.Comentarios
                         comentario.dados,
                         comentario.tag_unico as tagunico,
                         comentario.color,
+                        comentario.autor_nombre as nombre,
+                        comentario.rango_corto as rangocorto,
+                        comentario.rango,
                         comentario.recibir_notificaciones as recibirnotificaciones,
                         NULL as destacado_at,  
-                        FALSE as destacado,
-                        autor.nombre,
-                        autor.rango,
-                        autor.rango_corto as rangocorto
+                        FALSE as destacado
                     FROM comentarios comentario
                     JOIN usuarios autor ON comentario.autor_id = autor.id
-                    /**Where**/
-                    ORDER BY createdat DESC, destacado_at DESC
+                    /**where**/
+                    ORDER BY destacado DESC, destacado_at DESC, createdat DESC 
                 ";
 
                 SqlBuilder comentarios_builder = new SqlBuilder()
@@ -50,16 +50,16 @@ namespace Application.Comentarios
                     comentarios_builder.Where(
                         $@"comentario.id NOT IN (
                             SELECT 
-                                interaccion.id
-                            FROM interacion_comentario
-                            WHERE interacion.usuario_id = '{_user.UsuarioId}' AND interaccion.oculto
+                                id
+                            FROM comentario_interacciones  
+                            WHERE  usuario_id = '{_user.UsuarioId}' AND   oculto
                         )"
                     );
                 }
 
                 string? destacados_sql = null;
 
-                if(request.UltimoComentario is null){
+                if(!request.UltimoComentario.HasValue){
                     destacados_sql = $@"
                     SELECT
                         comentario.id,
@@ -70,6 +70,9 @@ namespace Application.Comentarios
                         comentario.dados,
                         comentario.tag_unico as tagunico,
                         comentario.color,
+                        comentario.autor_nombre as nombre,
+                        comentario.rango_corto as rangocorto,
+                        comentario.rango,
                         comentario.recibir_notificaciones as recibirnotificaciones,
                         destacado.created_at as destacado_at,
                         TRUE as destacado
@@ -80,13 +83,16 @@ namespace Application.Comentarios
                     ";
                 } 
                 else {
-                    comentarios_builder.Where($"comentario.created_at < {request.UltimoComentario}");
+                    comentarios_builder.Where($"comentario.created_at < @ultimo_comentario", new { ultimo_comentario = request.UltimoComentario });
                 }
+
+                SqlBuilder.Template template = comentarios_builder.AddTemplate(sql);
 
                 IEnumerable<GetComentarioDBResponse> response = await connection.QueryAsync<GetComentarioDBResponse>(
                     (destacados_sql is not null? destacados_sql + "\nUNION\n": "")
                     + 
-                    sql 
+                    template.RawSql,
+                    template.Parameters
                 );
 
                 List<GetComentarioResponse> comentarios = response.Select((c)=> new GetComentarioResponse(){
@@ -97,6 +103,7 @@ namespace Application.Comentarios
                     Tag = c.Tag,
                     TagUnico = c.TagUnico,
                     Dados = c.Dados,
+                    Destacado = c.Destacado,
                     Color = c.Color,
                     RecibirNotificaciones = c.RecibirNotificaciones,
                     Autor =   new GetComentarioAutorResponse(){

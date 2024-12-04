@@ -43,17 +43,39 @@ namespace Domain.Notificaciones
 
     static public class NotificacionesFailures
     {
-        public readonly static Error NoTePertenece = new Error("");
+        public readonly static Error NoTePertenece = new Error("notificacion.no_te_pertenece", "No te pertenece esta notificación");
     }
 
-    public class HiloInteraccionNotificacion : Notificacion
+    public abstract class HiloInteraccionNotificacion : Notificacion
     {
-        public HiloId Hilo { get; private set; }
+        public HiloId HiloId { get; private set; }
         public ComentarioId ComentarioId { get; private set; }
-        public HiloInteraccionNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId) : base(usuarioId)
+        protected HiloInteraccionNotificacion() { }
+        public HiloInteraccionNotificacion(UsuarioId usuarioId, HiloId hiloId, ComentarioId comentarioId) : base(usuarioId)
         {
-            Hilo = hilo;
+            HiloId = hiloId;
             ComentarioId = comentarioId;
+        }
+    }
+
+    public class HiloComentadoNotificacion : HiloInteraccionNotificacion
+    {
+        private HiloComentadoNotificacion() { }
+        public HiloComentadoNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId) : base(usuarioId, hilo, comentarioId) { }
+    }
+
+    public class HiloSeguidoNotificacion : HiloInteraccionNotificacion
+    {
+        private HiloSeguidoNotificacion() { }
+        public HiloSeguidoNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId) : base(usuarioId, hilo, comentarioId) { }
+    }
+    public class ComentarioRespondidoNotificacion : HiloInteraccionNotificacion
+    {
+        public ComentarioId RespondidoId { get; private set; }
+        private ComentarioRespondidoNotificacion() { }
+        public ComentarioRespondidoNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId, ComentarioId respondidoId) : base(usuarioId, hilo, comentarioId)
+        {
+            RespondidoId = respondidoId;
         }
     }
 }

@@ -36,9 +36,6 @@ namespace Application.Hilos.Queries
                         hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
-                        hilo.autor_nombre AS autornombre,
-                        hilo.rango_corto AS rangocorto,
-                        hilo.rango AS rango,
                         hilo.encuesta_id AS encuesta,
                         hilo.dados,
                         hilo.id_unico_activado AS idunico,
@@ -62,8 +59,8 @@ namespace Application.Hilos.Queries
  
                 SqlBuilder portadas_builder = new SqlBuilder();
 
-                if(request.UltimoBump != DateTime.MinValue) {
-                    portadas_builder.Where($"portada.ultimo_bump < '{request.UltimoBump}'::timestamptz");
+                if(!request.UltimoBump.HasValue) {
+                    portadas_builder.Where($"hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
                 }
 
                 if(request.Titulo is not null){
@@ -75,13 +72,13 @@ namespace Application.Hilos.Queries
                 }
 
                 if(_user.IsLogged){
-                    portadas_builder.Where($@"´
+                    portadas_builder.Where($@"
                     hilo.id NOT IN (
                         SELECT
                             hilo_id
-                        FROM interaccion_hilo
+                        FROM hilo_interacciones
                         WHERE 
-                            usuario_id = {_user.UsuarioId}
+                            usuario_id = '{_user.UsuarioId}'
                             AND
                             oculto 
                     )");
@@ -97,9 +94,6 @@ namespace Application.Hilos.Queries
                         hilo.created_at as createdat,
                         hilo.ultimo_bump as ultimobump,
                         hilo.usuario_id AS autor,
-                        hilo.autor_nombre AS autornombre,
-                        hilo.rango_corto AS rangocorto,
-                        hilo.rango AS rango,
                         hilo.encuesta_id AS encuesta,
                         hilo.dados,
                         hilo.id_unico_activado AS idunico,
@@ -124,10 +118,10 @@ namespace Application.Hilos.Queries
                         +
                     template.RawSql;
                 
-                Console.Write(raw_sql);
                 
                 IEnumerable<PortadaResponse> response =  await connection.QueryAsync<PortadaResponse>(
-                raw_sql    
+                raw_sql,
+                template.Parameters
                 );
                 
                 List<GetPortadaHomeResponse> portadas = [];

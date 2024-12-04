@@ -26,6 +26,7 @@ namespace Persistence.Configurations
                 b.Property(c => c.Value).HasColumnName("status");
             });
 
+
             builder.Property(h => h.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
             builder.ComplexProperty(h => h.Titulo).Property(t => t.Value).HasColumnName("titulo");
             builder.ComplexProperty(h => h.Descripcion).Property(t => t.Value).HasColumnName("descripcion");
@@ -70,9 +71,11 @@ namespace Persistence.Configurations
             {
                 y.ToTable("stickies");
 
+                y.HasKey(s => s.Id);
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
-
+                
                 y.Property(c => c.Hilo).HasColumnName("hilo_id");
+
                 y.WithOwner().HasForeignKey(s => s.Hilo);
             });
 
@@ -91,7 +94,6 @@ namespace Persistence.Configurations
 
                 y.Property(c => c.CreatedAt).HasColumnName("created_at");
             });
-
 
             builder.OwnsMany(h => h.Denuncias, y =>
             {

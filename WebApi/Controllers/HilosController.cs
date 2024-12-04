@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 using WebApi.Infraestructure;
 using WebApi.Atributos;
+using Microsoft.AspNetCore.Authorization;
 namespace WebApi.Controllers
 {
 
@@ -14,6 +15,7 @@ namespace WebApi.Controllers
     {
         public HilosController(ISender sender) : base(sender) { }
 
+        [Authorize]
         [HttpPost("postear")]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {

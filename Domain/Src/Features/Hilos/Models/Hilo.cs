@@ -32,6 +32,8 @@ namespace Domain.Hilos
         public List<DenunciaDeHilo> Denuncias { get; private set; }
         public List<Comentario> Comentarios { get; private set; } = [];
         public List<ComentarioDestacado> ComentarioDestacados { get; private set; }
+        public List<HiloInteraccionNotificacion> Notificaciones { get; private set; } = [];
+        public List<HiloInteraccion> Interacciones { get; private set; } = [];
         public UsuarioId AutorId { get; private set; }
         public SubcategoriaId Categoria { get; private set; }
         public EncuestaId? Encuesta { get; private set; }
@@ -118,7 +120,7 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result Seguir(RelacionDeHilo relacion)
+        public Result Seguir(HiloInteraccion relacion)
         {
             if (!Activo) return HilosFailures.Inactivo;
 
@@ -127,7 +129,7 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result Ocultar(RelacionDeHilo relacion)
+        public Result Ocultar(HiloInteraccion relacion)
         {
             if (!Activo) return HilosFailures.Inactivo;
 
@@ -156,8 +158,10 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public void Comentar(Comentario comentario, DateTime now)
+        public Result Comentar(Comentario comentario, DateTime now)
         {
+            if (!Activo) return HilosFailures.Inactivo;
+
             Comentarios.Add(comentario);
 
             List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
@@ -169,9 +173,28 @@ namespace Domain.Hilos
                 if (respondido is not null)
                 {
                     respondido.AgregarRespuesta(comentario.Id);
+
+                    Notificaciones.Add(new ComentarioRespondidoNotificacion(
+                        respondido.AutorId,
+                        Id,
+                        comentario.Id,
+                        respondido.Id
+                    ));
                 }
             }
+
+            List<UsuarioId> seguidores = Interacciones.Where(i => i.Seguido).Select(i => i.UsuarioId).ToList();
+
+            foreach (UsuarioId seguidor in seguidores)
+            {
+                Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
+            }
+
+            this.Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
+
             this.UltimoBump = now;
+
+            return Result.Success();
         }
 
         public Result Eliminar(Comentario comentario)

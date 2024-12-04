@@ -1,6 +1,7 @@
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Media.ValueObjects;
+using Domain.Notificaciones;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -19,7 +20,7 @@ namespace Domain.Comentarios
         public Dados? Dados { get; private set; }
         public Colores Color { get; private set; }
         public List<DenunciaDeComentario> Denuncias { get; private set; } = [];
-        public List<RelacionDeComentario> Relaciones { get; private set; } = [];
+        public List<ComentarioInterracion> Relaciones { get; private set; } = [];
         public List<Respuesta> Respuestas { get; private set; } = [];
         public ComentarioStatus Status { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
@@ -71,7 +72,7 @@ namespace Domain.Comentarios
 
         public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
 
-        public Result Ocultar(Hilo hilo, RelacionDeComentario relacion)
+        public Result Ocultar(Hilo hilo, ComentarioInterracion relacion)
         {
             if (!hilo.Activo) return HilosFailures.Inactivo;
 

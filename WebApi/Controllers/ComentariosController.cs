@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Application.Comentarios;
 using Application.Comentarios.Commands;
 using Infraestructure.Media;
@@ -20,7 +21,7 @@ namespace WebApi.Controllers
 
         [HttpGet("hilo/{hilo}")]
         [ProducesResponseType(typeof(IEnumerable<GetComentarioResponse>), StatusCodes.Status200OK)]
-        public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery] DateTime? ultimoComentario)
+        public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery(Name = "ultimo_comentario")] DateTime? ultimoComentario)
         {
             var result = await sender.Send(new GetComentariosDeHiloQuery(){
                 Hilo = hilo,
@@ -70,8 +71,11 @@ namespace WebApi.Controllers
 
     public class ComentarHiloRequest
     {
+        [JsonPropertyName("texto")]
         public string Texto { get; set; }
+        [JsonPropertyName("embed_file")]
         public string? EmbedFile { get; set; }
+        [JsonPropertyName("file")]
         public IFormFile File { get; set; }
     }
 }

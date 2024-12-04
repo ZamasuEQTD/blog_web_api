@@ -8,6 +8,8 @@ using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
+using Domain.Notificaciones;
+using Domain.Notificaciones.Abstractions;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -18,16 +20,18 @@ namespace Application.Comentarios.Commands
     {
         private readonly IHilosRepository _hilosRepository;
         private readonly ICategoriasRepository _categoriasRepository;
+        private readonly INotificacionesRepository _notificacionesRepository;
         private readonly IUserContext _userContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _timeProvider;
         
-        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, IUserContext userContext, ICategoriasRepository categoriasRepository, IDateTimeProvider timeProvider)
+        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, IUserContext userContext, ICategoriasRepository categoriasRepository, INotificacionesRepository notificacionesRepository, IDateTimeProvider timeProvider)
         {
             _unitOfWork = unitOfWork;
             _hilosRepository = hilosRepository;
             _userContext = userContext;
             _categoriasRepository = categoriasRepository;
+            _notificacionesRepository = notificacionesRepository;
             _timeProvider = timeProvider;
         }
 
@@ -64,7 +68,9 @@ namespace Application.Comentarios.Commands
                 )
             );
 
-            hilo.Comentar(c, _timeProvider.UtcNow);
+            Result result = hilo.Comentar(c, _timeProvider.UtcNow);
+
+            if (result.IsFailure) return result.Error;
 
             _hilosRepository.Add(c);
 

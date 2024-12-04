@@ -28,7 +28,7 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado;
 
-            RelacionDeHilo? relacion = await _hilosRepository.GetRelacion(hilo.Id, new(_user.UsuarioId));
+            HiloInteraccion? relacion = await _hilosRepository.GetRelacion(hilo.Id, new(_user.UsuarioId));
 
             if (relacion is null)
             {

@@ -18,9 +18,9 @@ namespace Persistence.Repositories
 
         public void Add(Hilo hilo) => _context.Add(hilo);
         public void Add(Comentario comentario) => _context.Add(comentario);
-        public void Add(RelacionDeHilo relacion) => _context.Add(relacion);
-        public Task<Hilo?> GetHiloById(HiloId id) => _context.Hilos.FirstOrDefaultAsync(h => h.Id == id);
-        public Task<RelacionDeHilo?> GetRelacion(UsuarioId usuarioId) => _context.Relaciones.FirstOrDefaultAsync(r => r.UsuarioId == usuarioId);
-        public Task<RelacionDeHilo?> GetRelacion(HiloId hiloId, UsuarioId usuarioId) => _context.Relaciones.FirstOrDefaultAsync(r => r.HiloId == hiloId && r.UsuarioId == usuarioId);
+        public void Add(HiloInteraccion relacion) => _context.Add(relacion);
+        public Task<Hilo?> GetHiloById(HiloId id) => _context.Hilos.Include(h => h.Notificaciones).Include(h=> h.Comentarios).FirstOrDefaultAsync(h => h.Id == id);
+        public Task<HiloInteraccion?> GetRelacion(UsuarioId usuarioId) => _context.Relaciones.FirstOrDefaultAsync(r => r.UsuarioId == usuarioId);
+        public Task<HiloInteraccion?> GetRelacion(HiloId hiloId, UsuarioId usuarioId) => _context.Relaciones.FirstOrDefaultAsync(r => r.HiloId == hiloId && r.UsuarioId == usuarioId);
     }
 }

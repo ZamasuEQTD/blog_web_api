@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Ssssklksixkty : Migration
+    public partial class ssFifthMigrssations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,6 +63,7 @@ namespace Persistence.Migrations
                     username = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     rango = table.Column<string>(type: "text", nullable: false),
+                    NombreModerador = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -191,6 +192,9 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     recibir_notificaciones = table.Column<bool>(type: "boolean", nullable: false),
+                    autor_nombre = table.Column<string>(type: "text", nullable: false),
+                    rango = table.Column<string>(type: "text", nullable: false),
+                    rango_corto = table.Column<string>(type: "text", nullable: false),
                     ultimo_bump = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
                     dados = table.Column<bool>(type: "boolean", nullable: false),
@@ -308,7 +312,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "relaciones_de_hilo",
+                name: "hilo_interacciones",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -321,15 +325,15 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_relaciones_de_hilo", x => x.id);
+                    table.PrimaryKey("PK_hilo_interacciones", x => x.id);
                     table.ForeignKey(
-                        name: "FK_relaciones_de_hilo_hilos_hilo_id",
+                        name: "FK_hilo_interacciones_hilos_hilo_id",
                         column: x => x.hilo_id,
                         principalTable: "hilos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_relaciones_de_hilo_usuarios_usuario_id",
+                        name: "FK_hilo_interacciones_usuarios_usuario_id",
                         column: x => x.usuario_id,
                         principalTable: "usuarios",
                         principalColumn: "id",
@@ -340,17 +344,44 @@ namespace Persistence.Migrations
                 name: "stickies",
                 columns: table => new
                 {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    id = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_stickies", x => x.hilo_id);
+                    table.PrimaryKey("PK_stickies", x => x.id);
                     table.ForeignKey(
                         name: "FK_stickies_hilos_hilo_id",
                         column: x => x.hilo_id,
                         principalTable: "hilos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "comentario_interacciones",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    comentario_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    usuario_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    oculto = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_comentario_interacciones", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_comentario_interacciones_comentarios_comentario_id",
+                        column: x => x.comentario_id,
+                        principalTable: "comentarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_comentario_interacciones_usuarios_usuario_id",
+                        column: x => x.usuario_id,
+                        principalTable: "usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -414,11 +445,12 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    notificado_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    usuario_notificado_id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    tipo_de_notificacion = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    tipo_de_interaccion = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: true),
                     comentario_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    respondido_id = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -431,41 +463,20 @@ namespace Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_notificaciones_comentarios_respondido_id",
+                        column: x => x.respondido_id,
+                        principalTable: "comentarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_notificaciones_hilos_hilo_id",
                         column: x => x.hilo_id,
                         principalTable: "hilos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_notificaciones_usuarios_notificado_id",
-                        column: x => x.notificado_id,
-                        principalTable: "usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "relaciones_de_comentario",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    comentario_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    usuario_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    oculto = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_relaciones_de_comentario", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_relaciones_de_comentario_comentarios_comentario_id",
-                        column: x => x.comentario_id,
-                        principalTable: "comentarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_relaciones_de_comentario_usuarios_usuario_id",
-                        column: x => x.usuario_id,
+                        name: "FK_notificaciones_usuarios_usuario_notificado_id",
+                        column: x => x.usuario_notificado_id,
                         principalTable: "usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -506,6 +517,16 @@ namespace Persistence.Migrations
                 name: "IX_baneos_usuario_baneado_id",
                 table: "baneos",
                 column: "usuario_baneado_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentario_interacciones_comentario_id",
+                table: "comentario_interacciones",
+                column: "comentario_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_comentario_interacciones_usuario_id",
+                table: "comentario_interacciones",
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_comentarios_autor_id",
@@ -558,6 +579,16 @@ namespace Persistence.Migrations
                 column: "hilo_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_hilo_interacciones_hilo_id",
+                table: "hilo_interacciones",
+                column: "hilo_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_hilo_interacciones_usuario_id",
+                table: "hilo_interacciones",
+                column: "usuario_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_hilos_encuesta_id",
                 table: "hilos",
                 column: "encuesta_id",
@@ -600,29 +631,14 @@ namespace Persistence.Migrations
                 column: "hilo_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notificaciones_notificado_id",
+                name: "IX_notificaciones_respondido_id",
                 table: "notificaciones",
-                column: "notificado_id");
+                column: "respondido_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_relaciones_de_comentario_comentario_id",
-                table: "relaciones_de_comentario",
-                column: "comentario_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_relaciones_de_comentario_usuario_id",
-                table: "relaciones_de_comentario",
-                column: "usuario_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_relaciones_de_hilo_hilo_id",
-                table: "relaciones_de_hilo",
-                column: "hilo_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_relaciones_de_hilo_usuario_id",
-                table: "relaciones_de_hilo",
-                column: "usuario_id");
+                name: "IX_notificaciones_usuario_notificado_id",
+                table: "notificaciones",
+                column: "usuario_notificado_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_respuestas_encuesta_id",
@@ -638,6 +654,12 @@ namespace Persistence.Migrations
                 name: "IX_respuestas_comentarios_respuesta_id",
                 table: "respuestas_comentarios",
                 column: "respuesta_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_stickies_hilo_id",
+                table: "stickies",
+                column: "hilo_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_subcategorias_categoria_id",
@@ -662,6 +684,9 @@ namespace Persistence.Migrations
                 name: "baneos");
 
             migrationBuilder.DropTable(
+                name: "comentario_interacciones");
+
+            migrationBuilder.DropTable(
                 name: "comentarios_destacados");
 
             migrationBuilder.DropTable(
@@ -671,13 +696,10 @@ namespace Persistence.Migrations
                 name: "denuncias_de_hilo");
 
             migrationBuilder.DropTable(
+                name: "hilo_interacciones");
+
+            migrationBuilder.DropTable(
                 name: "notificaciones");
-
-            migrationBuilder.DropTable(
-                name: "relaciones_de_comentario");
-
-            migrationBuilder.DropTable(
-                name: "relaciones_de_hilo");
 
             migrationBuilder.DropTable(
                 name: "respuestas");

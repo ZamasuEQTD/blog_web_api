@@ -24,6 +24,8 @@ namespace Application.Comentarios
         public string Texto { get; set; }
         public string Tag { get; set; }
         public string Color {get; set;}
+        public List<string> Taggueos { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
         [JsonPropertyName("tag_unico")]
         public string? TagUnico { get; set; }
         public string? Dados { get; set; }

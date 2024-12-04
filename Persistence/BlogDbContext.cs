@@ -22,7 +22,7 @@ namespace Persistence
 
         public DbSet<Baneo> Baneos { get; set; }
         public DbSet<Encuesta> Encuestas { get; set; }
-        public DbSet<RelacionDeHilo> Relaciones { get; set; }
+        public DbSet<HiloInteraccion> Relaciones { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<MediaReference> MediaReferences { get; set; }
         public DbSet<HashedMedia> Medias { get; set; }

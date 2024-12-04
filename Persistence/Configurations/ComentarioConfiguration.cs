@@ -91,7 +91,7 @@ namespace Persistence.Configurations
 
             builder.OwnsMany(c => c.Relaciones, y =>
             {
-                y.ToTable("relaciones_de_comentario");
+                y.ToTable("comentario_interacciones");
 
                 y.HasKey(c => c.Id);
                 y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");

@@ -30,10 +30,12 @@ namespace WebApi.Atributos
                         baneo.mensaje
                     FROM baneos baneo
                     WHERE baneo.usuario_baneado_id = '{_user.UsuarioId}'
-                    AND (baneo.concluye IS NULL OR baneo.concluye > '{_time.UtcNow}'::timestamptz)
+                    AND (baneo.concluye IS NULL OR baneo.concluye > @now)
                 ";
 
-                GetBaneoResponse? baneo = await connection.QueryFirstOrDefaultAsync<GetBaneoResponse?>(sql);
+                Console.WriteLine("sql es: " + sql);
+
+                GetBaneoResponse? baneo = await connection.QueryFirstOrDefaultAsync<GetBaneoResponse?>(sql, new { now = _time.UtcNow });
 
                 if(baneo is not null){
                     context.HttpContext.Response.StatusCode = StatusCodes.Status203NonAuthoritative;

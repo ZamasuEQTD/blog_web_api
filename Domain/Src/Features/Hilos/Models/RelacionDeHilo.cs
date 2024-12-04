@@ -4,7 +4,7 @@ using SharedKernel.Abstractions;
 
 namespace Domain.Hilos
 {
-    public class RelacionDeHilo : Entity<RelacionId>
+    public class HiloInteraccion : Entity<RelacionId>
     {
         public HiloId HiloId { get; private set; }
         public UsuarioId UsuarioId { get; private set; }
@@ -12,9 +12,9 @@ namespace Domain.Hilos
         public bool Favorito { get; private set; }
         public bool Oculto { get; private set; }
 
-        private RelacionDeHilo() { }
+        private HiloInteraccion() { }
 
-        public RelacionDeHilo(HiloId hiloId, UsuarioId usuarioId)
+        public HiloInteraccion(HiloId hiloId, UsuarioId usuarioId)
         {
             this.Id = new(Guid.NewGuid());
             this.HiloId = hiloId;
