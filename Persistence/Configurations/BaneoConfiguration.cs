@@ -28,6 +28,8 @@ namespace Persistence.Configurations
             builder.Property(b => b.Concluye).HasColumnName("concluye_en");
 
             builder.Property(b => b.Mensaje).HasColumnName("mensaje");
+
+            builder.Property(b => b.Razon).HasColumnName("razon");
         }
     }
 }

@@ -5,6 +5,7 @@ using WebApi.Extensions;
 
 namespace WebApi.Controllers
 {
+    [Route("api/auth")]
     public class AuthController : Controller
     {
         private readonly ISender _sender;
@@ -14,7 +15,7 @@ namespace WebApi.Controllers
             _sender = sender;
         }
 
-        [HttpPost("api/auth/login")]
+        [HttpPost("login")]
         public async Task<IResult> Login([FromBody] LoginRequest request)
         {
             var command = new LoginCommand(
@@ -31,7 +32,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPost("api/auth/registro")]
+        [HttpPost("registro")]
         public async Task<IResult> Registro([FromBody] RegistroRequest request)
         {
             var command = new RegistroCommand(

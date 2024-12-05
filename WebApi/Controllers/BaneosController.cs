@@ -6,6 +6,7 @@ using WebApi.Extensions;
 
 namespace WebApi.Controllers    
 {
+    [Route("api/baneos")]
     public class BaneosController : Controller
     {
         private readonly ISender _sender;
@@ -16,7 +17,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPost("api/baneos/banear")]
+        [HttpPost("banear")]
         public async Task<IResult> BanearUsuario([FromBody] BanearUsuarioRequest request)
         {
             var command = new BanearUsuarioCommand(){
@@ -34,7 +35,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpDelete("api/baneos/desbanear/usuario/{usuario}")]
+        [HttpDelete("desbanear/usuario/{usuario}")]
         public async Task<IResult> DesbanearUsuario(Guid usuario)  
         {
             var command = new DesbanearUsuarioCommand(){

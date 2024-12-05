@@ -34,6 +34,8 @@ namespace Domain.Notificaciones
     public class NotificacionStatus : ValueObject
     {
         public string Value { get; private set; }
+
+        private NotificacionStatus() { }
         public NotificacionStatus(string status)
         {
             this.Value = status;

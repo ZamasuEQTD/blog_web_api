@@ -35,24 +35,14 @@ namespace Application.Bneos.Commands
 
             DateTime? finalizacion = null;
 
-            switch(request.Duracion) {
-                case DuracionBaneo.CincoMinutos:
-                    finalizacion = _timeProvider.UtcNow.AddMinutes(5);
-                    break;
-                case DuracionBaneo.UnaSemana:
-                    finalizacion = _timeProvider.UtcNow.AddDays(7);
-                    break;
-                case DuracionBaneo.UnMes:
-                    finalizacion = _timeProvider.UtcNow.AddMonths(1);
-                    break;
-            }
-
+            if(request.Duracion is not null) finalizacion = request.Duracion.Value.ToDuracion();
 
             Baneo baneo = new(
                 new(_context.UsuarioId),
                 anon.Id,
                 finalizacion,
-                request.Mensaje
+                request.Mensaje,
+                request.Razon
             );
 
             _baneosRepository.Add(baneo);
@@ -60,6 +50,18 @@ namespace Application.Bneos.Commands
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
+        }
+    }
+
+    static class BaneoExtensions {
+        public static DateTime ToDuracion(this DuracionBaneo duracion) {
+            DateTime time = new DateTime();
+            return duracion switch {
+                DuracionBaneo.CincoMinutos => time.AddMinutes(5),
+                DuracionBaneo.UnaSemana => time.AddDays(7),
+                DuracionBaneo.UnMes => time.AddMonths(1),
+                _ => throw new ArgumentException("Duracion de baneo no soportada")
+            };
         }
     }
 }

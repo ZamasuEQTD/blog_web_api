@@ -1,4 +1,5 @@
 using Application.Notificaciones.Commands;
+using Application.Notificaciones.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,9 @@ using WebApi.Infraestructure;
 
 namespace WebApi.Controllers
 {
+
+
+    [Route("api/notificaciones")]
     [Authorize]
     public class NotificacionesController :  Controller
     {
@@ -43,10 +47,16 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }       
 
+
+        [Authorize]
         [HttpGet()]
         public async Task<IResult> GetNotificaciones(){
-        return  Results.Ok();
-
+            var result = await _sender.Send(new GetNotificacionesQuery());
+           
+             return result.IsSuccess ?
+            Results.Ok(result)
+                :
+            result.HandleFailure();
         }
     }
 }

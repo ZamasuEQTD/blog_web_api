@@ -14,8 +14,10 @@ class GetRegistroUsuarioQueryHandler : IQueryHandler<GetRegistroUsuarioQuery, Ge
         SELECT
             usuario.id,
             usuario.username as nombre,
-            usuario.registrado_en as registradoen,
+            usuario.created_at as registradoen,
+            baneo.id,
             baneo.concluye_en as concluye,
+            baneo.razon,
             moderador.username as moderador,
             baneo.mensaje
         FROM usuarios usuario 

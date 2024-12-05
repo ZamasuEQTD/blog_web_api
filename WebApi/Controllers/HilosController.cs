@@ -5,12 +5,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 using WebApi.Infraestructure;
-using WebApi.Atributos;
 using Microsoft.AspNetCore.Authorization;
 namespace WebApi.Controllers
 {
 
-    [Route("hilos")]
+    [Route("api/hilos")]
     public class HilosController : ApiController
     {
         public HilosController(ISender sender) : base(sender) { }

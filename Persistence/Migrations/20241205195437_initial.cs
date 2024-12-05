@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class ssFifthMigrssations : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,7 @@ namespace Persistence.Migrations
                     password = table.Column<string>(type: "text", nullable: false),
                     rango = table.Column<string>(type: "text", nullable: false),
                     NombreModerador = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,9 +138,9 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     moderador_id = table.Column<Guid>(type: "uuid", nullable: false),
                     usuario_baneado_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    concluye = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    concluye_en = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     mensaje = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -446,12 +446,12 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     usuario_notificado_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
                     tipo_de_interaccion = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: true),
                     comentario_id = table.Column<Guid>(type: "uuid", nullable: true),
                     respondido_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

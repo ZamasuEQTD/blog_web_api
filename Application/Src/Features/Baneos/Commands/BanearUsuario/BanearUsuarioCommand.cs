@@ -7,6 +7,7 @@ namespace Application.Bneos.Commands
     {
         public Guid UsuarioId { get; set; }
         public string? Mensaje { get; set; }
+        public Razon Razon { get; set; }
         public DuracionBaneo? Duracion   { get; set; }
-    }   
+    }
 }

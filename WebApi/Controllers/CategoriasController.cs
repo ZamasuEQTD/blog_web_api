@@ -7,13 +7,14 @@ using WebApi.Infraestructure;
 
 namespace WebApi.Controllers
 {
+    [Route("api/categorias")]
     public class CategoriasController : ApiController
     {
         public CategoriasController(ISender sender) : base(sender)
         {
         }
 
-        [HttpGet("categorias")]
+        [HttpGet( )]
         public async Task<IResult> GetCategorias()
         {
             var result = await sender.Send(new GetCategoriasQuery());

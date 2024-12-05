@@ -13,8 +13,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20241204145016_ssFifthMigrssations")]
-    partial class ssFifthMigrssations
+    [Migration("20241205195437_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,10 +34,11 @@ namespace Persistence.Migrations
 
                     b.Property<DateTime?>("Concluye")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("concluye");
+                        .HasColumnName("concluye_en");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Mensaje")
                         .HasColumnType("text")
@@ -360,14 +361,12 @@ namespace Persistence.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid>("NotificadoId")
                         .HasColumnType("uuid")
                         .HasColumnName("usuario_notificado_id");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
 
                     b.Property<string>("tipo_de_interaccion")
                         .IsRequired()
@@ -392,7 +391,8 @@ namespace Persistence.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("HashedPassword")
                         .IsRequired()
@@ -1140,6 +1140,27 @@ namespace Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("NotificadoId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Notificaciones.NotificacionStatus", "Status", b1 =>
+                        {
+                            b1.Property<Guid>("NotificacionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("status");
+
+                            b1.HasKey("NotificacionId");
+
+                            b1.ToTable("notificaciones");
+
+                            b1.WithOwner()
+                                .HasForeignKey("NotificacionId");
+                        });
+
+                    b.Navigation("Status")
                         .IsRequired();
                 });
 
