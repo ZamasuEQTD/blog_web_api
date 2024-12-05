@@ -28,14 +28,26 @@ namespace Domain.Notificaciones
             return Result.Success();
         }
 
-        public enum NotificacionStatus
+        public bool EsUsuarioNotificado(UsuarioId usuarioId) => this.NotificadoId == usuarioId;
+    }   
+
+    public class NotificacionStatus : ValueObject
+    {
+        public string Value { get; private set; }
+        public NotificacionStatus(string status)
         {
-            Leida,
-            SinLeer
+            this.Value = status;
         }
 
-        public bool EsUsuarioNotificado(UsuarioId usuarioId) => this.NotificadoId == usuarioId;
+        protected override IEnumerable<object> GetAtomicValues()
+        {
+            yield return Value;
+        }
+
+        public static readonly NotificacionStatus Leida = new("Leida");
+        public static readonly NotificacionStatus SinLeer = new("SinLeer");
     }
+
     public class NotificacionId : EntityId
     {
         public NotificacionId(Guid id) : base(id) { }

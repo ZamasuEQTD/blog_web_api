@@ -16,7 +16,16 @@ namespace Persistence.Configuration
 
             builder.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
+            builder.Property(r => r.CreatedAt).HasColumnName("created_at");
+
+            builder.OwnsOne(c => c.Status, b =>
+            {
+                b.Property(c => c.Value).HasColumnName("status");
+            });
+
+
             builder.Property(r => r.NotificadoId).HasColumnName("usuario_notificado_id");
+
             builder.HasOne<Usuario>().WithMany().HasForeignKey(r => r.NotificadoId);
 
             builder
@@ -36,9 +45,8 @@ namespace Persistence.Configuration
             builder.HasOne<Hilo>().WithMany(h=> h.Notificaciones).HasForeignKey(r => r.HiloId);
 
             builder.Property(r => r.ComentarioId).HasColumnName("comentario_id");
-            builder.HasOne<Comentario>().WithMany().HasForeignKey(r => r.ComentarioId);
-
             
+            builder.HasOne<Comentario>().WithMany().HasForeignKey(r => r.ComentarioId);
         }
     }
 

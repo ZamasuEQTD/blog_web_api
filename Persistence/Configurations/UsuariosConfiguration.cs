@@ -14,10 +14,10 @@ namespace Persistence.EntityConfigurations
 
             builder.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
+            builder.Property(u => u.CreatedAt).HasColumnName("created_at");
+
             builder.Property(u => u.Username).HasConversion(u => u.Value, value => Username.Create(value).Value).HasColumnName("username");
             builder.Property(u => u.HashedPassword).HasColumnName("password");
-
-            builder.HasMany<Notificacion>().WithOne().HasForeignKey(n => n.NotificadoId);
 
             builder.Property(u => u.Rango).HasConversion(r => r.Nombre, n => Rango.FromNombre(n)).HasColumnName("rango");
             

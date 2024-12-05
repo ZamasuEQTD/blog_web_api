@@ -9,7 +9,7 @@ using SharedKernel;
 
 namespace Application.Baneos.Queries
 {
-    public class GetBaneoActivoQueryHandler : IQueryHandler<GetBaneoActivoQuery, BaneoDeUsuarioDto?>
+    public class GetBaneoActivoQueryHandler : IQueryHandler<GetBaneoActivoQuery, GetBaneoResponse?>
     {
         private readonly IDBConnectionFactory _connection;
         private readonly IUserContext _user;
@@ -19,13 +19,13 @@ namespace Application.Baneos.Queries
             _user = user;
         }
 
-        public async Task<Result<BaneoDeUsuarioDto?>> Handle(GetBaneoActivoQuery request, CancellationToken cancellationToken)
+        public async Task<Result<GetBaneoResponse?>> Handle(GetBaneoActivoQuery request, CancellationToken cancellationToken)
         {
             IDbConnection connection = _connection.CreateConnection();
 
             string sql = "";
 
-            var baneo = await connection.QuerySingleAsync<BaneoDeUsuarioDto>(sql, new
+            var baneo = await connection.QuerySingleAsync<GetBaneoResponse>(sql, new
             {
                 _user.UsuarioId
             });

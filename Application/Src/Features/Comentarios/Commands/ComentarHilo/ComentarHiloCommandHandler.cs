@@ -8,7 +8,6 @@ using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
-using Domain.Notificaciones;
 using Domain.Notificaciones.Abstractions;
 using Domain.Usuarios;
 using SharedKernel;
@@ -20,7 +19,6 @@ namespace Application.Comentarios.Commands
     {
         private readonly IHilosRepository _hilosRepository;
         private readonly ICategoriasRepository _categoriasRepository;
-        private readonly INotificacionesRepository _notificacionesRepository;
         private readonly IUserContext _userContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _timeProvider;
@@ -31,7 +29,6 @@ namespace Application.Comentarios.Commands
             _hilosRepository = hilosRepository;
             _userContext = userContext;
             _categoriasRepository = categoriasRepository;
-            _notificacionesRepository = notificacionesRepository;
             _timeProvider = timeProvider;
         }
 

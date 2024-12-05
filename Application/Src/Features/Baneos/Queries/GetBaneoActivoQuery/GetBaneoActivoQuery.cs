@@ -2,9 +2,9 @@ using Application.Abstractions.Messaging;
 
 namespace Application.Baneos.Queries
 {
-    public class GetBaneoActivoQuery : IQuery<BaneoDeUsuarioDto?> { }
+    public class GetBaneoActivoQuery : IQuery<GetBaneoResponse?> { }
 
-    public class BaneoDeUsuarioDto
+    public class GetBaneoResponse
     {
         public required Guid Id { get; set; }
         public required string Moderador { get; set; }

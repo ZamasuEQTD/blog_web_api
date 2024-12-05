@@ -15,6 +15,6 @@ namespace Application.Moderacion
         public string Nombre { get; set; }
         [JsonPropertyName("registrado_en")]
         public DateTime RegistradoEn { get; set; }
-        public BaneoDeUsuarioDto? UltimoBaneo { get; set; }
+        public GetBaneoResponse? UltimoBaneo { get; set; }
     }
 }
