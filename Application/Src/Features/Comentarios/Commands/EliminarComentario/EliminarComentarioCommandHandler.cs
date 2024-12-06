@@ -36,9 +36,7 @@ namespace Application.Comentarios.Commands
 
             if (hilo.Id != comentario.Hilo) return ComentariosFailures.NoEncontrado;
 
-            Result result = hilo.Eliminar(
-                comentario
-            );
+            var result = comentario.Eliminar(hilo);
 
             if (result.IsFailure) return result.Error;
 

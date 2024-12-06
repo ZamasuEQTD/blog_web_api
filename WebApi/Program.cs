@@ -1,8 +1,6 @@
 using Application.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text.Json.Serialization;
-using SharedKernel;
-using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Application.Behaviors;
 using FluentValidation;
@@ -11,6 +9,7 @@ using WebApi.Extensions;
 using WebApi.Configuration;
 using Infraestructure.Configuration;
 using Microsoft.Extensions.FileProviders;
+using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +77,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.Run();
 

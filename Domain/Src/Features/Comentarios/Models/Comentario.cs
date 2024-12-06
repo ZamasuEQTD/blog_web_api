@@ -41,14 +41,25 @@ namespace Domain.Comentarios
             Color = color;
         }
 
-        internal void Eliminar()
+        public Result Eliminar(Hilo hilo)
         {
+            if (!hilo.Activo) return HilosFailures.Inactivo;
+
+            if (!Activo) return ComentariosFailures.Inactivo;
+
+            if (hilo.EstaDestacado(Id))
+            {
+                hilo.DejarDeDestacarComentario(Id);
+            }
+
             foreach (var denuncia in Denuncias)
             {
                 denuncia.Desestimar();
             }
 
             Status = ComentarioStatus.Eliminado;
+
+            return Result.Success();
         }
 
         public void AgregarRespuesta(ComentarioId respuesta)
@@ -72,11 +83,19 @@ namespace Domain.Comentarios
 
         public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
 
-        public Result Ocultar(Hilo hilo, ComentarioInterracion relacion)
+        public Result Ocultar(Hilo hilo, UsuarioId usuarioId)
         {
             if (!hilo.Activo) return HilosFailures.Inactivo;
 
             if (!Activo) return ComentariosFailures.Inactivo;
+
+            ComentarioInterracion? relacion = Relaciones.FirstOrDefault(r => r.UsuarioId == usuarioId);
+
+            if (relacion is null)
+            {
+                relacion = new ComentarioInterracion(Id, usuarioId);
+                Relaciones.Add(relacion);
+            }
 
             relacion.Ocultar();
 

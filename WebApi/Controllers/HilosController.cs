@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 using WebApi.Infraestructure;
 using Microsoft.AspNetCore.Authorization;
+using Application.Hilos.Commands.PonerHiloEnFavorito;
 namespace WebApi.Controllers
 {
 
@@ -83,7 +84,7 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPost("seguir/{hilo}")]
+        [HttpPost("colecciones/seguir/{hilo}")]
         public async Task<IResult> Seguir(Guid hilo)
         {
             var result = await sender.Send(
@@ -92,6 +93,34 @@ namespace WebApi.Controllers
                     Hilo = hilo
                 }
             );
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+        [HttpPost("colecciones/ocultar/{hilo}")]
+        public async Task<IResult> Ocultar(Guid hilo)
+        {
+            var result = await sender.Send(new OcultarHiloCommand()
+            {
+                Hilo = hilo
+            });
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+        [HttpPost("colecciones/favoritos/{hilo}")]
+        public async Task<IResult> PonerEnFavoritos(Guid hilo)
+        {
+            var result = await sender.Send(new PonerHiloEnFavoritoCommand()
+            {
+                Hilo = hilo
+            });
 
             return result.IsSuccess ?
                 Results.Ok(result)

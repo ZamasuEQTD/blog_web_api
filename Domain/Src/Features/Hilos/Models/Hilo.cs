@@ -6,7 +6,6 @@ using Domain.Encuestas;
 using Domain.Media;
 using Domain.Hilos.Events;
 using Domain.Hilos.ValueObjects;
-using Domain.Media;
 using Domain.Notificaciones;
 using Domain.Stickies;
 using Domain.Usuarios;
@@ -75,7 +74,7 @@ namespace Domain.Hilos
         {
             if (Eliminado) return HilosFailures.YaEliminado;
 
-            if (TieneStickyActivo( ))
+            if (TieneStickyActivo())
             {
                 Sticky = null;
             }
@@ -120,20 +119,53 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
-        public Result Seguir(HiloInteraccion relacion)
+        public Result Seguir(UsuarioId usuarioId)
         {
             if (!Activo) return HilosFailures.Inactivo;
+
+            HiloInteraccion? relacion = Interacciones.FirstOrDefault(i => i.UsuarioId == usuarioId);
+
+            if(relacion is null) {
+                relacion = new HiloInteraccion(Id, usuarioId);
+
+                Interacciones.Add(relacion);
+            };
 
             relacion.Seguir();
 
             return Result.Success();
         }
 
-        public Result Ocultar(HiloInteraccion relacion)
+        public Result Ocultar(UsuarioId usuarioId)
         {
             if (!Activo) return HilosFailures.Inactivo;
 
+            HiloInteraccion? relacion = Interacciones.FirstOrDefault(i => i.UsuarioId == usuarioId);
+
+            if(relacion is null) {
+                relacion = new HiloInteraccion(Id, usuarioId);
+
+                Interacciones.Add(relacion);
+            };
+
             relacion.Ocultar();
+
+            return Result.Success();
+        }
+
+        public Result PonerEnFavoritos(UsuarioId usuarioId)
+        {
+            if (!Activo) return HilosFailures.Inactivo;
+
+            HiloInteraccion? relacion = Interacciones.FirstOrDefault(i => i.UsuarioId == usuarioId);
+
+            if(relacion is null) {
+                relacion = new HiloInteraccion(Id, usuarioId);
+
+                Interacciones.Add(relacion);
+            };
+
+            relacion.PonerEnFavoritos();
 
             return Result.Success();
         }
@@ -166,6 +198,11 @@ namespace Domain.Hilos
 
             List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
 
+            if(AutorId != comentario.AutorId)
+            {
+                Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
+            }
+
             foreach (var tag in tags)
             {
                 Comentario? respondido = Comentarios.FirstOrDefault(c => c.Tag == Tag.Create(tag).Value);
@@ -174,12 +211,15 @@ namespace Domain.Hilos
                 {
                     respondido.AgregarRespuesta(comentario.Id);
 
-                    Notificaciones.Add(new ComentarioRespondidoNotificacion(
-                        respondido.AutorId,
-                        Id,
-                        comentario.Id,
-                        respondido.Id
-                    ));
+                    if(respondido.AutorId != comentario.AutorId)
+                    {
+                        Notificaciones.Add(new ComentarioRespondidoNotificacion(
+                            respondido.AutorId,
+                            Id,
+                            comentario.Id,
+                            respondido.Id
+                        ));
+                    }
                 }
             }
 
@@ -190,29 +230,19 @@ namespace Domain.Hilos
                 Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
             }
 
-            this.Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
 
             this.UltimoBump = now;
 
             return Result.Success();
         }
 
-        public Result Eliminar(Comentario comentario)
+        public void ModificarSubcategoria(SubcategoriaId subcategoriaId)
         {
-            if (!Activo) return HilosFailures.Inactivo;
-
-            if (EstaDestacado(comentario.Id))
-            {
-                DejarDeDestacarComentario(comentario.Id);
-            }
-
-            comentario.Eliminar();
-
-            return Result.Success();
+            Categoria = subcategoriaId;
         }
 
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
-        private void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
+        public void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
         public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
         bool HaAlcandoMaximaCantidadDeDestacados => ComentarioDestacados.Count == 5;
         public bool EstaDestacado(ComentarioId comentarioId) => ComentarioDestacados.Any(c => c.ComentarioId == comentarioId);

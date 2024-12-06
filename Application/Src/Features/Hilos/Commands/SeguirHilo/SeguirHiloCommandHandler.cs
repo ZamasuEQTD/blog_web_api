@@ -28,19 +28,9 @@ namespace Application.Hilos.Commands
 
             if (hilo is null) return HilosFailures.NoEncontrado;
 
-            HiloInteraccion? relacion = await _hilosRepository.GetRelacion(hilo.Id, new(_user.UsuarioId));
+            Result result = hilo.Seguir(new UsuarioId(_user.UsuarioId));
 
-            if (relacion is null)
-            {
-                relacion = new(
-                    hilo.Id,
-                    new UsuarioId(_user.UsuarioId)
-                );
-            }
-
-            Result result = hilo.Seguir(relacion);
-
-            if (result.IsFailure) return result;
+            if (result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -139,6 +139,7 @@ namespace Persistence.Migrations
                     moderador_id = table.Column<Guid>(type: "uuid", nullable: false),
                     usuario_baneado_id = table.Column<Guid>(type: "uuid", nullable: false),
                     concluye_en = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    razon = table.Column<int>(type: "integer", nullable: false),
                     mensaje = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

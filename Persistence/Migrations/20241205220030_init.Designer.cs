@@ -13,8 +13,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20241205195437_initial")]
-    partial class initial
+    [Migration("20241205220030_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,10 @@ namespace Persistence.Migrations
                     b.Property<Guid>("ModeradorId")
                         .HasColumnType("uuid")
                         .HasColumnName("moderador_id");
+
+                    b.Property<int>("Razon")
+                        .HasColumnType("integer")
+                        .HasColumnName("razon");
 
                     b.Property<Guid>("UsuarioBaneadoId")
                         .HasColumnType("uuid")

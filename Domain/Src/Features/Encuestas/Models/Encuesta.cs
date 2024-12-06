@@ -24,9 +24,9 @@ namespace Domain.Encuestas
 
         public Result Votar(UsuarioId usuarioId, RespuestaId respuestaId)
         {
-            if (HaVotado(usuarioId)) return EncuestaFailures.YaHaVotado;
-
             if (!ContieneRespuesta(respuestaId)) return EncuestaFailures.RespuestaInexistente;
+
+            if (HaVotado(usuarioId)) return EncuestaFailures.YaHaVotado;
 
             Votos.Add(new Voto(
                 usuarioId,

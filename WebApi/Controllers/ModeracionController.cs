@@ -25,6 +25,17 @@ public class ModeracionController : ApiController
         return result.IsSuccess ? Results.Ok(result) : Results.NotFound();
     }
 
+
+    [HttpGet("registro/comentarios/usuario/{id}")]
+    [ProducesResponseType(typeof(IEnumerable<GetRegistroDeComentarioResponse>), StatusCodes.Status200OK)]
+    public async Task<IResult> GetRegistroComentariosUsuario(Guid id,[FromQuery(Name ="ultimo_comentario")] DateTime? UltimoComentario) {
+        var result = await sender.Send(new GetRegistroDeComentariosQuery(){
+            Usuario = id,
+            UltimoComentario = UltimoComentario
+        });
+        return result.IsSuccess ? Results.Ok(result) : Results.NotFound();
+    }
+
     [HttpGet("registro/usuario/{id}")]
     [ProducesResponseType(typeof(GetRegistroUsuarioResponse), StatusCodes.Status200OK)]
     public async Task<IResult> GetRegistroUsuario(Guid id)

@@ -28,8 +28,8 @@ namespace Application.Moderacion
                         portada.hash
                     FROM comentarios c
                     JOIN hilos h ON h.id = c.hilo_id
-                    JOIN medias portada ON p.id h = h.portada_id
-                    WHERE c.status = 'Activo' AND c.created_at > @UltimoComentario AND c.autor_id = @Usuario
+                    JOIN media_references portada_ref ON portada_ref.id = h.portada_id
+ 					JOIN media portada ON portada.id = portada_ref.media_id
                     ORDER BY c.created_at DESC
                     LIMIT 20
                 ";
@@ -42,7 +42,7 @@ namespace Application.Moderacion
 
                         return new GetRegistroDeComentarioResponse
                         {
-                            Comentario = comentario.Comentario,
+                            Id = comentario.Id,
                             Contenido = comentario.Contenido,
                             Fecha = comentario.Fecha,
                             Hilo = hilo

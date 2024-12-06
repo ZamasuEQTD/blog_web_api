@@ -5,6 +5,7 @@ using Application.Hilos;
 using Domain.Comentarios;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
+using Domain.Usuarios;
 using SharedKernel;
 
 namespace Application.Comentarios.Commands
@@ -34,19 +35,9 @@ namespace Application.Comentarios.Commands
 
             if (comentario is null) return ComentariosFailures.NoEncontrado;
 
-            // ComentarioInterracion? relacion = await _comentariosRepository.GetComentarioInterracion(new(_context.UsuarioId), new(request.Comentario));
+            Result result = comentario.Ocultar(hilo, new UsuarioId(_context.UsuarioId));
 
-            // if (relacion is null)
-            // {
-            //     relacion = new ComentarioInterracion(
-            //         comentario.Id,
-            //         new(_context.UsuarioId)
-            //     );
-            // }
-
-            // var result = comentario.Ocultar(hilo, relacion);
-
-            // if (result.IsFailure) return result.Error;
+            if (result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync();
 

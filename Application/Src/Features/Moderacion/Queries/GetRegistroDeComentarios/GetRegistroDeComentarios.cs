@@ -11,7 +11,7 @@ namespace Application.Moderacion
 
     public class GetRegistroDeComentarioResponse
     {
-        public Guid Comentario  {get;set;}
+        public Guid Id { get; set; }
         public GetHiloRegistroResponse Hilo { get; set; }
         public DateTime Fecha { get; set; }
         public string Contenido { get; set; }
