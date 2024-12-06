@@ -1,6 +1,6 @@
 using Domain.Comentarios.ValueObjects;
+using Domain.Features.Medias.Models.ValueObjects;
 using Domain.Hilos;
-using Domain.Media.ValueObjects;
 using Domain.Notificaciones;
 using Domain.Usuarios;
 using SharedKernel;
@@ -15,7 +15,7 @@ namespace Domain.Comentarios
         public HiloId Hilo { get; private set; }
         public Texto Texto { get; private set; }
         public Tag Tag { get; private set; }
-        public MediaReferenceId? MediaReferenceId { get; private set; }
+        public MediaSpoileableId? MediaSpoileableId { get; private set; }
         public TagUnico? TagUnico { get; private set; }
         public Dados? Dados { get; private set; }
         public Colores Color { get; private set; }
@@ -26,13 +26,13 @@ namespace Domain.Comentarios
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autorId, Autor autor, MediaReferenceId? mediaReferenceId, Texto texto, Colores color, InformacionDeComentario informacion)
+        public Comentario(HiloId hilo, UsuarioId autorId, Autor autor, MediaSpoileableId? mediaSpoileableId, Texto texto, Colores color, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
             AutorId = autorId;
             Autor = autor;
             Hilo = hilo;
-            MediaReferenceId = mediaReferenceId;
+            MediaSpoileableId = mediaSpoileableId;
             Texto = texto;
             Status = ComentarioStatus.Activo;
             Tag = informacion.Tag;

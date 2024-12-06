@@ -1,7 +1,6 @@
 using Application.Abstractions;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
-using Domain.Media.Abstractions;
 using Domain.Usuarios.Abstractions;
 using Infraestructure.Authentication;
 using Infraestructure.Media;
@@ -20,14 +19,13 @@ namespace Infraestructure.Configuration
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
-            services.AddScoped<IFolderProvider, FolderProvider>();
-            services.AddScoped<IHasherCalculator, HasherCalculator>();
-            services.AddScoped<IVideoPrevisualizadorGenerador, FfmpegVideoVistaPreviaService>();
+            services.AddScoped<IMediaFolderProvider, FolderProvider>();
+            services.AddScoped<IHasher, Hasher>();
+            services.AddScoped<IVideoGifPrevisualizadorService, FfmpegVideoVistaPreviaService>();
             services.AddScoped<IFileService, FileService>();
-            services.AddScoped<IResizer, Resizer>();
+            services.AddScoped<IImageResizer, Resizer>();
 
-            services.AddScoped<MiniaturaProcesor>();
-            services.AddScoped<GifVideoPrevisualizadorProcesador>();
+            services.AddScoped<MiniaturaService>();
 
             return services;
         }

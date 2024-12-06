@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
-using Domain.Media.Abstractions;
+using Application.Medias.Abstractions;
 
 namespace Infraestructure.Media
 {
-    public class HasherCalculator : IHasherCalculator
+    public class Hasher : IHasher
     {
         public async Task<string> Hash(Stream stream)
         {

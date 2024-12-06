@@ -1,5 +1,5 @@
 using Application.Hilos.Commands;
-using Domain.Media;
+using Domain.Features.Medias.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
@@ -15,7 +15,7 @@ namespace Persistence.Repositories
 
         public void Add(HashedMedia media) => _context.Add(media);
 
-        public void Add(MediaReference reference) => _context.Add(reference);
+        public void Add(MediaSpoileable reference) => _context.Add(reference);
 
         public Task<HashedMedia?> GetMediaByHash(string hash) => _context.Medias.FirstOrDefaultAsync(m => m.Hash == hash);
     }

@@ -1,6 +1,5 @@
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
-using Domain.Media.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,17 +15,11 @@ namespace Application.Configuration
             .AddClasses(c => c.AssignableTo(typeof(IRequestHandler<>)))
             .AsImplementedInterfaces().WithScopedLifetime());
 
-            services.AddKeyedScoped<IFileProcesorsStrategy, VideoProcesor>(FileType.Video);
-            services.AddKeyedScoped<IFileProcesorsStrategy, GifProcesador>(FileType.Gif);
-            services.AddKeyedScoped<IFileProcesorsStrategy, ImagenProcesor>(FileType.Imagen);
+            services.AddScoped<IMediaFactory, MediaFactoryServiceScoped>();
 
-            services.AddKeyedScoped<IEmbedProcesorStrategy, YoutubeEmbedProcesor>(NetworkSource.Youtube);
-
-            services.AddScoped<IFileContextStrategy, FileContextStrategy>();
-            services.AddScoped<IEmbedContextProcesorStrategy, EmbedContextStrategy>();
-
+            services.AddScoped<VideoService>();
+            services.AddScoped<ImagenService>();
             services.AddScoped<MediaProcesador>();
-            services.AddScoped<EmbedProcessor>();
 
             return services;
         }

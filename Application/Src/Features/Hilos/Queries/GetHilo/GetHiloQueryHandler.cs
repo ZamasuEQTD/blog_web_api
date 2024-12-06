@@ -109,7 +109,7 @@ namespace Application.Hilos.Queries
                             Id = hilo_response.SubcategoriaId,
                             Nombre = hilo_response.Nombre
                         },
-                        Media = new MediaSpoileable<GetMediaResponse>() {
+                        Media = new GetMediaSpoileable<GetMediaResponse>() {
                             Spoiler = hilo_response.Spoiler,
                             Media = new GetMediaResponse()
                             {

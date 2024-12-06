@@ -1,5 +1,4 @@
-using Domain.Media.Abstractions;
-using Domain.Media.ValueObjects;
+using Application.Medias.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace Infraestructure.Media

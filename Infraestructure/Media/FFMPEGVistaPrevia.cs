@@ -2,10 +2,11 @@ using Application.Medias.Abstractions;
 
 namespace Infraestructure.Media
 {
-    public class FfmpegVideoVistaPreviaService : IVideoPrevisualizadorGenerador
+    public class FfmpegVideoVistaPreviaService : IVideoGifPrevisualizadorService
     {
         static private readonly NReco.VideoConverter.FFMpegConverter FFmpeg = new NReco.VideoConverter.FFMpegConverter();
-        public Stream GenerarDesdeVideo(string path)
+
+        public Stream Generar(string path)
         {
             Stream stream = new MemoryStream();
 

@@ -1,4 +1,4 @@
-using Domain.Media.Abstractions;
+using Application.Medias.Abstractions;
 
 namespace Infraestructure.Media
 {

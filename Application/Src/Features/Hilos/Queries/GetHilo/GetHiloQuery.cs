@@ -51,7 +51,7 @@ namespace Application.Hilos.Queries
         public GetSubcategoriaResponse Subcategoria { get; set; }
 
         [JsonPropertyName("portada")]
-        public MediaSpoileable<GetMediaResponse> Media { get; set; }
+        public GetMediaSpoileable<GetMediaResponse> Media { get; set; }
         public BanderasResponse Banderas { get; set; }
         public GetEncuestaResponse? Encuesta { get; set; }
     }
@@ -63,7 +63,7 @@ namespace Application.Hilos.Queries
         public bool IdUnico { get; set; }
     }
 
-    public class MediaSpoileable<T> 
+    public class GetMediaSpoileable<T> 
     {
         public bool Spoiler { get; set; }
         public T Media { get; set; }

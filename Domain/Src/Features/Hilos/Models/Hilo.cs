@@ -3,16 +3,13 @@ using Domain.Comentarios;
 using Domain.Comentarios.Services;
 using Domain.Comentarios.ValueObjects;
 using Domain.Encuestas;
-using Domain.Media;
-using Domain.Hilos.Events;
 using Domain.Hilos.ValueObjects;
 using Domain.Notificaciones;
 using Domain.Stickies;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
-using static Domain.Hilos.Hilo;
-using Domain.Media.ValueObjects;
+using Domain.Features.Medias.Models.ValueObjects;
 
 namespace Domain.Hilos
 {
@@ -36,7 +33,7 @@ namespace Domain.Hilos
         public UsuarioId AutorId { get; private set; }
         public SubcategoriaId Categoria { get; private set; }
         public EncuestaId? Encuesta { get; private set; }
-        public MediaReferenceId PortadaId { get; private set; }
+        public MediaSpoileableId PortadaId { get; private set; }
         public bool Activo => Status == HiloStatus.Activo;
         public bool Eliminado => Status == HiloStatus.Eliminado;
         public bool Archivado => Status == HiloStatus.Archivado;
@@ -48,7 +45,7 @@ namespace Domain.Hilos
             Descripcion descripcion,
             Autor autor,
             UsuarioId autorId,
-            MediaReferenceId portada,
+            MediaSpoileableId portada,
             SubcategoriaId subcategoria,
             EncuestaId? encuesta,
             ConfiguracionDeComentarios configuracion

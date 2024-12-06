@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Domain.Media.Services;
+using Domain.Features.Medias.Services;
 
 namespace Application.Hilos.Queries.Responses;
 

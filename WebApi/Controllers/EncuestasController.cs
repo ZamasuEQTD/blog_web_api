@@ -1,4 +1,4 @@
-using Application.Encuesta.VotarRespuesta;
+using Application.Encuestas.VotarRespuesta;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;

@@ -7,12 +7,10 @@ using Application.Medias.Services;
 using Domain.Categorias;
 using Domain.Encuestas;
 using Domain.Encuestas.Abstractions;
+using Domain.Features.Medias.Models;
 using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Hilos.ValueObjects;
-using Domain.Media;
-using Domain.Media.Abstractions;
-using Domain.Media.ValueObjects;
 using Domain.Usuarios;
 using SharedKernel;
 
@@ -27,17 +25,13 @@ namespace Application.Hilos.Commands
             FileType.Gif,
         ];
 
-        static private readonly List<NetworkSource> NETWORK_SOURCES = [
-            NetworkSource.Youtube
-        ];
         private readonly MediaProcesador _mediaProcesador;
-        private readonly EmbedProcessor _embedProcessor;
         private readonly IHilosRepository _hilosRepository;
         private readonly IMediasRepository _mediasRepository;
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcessor embedProcessor)
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador)
         {
             _unitOfWork = unitOfWork;
             _user = user;
@@ -45,7 +39,6 @@ namespace Application.Hilos.Commands
             _mediasRepository = mediasRepository;
             _hilosRepository = hilosRepository;
             _mediaProcesador = mediaProcesador;
-            _embedProcessor = embedProcessor;
         }
 
         public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
@@ -71,7 +64,7 @@ namespace Application.Hilos.Commands
                 encuestaId = encuesta.Value.Id;
             }
 
-            MediaReference reference;
+            MediaSpoileable reference;
 
             HashedMedia media;
 
@@ -85,14 +78,13 @@ namespace Application.Hilos.Commands
             }
             else if (request.Embed is not null)
             {
-                media = await _embedProcessor.Procesar(request.Embed);
+              //  media = await _embedProcessor.Procesar(request.Embed);
+
+              throw new NotImplementedException();
             }
             else return new Error("Hilos.SinPortada");
 
-            reference = new MediaReference(
-                media.Id,
-                request.Spoiler
-            );
+            reference = new MediaSpoileable(media.Id, media, request.Spoiler);
 
             _mediasRepository.Add(reference);
 
@@ -122,6 +114,6 @@ namespace Application.Hilos.Commands
     {
         Task<HashedMedia?> GetMediaByHash(string hash);
         void Add(HashedMedia media);
-        void Add(MediaReference reference);
+        void Add(MediaSpoileable reference);
     }
 }

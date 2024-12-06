@@ -17,7 +17,7 @@ namespace Application.Medias.Services
             {
                 FileType.Imagen => _serviceProvider.GetRequiredService<ImagenService>(),
                 FileType.Video => _serviceProvider.GetRequiredService<VideoService>(),
-                FileType.Gif => _serviceProvider.GetRequiredService<GifMediaService>(),
+                FileType.Gif => _serviceProvider.GetRequiredService<GifService>(),
                 _ => throw new ArgumentException($"Tipo de media inválido: {tipo}"),
             };
         }

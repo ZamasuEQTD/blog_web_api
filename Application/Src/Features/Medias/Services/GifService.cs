@@ -4,11 +4,11 @@ using static Application.Medias.Services.VideoService;
 
 namespace Application.Medias.Services;
 
-public class GifMediaService : IMediaService
+public class GifService : IMediaService
 {
     private readonly GifVideoPrevisualizadorProcesador _gifVideoPrevisualizadorProcesador;
     private readonly MiniaturaService _miniaturaService;
-    public GifMediaService(GifVideoPrevisualizadorProcesador gifVideoPrevisualizadorProcesador, MiniaturaService miniaturaService)
+    public GifService(GifVideoPrevisualizadorProcesador gifVideoPrevisualizadorProcesador, MiniaturaService miniaturaService)
     {
         _gifVideoPrevisualizadorProcesador = gifVideoPrevisualizadorProcesador;
         _miniaturaService = miniaturaService;

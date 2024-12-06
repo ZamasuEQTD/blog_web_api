@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Infraestructure.Media
 {
-    public class Resizer : IResizer
+    public class Resizer : IImageResizer
     {
         public async Task<Stream> Resize(string path, int width, int height)
         {

@@ -2,7 +2,7 @@ using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Dapper;
-using Domain.Media.Services;
+using Domain.Features.Medias.Services;
 using SharedKernel;
 using SharedKernel.Abstractions;
 

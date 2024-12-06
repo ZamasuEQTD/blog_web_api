@@ -1,11 +1,9 @@
 using Domain.Baneos;
 using Domain.Categorias;
 using Domain.Comentarios;
-using Domain.Denuncias;
 using Domain.Encuestas;
+using Domain.Features.Medias.Models;
 using Domain.Hilos;
-using Domain.Media;
-using Domain.Stickies;
 using Domain.Usuarios;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +22,7 @@ namespace Persistence
         public DbSet<Encuesta> Encuestas { get; set; }
         public DbSet<HiloInteraccion> Relaciones { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
-        public DbSet<MediaReference> MediaReferences { get; set; }
+        public DbSet<MediaSpoileable> MediaSpoileables { get; set; }
         public DbSet<HashedMedia> Medias { get; set; }
         public BlogDbContext(DbContextOptions options, IMediator mediator) : base(options)
         {

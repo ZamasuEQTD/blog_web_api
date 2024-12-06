@@ -1,7 +1,7 @@
 using Domain.Comentarios;
 using Domain.Comentarios.ValueObjects;
+using Domain.Features.Medias.Models;
 using Domain.Hilos;
-using Domain.Media;
 using Domain.Usuarios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,8 +23,8 @@ namespace Persistence.Configurations
             builder.Property(c => c.Hilo).HasColumnName("hilo_id");
             builder.HasOne<Hilo>().WithMany().HasForeignKey(c => c.Hilo);
 
-            builder.Property(c => c.MediaReferenceId).HasColumnName("media");
-            builder.HasOne<MediaReference>().WithMany().HasForeignKey(c => c.MediaReferenceId);
+            builder.Property(c => c.MediaSpoileableId).HasColumnName("media_spoileable_id");
+            builder.HasOne<MediaSpoileable>().WithMany().HasForeignKey(c => c.MediaSpoileableId);
 
             builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value).HasColumnName("texto");
 

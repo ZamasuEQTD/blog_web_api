@@ -1,3 +1,4 @@
+using Application.Medias.Abstractions;
 using FluentAssertions;
 using Infraestructure.Media;
 using Xunit;
@@ -8,7 +9,7 @@ namespace Tests.Infraestructure
     public class HasherTest
     {
 
-        private readonly HasherCalculator _hasher = new HasherCalculator();
+        private readonly IHasher _hasher = new Hasher();
 
         [Fact]
         public async Task Hash_String_Devuelve_El_mismo_Hash()

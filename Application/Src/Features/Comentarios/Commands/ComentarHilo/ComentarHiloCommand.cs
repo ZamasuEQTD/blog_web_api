@@ -1,5 +1,5 @@
 using Application.Abstractions.Messaging;
-using Domain.Media.Abstractions;
+using Application.Medias.Abstractions;
 
 namespace Application.Comentarios.Commands
 {
