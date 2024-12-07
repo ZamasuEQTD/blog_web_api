@@ -1,42 +1,39 @@
 using System.Text.Json.Serialization;
 using Application.Abstractions.Messaging;
+using Application.Features.Hilos.Queries.GetHilo;
 
-namespace Application.Comentarios
+namespace Application.Comentarios.GetComentarioDeHilos;
+
+public class GetComentariosDeHiloQuery : IQuery<List<GetComentarioResponse>>
 {
-    public class GetComentariosDeHiloQuery : IQuery<List<GetComentarioResponse>>
-    {
-        public Guid Hilo { get; set; }
-        public DateTime? UltimoComentario { get; set; }
-    }
+    public Guid HiloId { get; set; }
+    public DateTime UltimoComentario { get; set; }
+}
 
-    public class GetComentarioResponse
-    {
-        public Guid Id { get; set; }
-        [JsonPropertyName("created_at")]
-        public DateTime CreatedAt { get; set; }
-        public bool Destacado { get; set; }
-        [JsonPropertyName("es_autor")]
-        public bool EsAutor { get; set; }
-        [JsonPropertyName("autor_id")]
-        public Guid? AutorId { get; set; }
-        [JsonPropertyName("recibir_notificaciones")]
-        public bool? RecibirNotificaciones { get; set; }
-        public string Texto { get; set; }
-        public string Tag { get; set; }
-        public string Color {get; set;}
-        public List<string> Taggueos { get; set; } = new List<string>();
-        public List<string> Tags { get; set; } = new List<string>();
-        [JsonPropertyName("tag_unico")]
-        public string? TagUnico { get; set; }
-        public string? Dados { get; set; }
-        public GetComentarioAutorResponse? Autor { get; set; }
-    }
-     
-    public class GetComentarioAutorResponse
-    {
-        public string Nombre { get; set; }
-        public string Rango { get; set; }
-        [JsonPropertyName("rango_corto")]
-        public string RangoCorto { get; set; }
-    }
+public class GetComentarioResponse {
+    public Guid Id { get; set; }
+    public string Texto { get; set; }
+    [JsonPropertyName("created_at")]
+    public DateTime CreatedAt { get; set; }
+    [JsonPropertyName("autor_id")]
+    public Guid AutorId { get; set; }
+
+    [JsonPropertyName("es_autor")]
+    public bool EsAutor { get; set; }
+    public bool Destacado { get; set; }
+    public List<string> Taggueos { get; set; } = new List<string>();
+    public List<string> Tags { get; set; } = new List<string>();
+    [JsonPropertyName("recibir_notificaciones")]
+    public bool? RecibirNotificaciones { get; set; }
+    public string Color {get; set;}
+    public GetHiloAutorResponse Autor { get; set; }
+    public GetComentarioDetallesResponse Detalles { get; set; }
+}
+
+
+public class GetComentarioDetallesResponse {
+    public string Tag { get; set; }
+    [JsonPropertyName("tag_unico")]
+    public string? TagUnico { get; set; }
+    public string? Dados { get; set; }
 }

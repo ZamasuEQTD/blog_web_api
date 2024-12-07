@@ -7,6 +7,9 @@ using WebApi.Extensions;
 using WebApi.Infraestructure;
 using Microsoft.AspNetCore.Authorization;
 using Application.Hilos.Commands.PonerHiloEnFavorito;
+using Application.Features.Hilos.Queries.GetHiloPortada;
+using Application.Hilos.Queries.Responses;
+using Application.Features.Hilos.Queries.GetHilo;
 namespace WebApi.Controllers
 {
 
@@ -144,11 +147,11 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("portadas")]
-        [ProducesResponseType(typeof(List<GetPortadaHomeResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<GetHiloPortadaResponse>), StatusCodes.Status200OK)]
         public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {
             var result = await sender.Send(
-                new GetPortadasHomeQuery()
+                new GetHiloPortadasQuery()
                 {
                     Titulo = request.Titulo,
                     Categoria = request.Categoria,

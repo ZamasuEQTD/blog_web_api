@@ -24,30 +24,34 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
         IEnumerable<GetNotificacionResponse> notificaciones = await connection.QueryAsync<GetNotificacionResponse, GetHiloNotificacionResponse, GetNotificacionResponse>(
             @"
             SELECT 
-                notificacion.tipo,
+                notificacion.tipo_de_interaccion,
                 notificacion.id,
                 notificacion.created_at as fecha,
                 notificacion.comentario_id as comentario_id,
-                CASE
-                    WHEN notificacion.tipo = 'hilo_comentado' OR notificacion.tipo = 'hilo_seguido_comentado' THEN h.titulo
-                    WHEN notificacion.tipo = 'comentario_respondido' THEN c.texto
+                CASE 
+                    WHEN notificacion.tipo_de_interaccion = 'hilo_comentado' OR notificacion.tipo_de_interaccion = 'hilo_seguido_comentado' THEN h.titulo
+                    WHEN notificacion.tipo_de_interaccion = 'comentario_respondido' THEN c.texto
                     ELSE NULL
                 END AS contenido,
                 h.id as id,
                 h.titulo as titulo,
-                p.hash as hash
+                p.miniatura
             FROM notificaciones notificacion
             JOIN hilos h ON notificacion.hilo_id = h.id
             JOIN comentarios c ON notificacion.comentario_id = c.id
-            JOIN media p ON h.portada_id = p.id
-            WHERE notificacion.usuario_id = @UsuarioId AND notificacion.status = 'Activo' AND notificacion.created_at > @UltimaNotificacion
+            JOIN media_spoileables spoiler ON h.portada_id = spoiler.id
+            JOIN media p ON spoiler.media_id = p.id
+            WHERE 
+                notificacion.usuario_notificado_id = @UsuarioId
+            AND 
+                notificacion.status = 'SinLeer' 
+            AND 
+                notificacion.created_at > @UltimaNotificacion
             ORDER BY fecha DESC
             LIMIT 20
             ",
             (notificacion, hilo) =>
             {
-                hilo.Imagen = "/media/thumbnails/" + hilo.Hash + ".jpeg";
-                
                 notificacion.Hilo = hilo;
 
                 return notificacion;

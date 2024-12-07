@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Application.Comentarios;
 using Application.Comentarios.Commands;
+using Application.Comentarios.GetComentarioDeHilos;
 using Infraestructure.Media;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,8 +24,8 @@ namespace WebApi.Controllers
         public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery(Name = "ultimo_comentario")] DateTime? ultimoComentario)
         {
             var result = await sender.Send(new GetComentariosDeHiloQuery(){
-                Hilo = hilo,
-                UltimoComentario = ultimoComentario
+                HiloId = hilo,
+                UltimoComentario = ultimoComentario ?? DateTime.MinValue
             });
 
             return result.IsSuccess ?

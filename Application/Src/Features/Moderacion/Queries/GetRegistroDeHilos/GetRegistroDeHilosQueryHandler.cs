@@ -25,7 +25,7 @@ public class GetRegistroDeHilosQueryHandler : IQueryHandler<GetRegistroDeHilosQu
                         h.titulo,
                         portada.hash
                     FROM hilos h
-                    JOIN media_references portada_ref ON portada_ref.id = h.portada_id
+                    JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
  					JOIN media portada ON portada.id = portada_ref.media_id
                     WHERE h.status = 'Activo' AND h.created_at > @UltimoHilo AND h.autor_id = @Usuario
                     ORDER BY h.created_at DESC

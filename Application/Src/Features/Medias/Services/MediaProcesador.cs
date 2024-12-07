@@ -36,9 +36,9 @@ public class MediaProcesador
         await _fileService.GuardarArchivo(stream, media_path);
 
         return new HashedMedia(
+            file.FileName,
             hash,
             media_path,
-            file.FileName,
             await _mediaFactory.Create(file.Type).Create(media_path)
         );
     }

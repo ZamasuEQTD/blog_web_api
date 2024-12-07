@@ -17,7 +17,7 @@ public class ImagenService : IMediaService
 
         return new Media(
             MediaProvider.Imagen,
-            miniatura,
+            "/media/thumbnails/" + Path.GetFileName(miniatura),
             null
         );
     }

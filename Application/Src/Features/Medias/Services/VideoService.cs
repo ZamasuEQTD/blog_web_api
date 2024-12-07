@@ -23,8 +23,8 @@ public class VideoService : IMediaService
 
         return new Media(
             MediaProvider.Video,
-            miniatura,
-            previsualizacion
+            "/media/thumbnails/" + Path.GetFileName(miniatura),
+            "/media/previsualizaciones/" + Path.GetFileName(previsualizacion)
         );
     }
 

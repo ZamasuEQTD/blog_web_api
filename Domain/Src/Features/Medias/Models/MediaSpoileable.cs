@@ -12,6 +12,7 @@ public class MediaSpoileable : Entity<MediaSpoileableId>
     private MediaSpoileable() { }
     public MediaSpoileable(HashedMediaId hashedMediaId, HashedMedia hashedMedia, bool spoiler) : base()
     {
+        Id = new MediaSpoileableId(Guid.NewGuid());
         HashedMediaId = hashedMediaId;
         HashedMedia = hashedMedia;
         Spoiler = spoiler;

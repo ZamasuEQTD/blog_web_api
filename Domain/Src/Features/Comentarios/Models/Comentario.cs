@@ -39,6 +39,7 @@ namespace Domain.Comentarios
             TagUnico = informacion.TagUnico;
             Dados = informacion.Dados;
             Color = color;
+            RecibirNotificaciones = true;
         }
 
         public Result Eliminar(Hilo hilo)

@@ -6,6 +6,7 @@ using Infraestructure.Authentication;
 using Infraestructure.Media;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.Abstractions;
+using static Application.Medias.Services.VideoService;
 
 namespace Infraestructure.Configuration
 {
@@ -27,6 +28,7 @@ namespace Infraestructure.Configuration
 
             services.AddScoped<MiniaturaService>();
 
+            services.AddScoped<GifVideoPrevisualizadorProcesador>();
             return services;
         }
     }

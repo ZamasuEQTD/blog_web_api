@@ -22,7 +22,5 @@ public class GetHiloNotificacionResponse
 {
     public Guid Id { get; set; }
     public string Titulo { get; set; }
-    public string Imagen { get; set; }
-    [JsonIgnore]
-    public string Hash { get; set; }
+    public string Miniatura { get; set; }
 }

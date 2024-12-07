@@ -10,9 +10,11 @@ namespace Domain.Features.Medias.Models
         public string Hash { get; private set; }
         public string Url { get; private set; }
         public Media Media { get; private set; }
+        private HashedMedia() { }
 
         public HashedMedia(string? filename, string hash, string url, Media media)
         {
+            Id = new HashedMediaId(Guid.NewGuid());
             Filename = filename;
             Hash = hash;
             Url = url;
@@ -26,6 +28,8 @@ namespace Domain.Features.Medias.Models
         public string? Miniatura { get; private set; }
         public string? Previsualizacion { get; private set; }
 
+        private Media() { }
+
         public Media(MediaProvider provider, string? miniatura, string? previsualizacion)
         {
             Provider = provider;
@@ -36,6 +40,7 @@ namespace Domain.Features.Medias.Models
    
     public class MediaProvider : ValueObject
     {
+        private MediaProvider() { }
         private MediaProvider(string value) => Value = value;
         public string Value { get; private set; }
         public static readonly MediaProvider Youtube = new MediaProvider("Youtube");

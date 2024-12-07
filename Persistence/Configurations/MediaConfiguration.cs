@@ -32,6 +32,7 @@ namespace Persistence.Configurations
             builder.Property(e => e.Hash).HasColumnName("hash");
 
             builder.Property(e => e.Filename).HasColumnName("filename");
+            builder.Property(e => e.Url).HasColumnName("url");
 
             builder.OwnsOne(e => e.Media, m => {
                 m.Property(e => e.Miniatura).HasColumnName("miniatura");

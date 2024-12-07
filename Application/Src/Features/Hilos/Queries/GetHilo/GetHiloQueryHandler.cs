@@ -1,134 +1,82 @@
-using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Categorias.Queries;
+using Application.Features.Encuestas.Queries.Responses;
+using Application.Features.Hilos.Queries.GetHilo;
+using Application.Features.Hilos.Queries.Responses;
 using Dapper;
 using Domain.Comentarios;
 using SharedKernel;
 
-namespace Application.Hilos.Queries
+namespace Application.Hilos.Queries.GetHilo;
+
+public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
 {
-    public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
+    private readonly IDBConnectionFactory _connection;
+
+    public GetHiloQueryHandler(IDBConnectionFactory connection)
     {
-        private readonly IDBConnectionFactory _connection;
-        private readonly IUserContext _context;
-        public GetHiloQueryHandler(IUserContext context, IDBConnectionFactory connection)
-        {
-            _context = context;
-            _connection = connection;
-        }
-
-        public async Task<Result<GetHiloResponse>> Handle(GetHiloQuery request, CancellationToken cancellationToken)
-        {
-            using (var connection = _connection.CreateConnection())
-            {
-                GetHiloResponse? hilo = null;
-
-                using (var query = await connection.QueryMultipleAsync(@"
-                    SELECT
-                        hilo.id,
-                        hilo.titulo,
-                        hilo.descripcion,
-                        hilo.dados,
-                        hilo.id_unico_activado as idunico,
-                        hilo.usuario_id as autorid,
-                        hilo.created_at as createdat,
-                        (
-	                    SELECT
-	                    	count(c.id)
-	                    FROM comentarios c
-	                    WHERE c.hilo_id = hilo.id
-	                    ) AS comentarios,
-                        subcategoria.id AS subcategoriaid,
-                        subcategoria.nombre AS nombre,
-                        portada_reference.spoiler,
-                        portada.path,
-                        portada.hash,
-                        portada.tipo_de_archivo as tipodearchivo
-                    FROM hilos hilo
-                    JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
-                    JOIN media_references portada_reference ON portada_reference.id = hilo.portada_id
-                    JOIN media portada ON portada.id = portada_reference.media_id
-                    WHERE hilo.id = @hilo;
-                    SELECT
-                        r.id,
-                        r.encuesta_id as encuestaid,
-                        r.contenido,
-                        (
-                            SELECT
-                                COUNT(v.id)
-                            FROM votos v
-                            WHERE r.id = v.id
-                        ) as  votos
-                    FROM respuestas r
-                    LEFT JOIN hilos h ON h.encuesta_id = r.encuesta_id
-                    WHERE h.id = @hilo;
-                ", new
-                {
-                    hilo = request.Hilo
-                }))
-                {
-                    var hilo_query = query.Read<HiloResponse>();
-
-                    var encuesta_query = query.Read<RespuestaResponse>();
-
-                    var hilo_response = hilo_query.FirstOrDefault();
-
-                    if (hilo_response is null) return HilosFailures.NoEncontrado;
-
-                    GetEncuestaResponse? encuesta = null;
-
-                    if (encuesta_query.Any())
-                    {
-                        encuesta = new GetEncuestaResponse()
-                        {
-                            Id = encuesta_query.First().EncuestaId,
-                            Opciones = encuesta_query.Select(x => new GetOpcionResponse()
-                            {
-                                Id = x.Id,
-                                Nombre = x.Contenido,
-                                Votos = x.Votos
-                            }).ToList()
-                        };
-                    }
-
-                    hilo = new GetHiloResponse()
-                    {
-                        Id = hilo_response.Id,
-                        Titulo = hilo_response.Titulo,
-                        Descripcion = hilo_response.Descripcion,
-                        EsOp = _context.IsLogged && hilo_response.AutorId == _context.UsuarioId,
-                        CreatedAt = hilo_response.CreatedAt,
-                        Encuesta = encuesta,
-                        Banderas = new BanderasResponse() {
-                            Dados = hilo_response.Dados,
-                            IdUnico = hilo_response.IdUnico
-                        },
-                        Subcategoria = new GetSubcategoriaResponse()
-                        {
-                            Id = hilo_response.SubcategoriaId,
-                            Nombre = hilo_response.Nombre
-                        },
-                        Media = new GetMediaSpoileable<GetMediaResponse>() {
-                            Spoiler = hilo_response.Spoiler,
-                            Media = new GetMediaResponse()
-                            {
-                                Tipo = hilo_response.TipoDeArchivo,
-                                Previsualizacion = hilo_response.TipoDeArchivo == "video" ? $"/media/previsualizaciones/{hilo_response.Hash}.png" : null,
-                                Url = hilo_response.TipoDeArchivo != "youtube" ? $"/media/files/{Path.GetFileName(hilo_response.Path)}" : hilo_response.Path
-                            }
-                        }
-
-                    };
-
-                    return hilo;
-                }
-            }
-        }
+        _connection = connection;
     }
 
-    public class HiloQuery
+    public async Task<Result<GetHiloResponse>> Handle(GetHiloQuery request, CancellationToken cancellationToken)
     {
+        var sql = @$"
+            SELECT
+                hilo.id,
+                hilo.titulo,
+                hilo.descripcion,
+                CASE
+                    WHEN @IsLogged THEN hilo.usuario_id
+                ELSE NULL
+                END AS AutorId,
+                hilo.created_at AS CreatedAt,
+                @UsuarioId = hilo.usuario_id AS EsOp,
+                CASE
+                    WHEN @IsLogged AND hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
+                ELSE NULL
+                END AS RecibirNotificaciones,
+                (
+	                SELECT
+	                	count(c.id)
+	                FROM comentarios c
+	                WHERE c.hilo_id = hilo.id
+	            )
+                AS Comentarios,
+                hilo.dados AS DadosActivados,
+                hilo.id_unico_activado AS IdUnicoActivado,
+                hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
+                portada.url,
+                portada.previsualizacion,
+                spoiler.spoiler,
+                hilo.autor_nombre as Nombre,
+                hilo.rango,
+                hilo.rango_corto as RangoCorto,
+                subcategoria.id,
+                subcategoria.nombre
+            FROM hilos hilo
+            JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
+            JOIN media_spoileables spoiler ON hilo.portada_id = spoiler.id
+            JOIN media portada ON spoiler.media_id = portada.id
+            WHERE hilo.id = @hilo;
+        ";
+        using var connection = _connection.CreateConnection();
 
+        GetHiloResponse? hilo;
+
+        var result = await  connection.QueryAsync<GetHiloResponse,GetHiloBanderasResponse,GetHiloMediaResponse,GetHiloAutorResponse,GetSubcategoriaResponse  ,GetHiloResponse  >(sql, 
+            (hilo,banderas,media,autor,subcategoria) => {
+                hilo.Subcategoria = subcategoria;
+                hilo.Banderas = banderas;
+                hilo.Media = media;
+                hilo.Autor = autor;
+                return hilo;
+            },
+            new { hilo = request.Hilo }
+            ,splitOn: "DadosActivados,url,nombre,id"
+        );
+
+        return result.FirstOrDefault();
     }
+
 }
