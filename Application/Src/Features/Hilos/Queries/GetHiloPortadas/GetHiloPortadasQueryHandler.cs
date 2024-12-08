@@ -46,7 +46,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             hilo.id_unico_activado AS IdUnicoActivado,
             hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
             spoileable.spoiler,
-            portada.miniatura
+            portada.miniatura AS Url
         FROM hilos hilo
         JOIN media_spoileables spoileable ON spoileable.id = hilo.portada_id
         JOIN media portada ON portada.id = spoileable.media_id
@@ -76,7 +76,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             hilo.id_unico_activado AS IdUnicoActivado,
             hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
             spoileable.spoiler,
-            portada.miniatura
+            portada.miniatura AS url
         FROM hilos hilo
         JOIN media_spoileables spoileable ON spoileable.id = hilo.portada_id
         JOIN media portada ON portada.id = spoileable.media_id
@@ -95,7 +95,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
 
         parameters.AddDynamicParams(new {
            _user.IsLogged,
-            UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null
+            UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null,
         });
 
         if(!string.IsNullOrEmpty(request.Titulo))
@@ -135,7 +135,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
         (portada, banderas,imagen ) => {
             portada.Banderas = banderas;
     
-            portada.Imagen = imagen;
+            portada.Miniatura = imagen;
 
             return portada;
         },

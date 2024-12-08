@@ -23,11 +23,11 @@ public class GetRegistroDeHilosQueryHandler : IQueryHandler<GetRegistroDeHilosQu
                         h.created_at AS fecha,
                         h.id,
                         h.titulo,
-                        portada.hash
+                        portada.miniatura
                     FROM hilos h
                     JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
  					JOIN media portada ON portada.id = portada_ref.media_id
-                    WHERE h.status = 'Activo' AND h.created_at > @UltimoHilo AND h.autor_id = @Usuario
+                    WHERE h.status = 'Activo' AND h.usuario_id = @Usuario
                     ORDER BY h.created_at DESC
                     LIMIT 20
             ";
@@ -35,8 +35,6 @@ public class GetRegistroDeHilosQueryHandler : IQueryHandler<GetRegistroDeHilosQu
             IEnumerable<GetRegistroDeHiloResponse> registros = await connection.QueryAsync<GetRegistroDeHiloResponse, GetHiloRegistroResponse, GetRegistroDeHiloResponse  >(sql,
                 (registro, hilo) =>
                 {
-                    hilo.Imagen = "/media/thumbnails/" + hilo.Hash + ".jpeg";
-                    
                     return new GetRegistroDeHiloResponse
                     {
                         Contenido = registro.Contenido,

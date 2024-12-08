@@ -15,11 +15,14 @@ public class GetHiloPortadaResponse {
     public bool EsOp { get; set; }
     [JsonPropertyName("es_sticky")]
     public bool EsSticky { get; set; }
+    [JsonPropertyName("es_nuevo")]
+    public bool EsNuevo => CreatedAt.AddMinutes(20) > DateTime.UtcNow;
+    internal   DateTime CreatedAt { get; set; }
     public string Subcategoria { get; set; }
     [JsonPropertyName("recibir_notificaciones")]
     public bool? RecibirNotificaciones { get; set; }
     public GetHiloBanderasResponse Banderas { get; set; }
-    public GetHiloPortadaImagenResponse Imagen { get; set; }
+    public GetHiloPortadaImagenResponse Miniatura { get; set; }
 }
 
  
@@ -27,6 +30,6 @@ public class GetHiloPortadaImagenResponse
 {
     [JsonPropertyName("es_spoiler")]
     public bool Spoiler { get; set; }
-    public string Miniatura { get; set; }
+    public string Url { get; set; }
 }
  
