@@ -9,7 +9,8 @@ using WebApi.Extensions;
 using WebApi.Configuration;
 using Infraestructure.Configuration;
 using Microsoft.Extensions.FileProviders;
-using WebApi.Middlewares;
+using Application.Features.Hilos;
+using Infraestructure.Hilos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 }
+
+app.MapHub<HilosHub>("/hilos");
 
 app.UseStaticFiles(new StaticFileOptions
 {
