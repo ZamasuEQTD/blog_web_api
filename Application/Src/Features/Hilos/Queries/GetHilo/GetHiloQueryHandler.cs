@@ -1,3 +1,4 @@
+using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Categorias.Queries;
@@ -13,10 +14,11 @@ namespace Application.Hilos.Queries.GetHilo;
 public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
 {
     private readonly IDBConnectionFactory _connection;
-
-    public GetHiloQueryHandler(IDBConnectionFactory connection)
+    private readonly IUserContext _user;
+    public GetHiloQueryHandler(IDBConnectionFactory connection, IUserContext user)
     {
         _connection = connection;
+        _user = user;
     }
 
     public async Task<Result<GetHiloResponse>> Handle(GetHiloQuery request, CancellationToken cancellationToken)
@@ -26,14 +28,15 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
                 hilo.id,
                 hilo.titulo,
                 hilo.descripcion,
+                sticky.id IS NOT NULL AS EsSticky,
                 CASE
-                    WHEN @IsLogged THEN hilo.usuario_id
+                    WHEN true THEN hilo.usuario_id
                 ELSE NULL
                 END AS AutorId,
                 hilo.created_at AS CreatedAt,
                 @UsuarioId = hilo.usuario_id AS EsOp,
                 CASE
-                    WHEN @IsLogged AND hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
+                    WHEN hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
                 ELSE NULL
                 END AS RecibirNotificaciones,
                 (
@@ -42,7 +45,7 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
 	                FROM comentarios c
 	                WHERE c.hilo_id = hilo.id
 	            )
-                AS Comentarios,
+                AS CantidadComentarios,
                 hilo.dados AS DadosActivados,
                 hilo.id_unico_activado AS IdUnicoActivado,
                 hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
@@ -58,6 +61,7 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
             JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
             JOIN media_spoileables spoiler ON hilo.portada_id = spoiler.id
             JOIN media portada ON spoiler.media_id = portada.id
+            LEFT JOIN stickies sticky ON hilo.id = sticky.hilo_id
             WHERE hilo.id = @hilo;
         ";
         using var connection = _connection.CreateConnection();
@@ -72,7 +76,10 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
                 hilo.Autor = autor;
                 return hilo;
             },
-            new { hilo = request.Hilo }
+            new { 
+                hilo = request.Hilo,
+                UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null 
+            }
             ,splitOn: "DadosActivados,url,nombre,id"
         );
 

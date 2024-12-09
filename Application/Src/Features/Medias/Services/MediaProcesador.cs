@@ -38,7 +38,7 @@ public class MediaProcesador
         return new HashedMedia(
             file.FileName,
             hash,
-            media_path,
+            "/media/files/" + Path.GetFileName(media_path),
             await _mediaFactory.Create(file.Type).Create(media_path)
         );
     }

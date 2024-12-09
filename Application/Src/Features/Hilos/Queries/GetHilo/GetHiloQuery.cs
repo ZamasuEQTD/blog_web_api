@@ -21,11 +21,13 @@ public class GetHiloResponse
     [JsonPropertyName("es_op")]
     public bool EsOp { get; set; }
     [JsonPropertyName("cantidad_de_comentarios")]
-    public int Comentarios { get; set; }
+    public int CantidadComentarios { get; set; }
     [JsonPropertyName("creado_en")]
     public DateTime CreatedAt { get; set; }
     [JsonPropertyName("recibir_notificaciones")]
     public bool? RecibirNotificaciones { get; set; }
+    [JsonPropertyName("es_sticky")]
+    public bool EsSticky { get; set; }
     public GetEncuestaResponse? Encuesta { get; set; }
     public GetHiloBanderasResponse Banderas { get; set; }
     public GetHiloMediaResponse Media { get; set; }
@@ -36,6 +38,7 @@ public class GetHiloResponse
  
 public class GetHiloMediaResponse
 {
+    [JsonPropertyName("es_spoiler")]
     public bool Spoileable { get; set; }
     public string Url { get; set; }
     public string? Previsualizacion { get; set; }

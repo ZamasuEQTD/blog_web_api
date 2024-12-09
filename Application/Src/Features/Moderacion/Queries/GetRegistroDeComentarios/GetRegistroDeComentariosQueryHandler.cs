@@ -25,7 +25,7 @@ namespace Application.Moderacion
                         c.created_at as fecha,
                         h.id,
                         h.titulo,
-                        portada.hash
+                        portada.miniatura
                     FROM comentarios c
                     JOIN hilos h ON h.id = c.hilo_id
                     JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
@@ -38,8 +38,6 @@ namespace Application.Moderacion
                 IEnumerable<GetRegistroDeComentarioResponse> registros = await connection.QueryAsync<GetRegistroDeComentarioResponse, GetHiloRegistroResponse, GetRegistroDeComentarioResponse>(sql,
                     (comentario, hilo) =>
                     {
-                        hilo.Imagen = "/media/thumbnails/" + hilo.Hash + ".jpeg";
-
                         return new GetRegistroDeComentarioResponse
                         {
                             Id = comentario.Id,
