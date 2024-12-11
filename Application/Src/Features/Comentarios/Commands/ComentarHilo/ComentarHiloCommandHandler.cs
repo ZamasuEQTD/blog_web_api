@@ -47,7 +47,7 @@ namespace Application.Comentarios.Commands
             Comentario c = new Comentario(
                 hilo.Id,
                 new UsuarioId(_userContext.UsuarioId),
-                new Autor(_userContext.Username," _userContext.Rango.Name"),
+                new Autor("Anonimo","Anon"),
                 null,
                 texto.Value,
                 ColorService.GenerarColor(

@@ -22,6 +22,6 @@ namespace Application.Categorias.Queries
         [JsonIgnore]
         public Guid CategoriaId { get; set; }
         public string Nombre { get; set; }
-        public string Imagen => $"/static/media/images/subcategorias/{Nombre.ToLower()}.jpeg";
+        public string Imagen => $"/static/media/images/subcategorias/{"string".ToLower()}.jpeg";
     }
 }

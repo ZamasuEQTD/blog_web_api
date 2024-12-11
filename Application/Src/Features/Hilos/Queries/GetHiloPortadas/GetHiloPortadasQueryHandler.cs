@@ -62,7 +62,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             hilo.created_at as CreatedAt,
             hilo.ultimo_bump as UltimoBump,
             CASE
-                WHEN AND hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
+                WHEN hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
             ELSE NULL
             END AS RecibirNotificaciones,
             subcategoria.nombre_corto AS Subcategoria,
@@ -105,35 +105,10 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
 
         if(request.Categoria is not null ){
             builder.Where("hilo.subcategoria_id = @Categoria", new { request.Categoria });
-        } else {
-            builder.Where(
-                @"hilo.subcategoria_id NOT IN (
-                    SELECT 
-                        id 
-                    FROM subcategorias 
-                    WHERE 
-                        id IN @CategoriasFiltradas 
-                    OR
-                        oculto_por_defecto
-                )", new { request.CategoriasFiltradas });
-        }
+        }  
 
         if(request.UltimoBump != DateTime.MinValue) {
-            builder.Where($"hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
-        }
-
-        if(_user.IsLogged){
-            builder.Where($@"
-                hilo.id NOT IN (
-                SELECT
-                    hilo_id
-                FROM hilo_interacciones
-                WHERE 
-                    usuario_id = @UsuarioId
-                AND
-                    oculto 
-                )
-            ");
+            builder.Where("hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
         }
 
         builder.AddParameters(parameters);

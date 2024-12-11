@@ -148,7 +148,7 @@ namespace WebApi.Controllers
 
         [HttpGet("portadas")]
         [ProducesResponseType(typeof(List<GetHiloPortadaResponse>), StatusCodes.Status200OK)]
-        public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request, [FromBody]List<Guid> categoriasFiltradas)
+        public async Task<IResult> GetPortadas([FromQuery] GetPortadasRequest request)
         {
             var result = await sender.Send(
                 new GetHiloPortadasQuery()
@@ -156,7 +156,6 @@ namespace WebApi.Controllers
                     Titulo = request.Titulo,
                     Categoria = request.Categoria,
                     UltimoBump = request.UltimoBump,
-                    CategoriasFiltradas = categoriasFiltradas
                 }
             );
 

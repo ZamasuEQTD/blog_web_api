@@ -7,7 +7,7 @@ namespace Domain.Comentarios.ValueObjects
     public class Texto : ValueObject
     {
         static public readonly int MAX = 255;
-        static public readonly int MIN = 20;
+        static public readonly int MIN = 5;
 
         public string Value { get; private set; }
         public Texto() { }

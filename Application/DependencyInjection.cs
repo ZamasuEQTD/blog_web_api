@@ -20,6 +20,8 @@ namespace Application.Configuration
             services.AddScoped<VideoService>();
             services.AddScoped<ImagenService>();
             services.AddScoped<MediaProcesador>();
+            services.AddScoped<GifService>();
+
 
             return services;
         }
