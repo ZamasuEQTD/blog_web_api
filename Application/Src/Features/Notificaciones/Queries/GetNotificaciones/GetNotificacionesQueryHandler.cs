@@ -56,7 +56,7 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
 
                 return notificacion;
             },
-            new { _userContext.UsuarioId, request.UltimaNotificacion }
+            new { _userContext.UsuarioId, UltimaNotificacion = request.UltimaNotificacion == DateTime.MinValue? (object) DBNull.Value : request.UltimaNotificacion }
         );
 
         return Result.Success(notificaciones);
