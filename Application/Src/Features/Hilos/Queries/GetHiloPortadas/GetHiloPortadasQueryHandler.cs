@@ -32,13 +32,13 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             hilo.created_at as CreatedAt,
             hilo.ultimo_bump as UltimoBump,
             CASE
-                WHEN hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
+                WHEN hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
             ELSE NULL
             END AS RecibirNotificaciones,
             subcategoria.nombre_corto AS Subcategoria,
-            @IsLogged AND hilo.usuario_id = @UsuarioId AS EsOp,
+            @IsLogged AND hilo.autor_id = @UsuarioId AS EsOp,
             CASE
-                WHEN @IsLogged THEN hilo.usuario_id
+                WHEN @IsLogged THEN hilo.autor_id
             ELSE NULL
             END AS AutorId,
             false AS EsSticky,
@@ -48,11 +48,11 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             spoileable.spoiler,
             portada.miniatura AS Url
         FROM hilos hilo
-        JOIN media_spoileables spoileable ON spoileable.id = hilo.portada_id
-        JOIN media portada ON portada.id = spoileable.media_id
+        JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
+        JOIN medias portada ON portada.id = spoileable.hashed_media_id
         JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
         /**where**/
-        {(_user.IsLogged ? 
+        {(request.UltimoBump == DateTime.MinValue ? 
         @"
         UNION ALL
         SELECT 
@@ -62,13 +62,13 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             hilo.created_at as CreatedAt,
             hilo.ultimo_bump as UltimoBump,
             CASE
-                WHEN AND hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
+                WHEN AND hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
             ELSE NULL
             END AS RecibirNotificaciones,
             subcategoria.nombre_corto AS Subcategoria,
-            hilo.usuario_id = @UsuarioId AS EsOp,
+            hilo.autor_id = @UsuarioId AS EsOp,
             CASE
-                WHEN @IsLogged THEN hilo.usuario_id
+                WHEN @IsLogged THEN hilo.autor_id
             ELSE NULL
             END AS AutorId,
             true AS EsSticky,
@@ -78,8 +78,8 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             spoileable.spoiler,
             portada.miniatura AS url
         FROM hilos hilo
-        JOIN media_spoileables spoileable ON spoileable.id = hilo.portada_id
-        JOIN media portada ON portada.id = spoileable.media_id
+        JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
+        JOIN medias portada ON portada.id = spoileable.hashed_media_id
         JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
         JOIN stickies sticky ON sticky.hilo_id = hilo.id
         /**where**/
@@ -105,25 +105,34 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
 
         if(request.Categoria is not null ){
             builder.Where("hilo.subcategoria_id = @Categoria", new { request.Categoria });
+        } else {
+            builder.Where(
+                @"hilo.subcategoria_id NOT IN (
+                    SELECT 
+                        id 
+                    FROM subcategorias 
+                    WHERE 
+                        id IN @CategoriasFiltradas 
+                    OR
+                        oculto_por_defecto
+                )", new { request.CategoriasFiltradas });
         }
 
         if(request.UltimoBump != DateTime.MinValue) {
-            Console.WriteLine("ultimo_bump: " + request.UltimoBump);
-
             builder.Where($"hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
         }
 
         if(_user.IsLogged){
             builder.Where($@"
-                    hilo.id NOT IN (
-                    SELECT
-                        hilo_id
-                    FROM hilo_interacciones
-                    WHERE 
-                        usuario_id = @UsuarioId
-                    AND
-                        oculto 
-                    )
+                hilo.id NOT IN (
+                SELECT
+                    hilo_id
+                FROM hilo_interacciones
+                WHERE 
+                    usuario_id = @UsuarioId
+                AND
+                    oculto 
+                )
             ");
         }
 

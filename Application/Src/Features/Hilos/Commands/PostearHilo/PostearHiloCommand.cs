@@ -15,6 +15,4 @@ namespace Application.Hilos.Commands
         public required IFile? File { get; set; }
         public required IEmbedFile? Embed { get; set; }
     }
-
-
 }

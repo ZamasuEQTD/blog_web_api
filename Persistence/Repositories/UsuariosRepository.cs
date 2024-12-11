@@ -13,6 +13,7 @@ namespace Persistence.Repositories
         }
 
         public void Add(Usuario usuario) => _context.Add(usuario);
+
         public Task<Usuario> GetUsuarioById(UsuarioId id) => _context.Usuarios.FirstAsync(u => u.Id == id);
         public Task<Usuario?> GetUsuarioByUsername(Username username) => _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
         public Task<bool> UsernameEstaOcupado(Username username) => _context.Usuarios.AnyAsync(u => u.Username == username);

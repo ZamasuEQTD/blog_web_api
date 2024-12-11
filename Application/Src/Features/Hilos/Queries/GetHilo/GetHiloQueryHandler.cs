@@ -30,13 +30,13 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
                 hilo.descripcion,
                 sticky.id IS NOT NULL AS EsSticky,
                 CASE
-                    WHEN true THEN hilo.usuario_id
+                    WHEN true THEN hilo.autor_id
                 ELSE NULL
                 END AS AutorId,
                 hilo.created_at AS CreatedAt,
-                @UsuarioId = hilo.usuario_id AS EsOp,
+                @UsuarioId = hilo.autor_id AS EsOp,
                 CASE
-                    WHEN hilo.usuario_id = @UsuarioId THEN hilo.recibir_notificaciones
+                    WHEN hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
                 ELSE NULL
                 END AS RecibirNotificaciones,
                 (
@@ -53,20 +53,18 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
                 portada.previsualizacion,
                 spoiler.spoiler,
                 hilo.autor_nombre as Nombre,
-                hilo.rango,
-                hilo.rango_corto as RangoCorto,
+                hilo.autor_rango as Rango,
                 subcategoria.id,
                 subcategoria.nombre
             FROM hilos hilo
             JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
-            JOIN media_spoileables spoiler ON hilo.portada_id = spoiler.id
-            JOIN media portada ON spoiler.media_id = portada.id
+            JOIN medias_spoileables spoiler ON hilo.portada_id = spoiler.id
+            JOIN medias portada ON spoiler.hashed_media_id = portada.id
             LEFT JOIN stickies sticky ON hilo.id = sticky.hilo_id
             WHERE hilo.id = @hilo;
         ";
+        
         using var connection = _connection.CreateConnection();
-
-        GetHiloResponse? hilo;
 
         var result = await  connection.QueryAsync<GetHiloResponse,GetHiloBanderasResponse,GetHiloMediaResponse,GetHiloAutorResponse,GetSubcategoriaResponse  ,GetHiloResponse  >(sql, 
             (hilo,banderas,media,autor,subcategoria) => {
@@ -83,7 +81,11 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
             ,splitOn: "DadosActivados,url,nombre,id"
         );
 
-        return result.FirstOrDefault();
+        GetHiloResponse? hilo = result.FirstOrDefault();
+
+        if (hilo == null) return HilosFailures.NoEncontrado;
+
+        return hilo;
     }
 
 }

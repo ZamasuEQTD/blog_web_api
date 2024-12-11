@@ -48,5 +48,4 @@ public class GetHiloAutorResponse
 {
     public string Nombre { get; set; }
     public string Rango { get; set; }
-    public string RangoCorto { get; set; }
 }

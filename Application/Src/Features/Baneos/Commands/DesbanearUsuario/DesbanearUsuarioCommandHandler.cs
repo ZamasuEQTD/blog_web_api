@@ -21,13 +21,14 @@ namespace Application.Bneos.Commands
             _unitOfWork = unitOfWork;
             _usuariosRepository = usuariosRepository;
             _baneosRepository = baneosRepository;
+            _time = time;
         }
 
         public async Task<Result> Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken)
         {
             Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.Usuario));
 
-            if (usuario is not Anonimo) return Result.Success();
+           // if (usuario is null || usuario.Roles.Any(r => r.Name != "Anonimo")) return Result.Success();
 
             foreach (var baneo in await _baneosRepository.GetBaneos(usuario.Id))
             {

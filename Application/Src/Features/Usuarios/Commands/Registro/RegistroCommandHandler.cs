@@ -34,7 +34,7 @@ namespace Application.Usuarios.Commands
 
             if (await _usuariosRepository.UsernameEstaOcupado(username.Value)) return UsuariosFailures.UsernameOcupado;
 
-            Anonimo usuario = new Anonimo(
+            Usuario usuario = new Usuario(
                 username.Value,
                 _passwordHasher.Hash(password.Value)
             );
@@ -43,7 +43,7 @@ namespace Application.Usuarios.Commands
 
             await _unitOfWork.SaveChangesAsync();
 
-            return _jwtProvider.Generar(usuario);
+            return await _jwtProvider.Generar(usuario);
         }
     }
 }

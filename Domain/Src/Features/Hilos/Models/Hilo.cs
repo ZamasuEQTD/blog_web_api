@@ -31,8 +31,8 @@ namespace Domain.Hilos
         public List<HiloInteraccionNotificacion> Notificaciones { get; private set; } = [];
         public List<HiloInteraccion> Interacciones { get; private set; } = [];
         public UsuarioId AutorId { get; private set; }
-        public SubcategoriaId Categoria { get; private set; }
-        public EncuestaId? Encuesta { get; private set; }
+        public SubcategoriaId SubcategoriaId { get; private set; }
+        public EncuestaId? EncuestaId    { get; private set; }
         public MediaSpoileableId PortadaId { get; private set; }
         public bool Activo => Status == HiloStatus.Activo;
         public bool Eliminado => Status == HiloStatus.Eliminado;
@@ -54,8 +54,8 @@ namespace Domain.Hilos
             Id = new HiloId(Guid.NewGuid());
             Autor = autor;
             AutorId = autorId;
-            Categoria = subcategoria;
-            Encuesta = encuesta;
+            SubcategoriaId = subcategoria;  
+            EncuestaId = encuesta;
             Titulo = titulo;
             PortadaId = portada;
             Descripcion = descripcion;
@@ -235,7 +235,7 @@ namespace Domain.Hilos
 
         public void ModificarSubcategoria(SubcategoriaId subcategoriaId)
         {
-            Categoria = subcategoriaId;
+            SubcategoriaId = subcategoriaId;
         }
 
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));

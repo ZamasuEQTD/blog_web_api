@@ -47,11 +47,11 @@ namespace Application.Comentarios.Commands
             Comentario c = new Comentario(
                 hilo.Id,
                 new UsuarioId(_userContext.UsuarioId),
-                new Autor(_userContext.Rango == Rango.Moderador ? _userContext.Username : "Anonimo", _userContext.Rango.ToRangoDeUsuario()),
+                new Autor(_userContext.Username," _userContext.Rango.Name"),
                 null,
                 texto.Value,
                 ColorService.GenerarColor(
-                    hilo.Categoria,
+                    hilo.SubcategoriaId,
                     await _categoriasRepository.GetSubcategoriasParanormales(),
                     _timeProvider.UtcNow
                 ),
@@ -74,16 +74,6 @@ namespace Application.Comentarios.Commands
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
-        }
-    }
-    public static class RangoExtension
-    {
-        public static RangoDeUsuario ToRangoDeUsuario(this Rango rango)
-        {
-            if (rango == Rango.Moderador) return RangoDeUsuario.Moderador;
-            if (rango == Rango.Anonimo) return RangoDeUsuario.Anonimo;
-            if (rango == Rango.Owner) return RangoDeUsuario.Owner;
-            throw new ArgumentException("Rango no válido");
         }
     }
 }

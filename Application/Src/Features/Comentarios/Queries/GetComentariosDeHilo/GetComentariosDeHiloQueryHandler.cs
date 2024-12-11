@@ -27,6 +27,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.texto,
                 comentario.autor_id as autorid,
                 comentario.color,
+                hilo.autor_id = comentario.autor_id AS EsOp,
                 comentario.autor_id = @UsuarioId AS EsAutor,
                 CASE
                     WHEN comentario.autor_id = @UsuarioId THEN comentario.recibir_notificaciones
@@ -35,12 +36,12 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 NULL as destacado_at,  
                 FALSE as destacado,
                 comentario.autor_nombre as nombre,
-                comentario.rango_corto as rangocorto,
-                comentario.rango,
+                comentario.autor_rango as rango,
                 comentario.tag,
                 comentario.dados,
                 comentario.tag_unico as tagunico
             FROM comentarios comentario
+            JOIN hilos hilo ON hilo.id = comentario.hilo_id
             /**where**/
             {
             (request.UltimoComentario == DateTime.MinValue ?
@@ -52,6 +53,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.texto,
                 comentario.autor_id as autorid,
                 comentario.color,
+                hilo.autor_id = comentario.autor_id AS EsOp,
                 comentario.autor_id = @UsuarioId AS EsAutor,
                 CASE
                     WHEN comentario.autor_id = @UsuarioId THEN comentario.recibir_notificaciones
@@ -60,13 +62,13 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 destacado.created_at as destacado_at,  
                 true as destacado,
                 comentario.autor_nombre as nombre,
-                comentario.rango_corto as rangocorto,
-                comentario.rango,
+                comentario.autor_rango as rango,
                 comentario.tag,
                 comentario.dados,
                 comentario.tag_unico as tagunico
             FROM comentarios comentario
             JOIN comentarios_destacados destacado ON destacado.comentario_id = comentario.id
+            JOIN hilos hilo ON hilo.id = comentario.hilo_id
             /**where**/
             " : "")
             }

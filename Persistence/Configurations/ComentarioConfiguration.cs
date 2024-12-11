@@ -26,7 +26,7 @@ namespace Persistence.Configurations
             builder.Property(c => c.MediaSpoileableId).HasColumnName("media_spoileable_id");
             builder.HasOne<MediaSpoileable>().WithMany().HasForeignKey(c => c.MediaSpoileableId);
 
-            builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value).HasColumnName("texto");
+            builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value);
 
             builder.OwnsOne(c => c.Status, b =>
             {
@@ -38,18 +38,12 @@ namespace Persistence.Configurations
                 b.Property(c => c.Value).HasColumnName("color");
             });
 
+            builder.Property(c => c.Texto).HasColumnName("texto");
+
             builder.OwnsOne(c => c.Autor, b =>
             {
                 b.Property(c => c.Nombre).HasColumnName("autor_nombre");
-                b.OwnsOne(c => c.Rango, r =>
-                {
-                    r.OwnsOne(r => r.Rango, r =>
-                    {
-                        r.Property(r => r.Nombre).HasColumnName("rango");
-                    });
-
-                    r.Property(r => r.RangoCorto).HasColumnName("rango_corto");
-                });
+                b.Property(c => c.Rango).HasColumnName("autor_rango");
             });
 
             builder.Property(c => c.Tag).HasConversion(tag => tag.Value, value => Tag.Create(value).Value).HasColumnName("tag");
@@ -58,7 +52,8 @@ namespace Persistence.Configurations
 
             builder.Property(c => c.RecibirNotificaciones).HasColumnName("recibir_notificaciones");
 
-            builder.Property(c => c.CreatedAt).HasColumnName("created_at");
+            builder.Property(c => c.CreatedAt).HasColumnName("created_at")  ;
+
             builder.OwnsMany(c => c.Respuestas, y =>
             {
                 y.ToTable("respuestas_comentarios");
@@ -66,10 +61,10 @@ namespace Persistence.Configurations
                 y.HasKey(c => c.Id);
                 y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
-                y.Property(c => c.RespondidoId).HasColumnName("comentario_respondido_id");
+                y.Property(c => c.RespondidoId).HasColumnName("respondido_id");
                 y.WithOwner().HasForeignKey(c => c.RespondidoId);
 
-                y.Property(c => c.RespuestaId).HasColumnName("respuesta_id");
+                y.Property(c => c.RespuestaId).HasColumnName("respuesta_id")    ;
                 y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.RespuestaId);
             });
 
@@ -86,7 +81,7 @@ namespace Persistence.Configurations
                 y.Property(h => h.DenuncianteId).HasColumnName("denunciante_id");
                 y.HasOne<Usuario>().WithMany().HasForeignKey(h => h.DenuncianteId);
 
-                y.Property(h => h.Status).HasColumnName("status");
+                y.Property(h => h.Status);
             });
 
             builder.OwnsMany(c => c.Relaciones, y =>
@@ -94,7 +89,7 @@ namespace Persistence.Configurations
                 y.ToTable("comentario_interacciones");
 
                 y.HasKey(c => c.Id);
-                y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+                y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id")    ;
 
                 y.Property(r => r.UsuarioId).HasColumnName("usuario_id");
                 y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);

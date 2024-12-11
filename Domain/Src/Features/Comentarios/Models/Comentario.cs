@@ -1,6 +1,7 @@
 using Domain.Comentarios.ValueObjects;
 using Domain.Features.Medias.Models.ValueObjects;
 using Domain.Hilos;
+using Domain.Hilos.ValueObjects;
 using Domain.Notificaciones;
 using Domain.Usuarios;
 using SharedKernel;
@@ -149,8 +150,8 @@ namespace Domain.Comentarios
         public static readonly Error YaTieneStickyActivo = new Error("Hilos.YaTieneStickyActivo", "Ya tiene un sticky activo");
         public static readonly Error SinStickyActivo = new Error("Hilos.SinStickyActivo", "No tienes un sticky activo");
         public static readonly Error NoEncontrado = new Error("Hilos.NoEncontrado", "El hilo no fue encontrado");
-        public static readonly Error LongitudDeTituloInvalida = new Error("Hilos.LongitudDeTituloInvalida", "La longitud del título es inválida");
-        public static readonly Error LongitudDeDescripcionInvalida = new Error("Hilos.LongitudDeDescripcionInvalida", "La longitud de la descripción es inválida");
+        public static readonly Error LongitudDeTituloInvalida = new Error("Hilos.LongitudDeTituloInvalida", $"El título debe tener entre {Titulo.MIN} y {Titulo.MAX} caracteres.");
+        public static readonly Error LongitudDeDescripcionInvalida = new Error("Hilos.LongitudDeDescripcionInvalida", $"La descripción debe tener entre {Descripcion.MIN} y {Descripcion.MAX} caracteres.");
     }
 
     static public class ComentariosFailures
@@ -161,7 +162,7 @@ namespace Domain.Comentarios
         public static readonly Error HaAlcanzadoMaximaCantidadDeDestacados = new Error("Comentarios.MaximaCantidadDeDestacadosAlcanzada", "Has alcanzado la máxima cantidad de comentarios destacados.");
         public static readonly Error TagInvalido = new Error("Comentarios.TagInvalido", "El tag proporcionado es inválido.");
         public static readonly Error TagUnicoInvalido = new Error("Comentarios.TagUnicoInvalido", "El tag único proporcionado es inválido.");
-        public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.LongitudDeTextoInvalido", "La longitud del texto del comentario es inválida.");
+        public static readonly Error LongitudDeTextoInvalido = new Error("Comentarios.LongitudDeTextoInvalido", $"El texto del comentario debe tener entre {Texto.MIN} y {Texto.MAX} caracteres.");
         public static readonly Error MaximaCantidadDeTaggueosSuperados = new Error("Comentarios.MaximaCantidadDeTaggueosSuperados", "Se ha superado la máxima cantidad de taggueos permitidos.");
         public static readonly Error ValorDeDadosInvalidos = new Error("Comentarios.ValorDeDadosInvalidos", "El valor de los dados proporcionado es inválido.");
     }

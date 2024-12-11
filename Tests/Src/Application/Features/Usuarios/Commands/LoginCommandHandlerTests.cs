@@ -37,7 +37,7 @@ namespace Tests.Application.Usuarios.Commands
 
             // Assert
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(UsuariosFailures.UsernameOrPasswordIncorrecta);
+            result.Error.Should().Be(UsuariosFailures.CredencialesInvalidas);
 
         }
 
@@ -52,7 +52,7 @@ namespace Tests.Application.Usuarios.Commands
 
             // Assert
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(UsuariosFailures.UsernameOrPasswordIncorrecta);
+            result.Error.Should().Be(UsuariosFailures.CredencialesInvalidas);
 
         }
 
@@ -68,7 +68,7 @@ namespace Tests.Application.Usuarios.Commands
 
             // Assert
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(UsuariosFailures.UsernameOrPasswordIncorrecta);
+            result.Error.Should().Be(UsuariosFailures.CredencialesInvalidas);
 
         }
 
@@ -77,7 +77,7 @@ namespace Tests.Application.Usuarios.Commands
         {
             // Arrange
             var command = new LoginCommand("usuarioExistente", "passwordIncorrecto");
-            var usuario = new Anonimo(
+            var usuario = new Usuario(
                 Username.Create("codubiiii").Value,
                 "password");
             _repository.GetUsuarioByUsername(Arg.Any<Username>()).Returns(usuario);
@@ -88,7 +88,7 @@ namespace Tests.Application.Usuarios.Commands
 
             // Assert
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(UsuariosFailures.UsernameOrPasswordIncorrecta);
+            result.Error.Should().Be(UsuariosFailures.CredencialesInvalidas);
 
         }
 

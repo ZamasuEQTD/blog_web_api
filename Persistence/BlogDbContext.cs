@@ -17,7 +17,6 @@ namespace Persistence
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Hilo> Hilos { get; set; }
         public DbSet<Subcategoria> Subcategorias { get; set; }
-
         public DbSet<Baneo> Baneos { get; set; }
         public DbSet<Encuesta> Encuestas { get; set; }
         public DbSet<HiloInteraccion> Relaciones { get; set; }

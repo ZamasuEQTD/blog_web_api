@@ -23,15 +23,16 @@ namespace Application.Usuarios.Commands
         public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             Result<Username> username = Username.Create(request.Username);
+            
             Result<Password> password = Password.Create(request.Password);
 
-            if (username.IsFailure || password.IsFailure) return UsuariosFailures.UsernameOrPasswordIncorrecta;
+            if (username.IsFailure || password.IsFailure) return UsuariosFailures.CredencialesInvalidas;
 
             Usuario? usuario = await _repository.GetUsuarioByUsername(username.Value);
 
-            if (usuario is null || !_hasher.Verify(password.Value, usuario.HashedPassword)) return UsuariosFailures.UsernameOrPasswordIncorrecta;
+            if (usuario is null || !_hasher.Verify(password.Value, usuario.HashedPassword)) return UsuariosFailures.CredencialesInvalidas;
 
-            return _jwtProvider.Generar(usuario);
+            return await _jwtProvider.Generar(usuario);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Application.Bneos.Commands
         {
             Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.UsuarioId));
 
-            if (usuario is not Anonimo anon) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
+            //if (usuario is null || usuario.Roles.Any(r => r.Name != "Anonimo")) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
 
             DateTime? finalizacion = null;
 
@@ -39,7 +39,7 @@ namespace Application.Bneos.Commands
 
             Baneo baneo = new(
                 new(_context.UsuarioId),
-                anon.Id,
+                usuario.Id,
                 finalizacion,
                 request.Mensaje,
                 request.Razon

@@ -23,6 +23,8 @@ public class GetComentarioResponse {
     public bool Destacado { get; set; }
     public List<string> Taggueos { get; set; } = new List<string>();
     public List<string> Tags { get; set; } = new List<string>();
+    [JsonPropertyName("es_op")]
+    public bool EsOp { get; set; }
     [JsonPropertyName("recibir_notificaciones")]
     public bool? RecibirNotificaciones { get; set; }
     public string Color {get; set;}

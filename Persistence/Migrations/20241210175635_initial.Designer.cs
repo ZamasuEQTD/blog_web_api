@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -12,9 +13,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241210175635_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,6 +91,9 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("CategoriaId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -101,12 +107,9 @@ namespace Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("nombre_corto");
 
-                    b.Property<Guid?>("categoria_id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("categoria_id");
+                    b.HasIndex("CategoriaId");
 
                     b.ToTable("subcategorias", (string)null);
                 });
@@ -155,8 +158,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Texto")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("texto");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -466,7 +468,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Categorias.Categoria", null)
                         .WithMany("Subcategorias")
-                        .HasForeignKey("categoria_id");
+                        .HasForeignKey("CategoriaId");
                 });
 
             modelBuilder.Entity("Domain.Comentarios.Comentario", b =>
@@ -653,7 +655,7 @@ namespace Persistence.Migrations
 
                             b1.HasIndex("RespuestaId");
 
-                            b1.ToTable("respuestas_comentarios", (string)null);
+                            b1.ToTable("RespuestasComentarios", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("RespondidoId");

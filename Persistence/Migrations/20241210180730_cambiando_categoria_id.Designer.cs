@@ -13,8 +13,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20241206200008_initial")]
-    partial class initial
+    [Migration("20241210180730_cambiando_categoria_id")]
+    partial class cambiando_categoria_id
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace Persistence.Migrations
 
                     b.Property<DateTime?>("Concluye")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("concluye_en");
+                        .HasColumnName("concluye");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -71,9 +71,6 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text")
@@ -94,10 +91,6 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("Categoria")
-                        .HasColumnType("uuid")
-                        .HasColumnName("categoria_id");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -111,9 +104,12 @@ namespace Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("nombre_corto");
 
+                    b.Property<Guid?>("categoria_id")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Categoria");
+                    b.HasIndex("categoria_id");
 
                     b.ToTable("subcategorias", (string)null);
                 });
@@ -162,8 +158,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Texto")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("texto");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -212,14 +207,15 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("url");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Hash")
                         .IsUnique();
 
-                    b.ToTable("media", (string)null);
+                    b.ToTable("medias", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Features.Medias.Models.MediaSpoileable", b =>
@@ -233,7 +229,7 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("HashedMediaId")
                         .HasColumnType("uuid")
-                        .HasColumnName("media_id");
+                        .HasColumnName("hashed_media_id");
 
                     b.Property<bool>("Spoiler")
                         .HasColumnType("boolean")
@@ -243,7 +239,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("HashedMediaId");
 
-                    b.ToTable("media_spoileables", (string)null);
+                    b.ToTable("medias_spoileables", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Hilos.Hilo", b =>
@@ -254,17 +250,13 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("AutorId")
                         .HasColumnType("uuid")
-                        .HasColumnName("usuario_id");
-
-                    b.Property<Guid>("Categoria")
-                        .HasColumnType("uuid")
-                        .HasColumnName("subcategoria_id");
+                        .HasColumnName("autor_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("Encuesta")
+                    b.Property<Guid?>("EncuestaId")
                         .HasColumnType("uuid")
                         .HasColumnName("encuesta_id");
 
@@ -275,6 +267,10 @@ namespace Persistence.Migrations
                     b.Property<bool>("RecibirNotificaciones")
                         .HasColumnType("boolean")
                         .HasColumnName("recibir_notificaciones");
+
+                    b.Property<Guid>("SubcategoriaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subcategoria_id");
 
                     b.Property<DateTime>("UltimoBump")
                         .HasColumnType("timestamp with time zone")
@@ -304,12 +300,12 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AutorId");
 
-                    b.HasIndex("Categoria");
-
-                    b.HasIndex("Encuesta")
+                    b.HasIndex("EncuestaId")
                         .IsUnique();
 
                     b.HasIndex("PortadaId");
+
+                    b.HasIndex("SubcategoriaId");
 
                     b.ToTable("hilos", (string)null);
                 });
@@ -364,7 +360,7 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("NotificadoId")
                         .HasColumnType("uuid")
-                        .HasColumnName("usuario_notificado_id");
+                        .HasColumnName("notificado_id");
 
                     b.Property<string>("tipo_de_interaccion")
                         .IsRequired()
@@ -395,12 +391,7 @@ namespace Persistence.Migrations
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("password");
-
-                    b.Property<string>("Rango")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("rango");
+                        .HasColumnName("hashed_password");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -410,10 +401,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("usuarios", (string)null);
-
-                    b.HasDiscriminator<string>("Rango");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Notificaciones.HiloInteraccionNotificacion", b =>
@@ -435,24 +422,6 @@ namespace Persistence.Migrations
                     b.HasDiscriminator().HasValue("HiloInteraccionNotificacion");
                 });
 
-            modelBuilder.Entity("Domain.Usuarios.Anonimo", b =>
-                {
-                    b.HasBaseType("Domain.Usuarios.Usuario");
-
-                    b.HasDiscriminator().HasValue("Anonimo");
-                });
-
-            modelBuilder.Entity("Domain.Usuarios.Moderador", b =>
-                {
-                    b.HasBaseType("Domain.Usuarios.Usuario");
-
-                    b.Property<string>("NombreModerador")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("Moderador");
-                });
-
             modelBuilder.Entity("Domain.Notificaciones.ComentarioRespondidoNotificacion", b =>
                 {
                     b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
@@ -463,32 +432,32 @@ namespace Persistence.Migrations
 
                     b.HasIndex("RespondidoId");
 
-                    b.HasDiscriminator().HasValue("comentario_respondido");
+                    b.HasDiscriminator().HasValue("ComentarioRespondido");
                 });
 
             modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
                 {
                     b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
 
-                    b.HasDiscriminator().HasValue("hilo_comentado");
+                    b.HasDiscriminator().HasValue("HiloComentado");
                 });
 
             modelBuilder.Entity("Domain.Notificaciones.HiloSeguidoNotificacion", b =>
                 {
                     b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
 
-                    b.HasDiscriminator().HasValue("hilo_seguido");
+                    b.HasDiscriminator().HasValue("HiloSeguido");
                 });
 
             modelBuilder.Entity("Domain.Baneos.Baneo", b =>
                 {
-                    b.HasOne("Domain.Usuarios.Moderador", null)
+                    b.HasOne("Domain.Usuarios.Usuario", null)
                         .WithMany()
                         .HasForeignKey("ModeradorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Usuarios.Anonimo", null)
+                    b.HasOne("Domain.Usuarios.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UsuarioBaneadoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -498,10 +467,8 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Categorias.Subcategoria", b =>
                 {
                     b.HasOne("Domain.Categorias.Categoria", null)
-                        .WithMany()
-                        .HasForeignKey("Categoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Subcategorias")
+                        .HasForeignKey("categoria_id");
                 });
 
             modelBuilder.Entity("Domain.Comentarios.Comentario", b =>
@@ -536,54 +503,17 @@ namespace Persistence.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("autor_nombre");
 
+                            b1.Property<string>("Rango")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("autor_rango");
+
                             b1.HasKey("ComentarioId");
 
                             b1.ToTable("comentarios");
 
                             b1.WithOwner()
                                 .HasForeignKey("ComentarioId");
-
-                            b1.OwnsOne("Domain.Usuarios.RangoDeUsuario", "Rango", b2 =>
-                                {
-                                    b2.Property<Guid>("AutorComentarioId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<string>("RangoCorto")
-                                        .IsRequired()
-                                        .HasColumnType("text")
-                                        .HasColumnName("rango_corto");
-
-                                    b2.HasKey("AutorComentarioId");
-
-                                    b2.ToTable("comentarios");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("AutorComentarioId");
-
-                                    b2.OwnsOne("Domain.Usuarios.Rango", "Rango", b3 =>
-                                        {
-                                            b3.Property<Guid>("RangoDeUsuarioAutorComentarioId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Nombre")
-                                                .IsRequired()
-                                                .HasColumnType("text")
-                                                .HasColumnName("rango");
-
-                                            b3.HasKey("RangoDeUsuarioAutorComentarioId");
-
-                                            b3.ToTable("comentarios");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("RangoDeUsuarioAutorComentarioId");
-                                        });
-
-                                    b2.Navigation("Rango")
-                                        .IsRequired();
-                                });
-
-                            b1.Navigation("Rango")
-                                .IsRequired();
                         });
 
                     b.OwnsMany("Domain.Comentarios.ComentarioInterracion", "Relaciones", b1 =>
@@ -646,8 +576,7 @@ namespace Persistence.Migrations
                                 .HasColumnType("integer");
 
                             b1.Property<int>("Status")
-                                .HasColumnType("integer")
-                                .HasColumnName("status");
+                                .HasColumnType("integer");
 
                             b1.HasKey("Id");
 
@@ -714,7 +643,7 @@ namespace Persistence.Migrations
 
                             b1.Property<Guid>("RespondidoId")
                                 .HasColumnType("uuid")
-                                .HasColumnName("comentario_respondido_id");
+                                .HasColumnName("respondido_id");
 
                             b1.Property<Guid>("RespuestaId")
                                 .HasColumnType("uuid")
@@ -726,7 +655,7 @@ namespace Persistence.Migrations
 
                             b1.HasIndex("RespuestaId");
 
-                            b1.ToTable("respuestas_comentarios", (string)null);
+                            b1.ToTable("RespuestasComentarios", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("RespondidoId");
@@ -843,7 +772,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("HashedMediaId");
 
-                            b1.ToTable("media");
+                            b1.ToTable("medias");
 
                             b1.WithOwner()
                                 .HasForeignKey("HashedMediaId");
@@ -860,7 +789,7 @@ namespace Persistence.Migrations
 
                                     b2.HasKey("MediaHashedMediaId");
 
-                                    b2.ToTable("media");
+                                    b2.ToTable("medias");
 
                                     b2.WithOwner()
                                         .HasForeignKey("MediaHashedMediaId");
@@ -893,19 +822,19 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Categorias.Subcategoria", null)
-                        .WithMany()
-                        .HasForeignKey("Categoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Encuestas.Encuesta", null)
                         .WithOne()
-                        .HasForeignKey("Domain.Hilos.Hilo", "Encuesta");
+                        .HasForeignKey("Domain.Hilos.Hilo", "EncuestaId");
 
                     b.HasOne("Domain.Features.Medias.Models.MediaSpoileable", null)
                         .WithMany()
                         .HasForeignKey("PortadaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Categorias.Subcategoria", null)
+                        .WithMany()
+                        .HasForeignKey("SubcategoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -972,8 +901,7 @@ namespace Persistence.Migrations
                     b.OwnsMany("Domain.Hilos.DenunciaDeHilo", "Denuncias", b1 =>
                         {
                             b1.Property<Guid>("Id")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<DateTime>("CreatedAt")
                                 .HasColumnType("timestamp with time zone");
@@ -1022,54 +950,17 @@ namespace Persistence.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("autor_nombre");
 
+                            b1.Property<string>("Rango")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("autor_rango");
+
                             b1.HasKey("HiloId");
 
                             b1.ToTable("hilos");
 
                             b1.WithOwner()
                                 .HasForeignKey("HiloId");
-
-                            b1.OwnsOne("Domain.Usuarios.RangoDeUsuario", "Rango", b2 =>
-                                {
-                                    b2.Property<Guid>("AutorHiloId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<string>("RangoCorto")
-                                        .IsRequired()
-                                        .HasColumnType("text")
-                                        .HasColumnName("rango_corto");
-
-                                    b2.HasKey("AutorHiloId");
-
-                                    b2.ToTable("hilos");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("AutorHiloId");
-
-                                    b2.OwnsOne("Domain.Usuarios.Rango", "Rango", b3 =>
-                                        {
-                                            b3.Property<Guid>("RangoDeUsuarioAutorHiloId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Nombre")
-                                                .IsRequired()
-                                                .HasColumnType("text")
-                                                .HasColumnName("rango");
-
-                                            b3.HasKey("RangoDeUsuarioAutorHiloId");
-
-                                            b3.ToTable("hilos");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("RangoDeUsuarioAutorHiloId");
-                                        });
-
-                                    b2.Navigation("Rango")
-                                        .IsRequired();
-                                });
-
-                            b1.Navigation("Rango")
-                                .IsRequired();
                         });
 
                     b.OwnsOne("Domain.Hilos.ValueObjects.ConfiguracionDeComentarios", "Configuracion", b1 =>
@@ -1194,6 +1085,11 @@ namespace Persistence.Migrations
                         .HasForeignKey("RespondidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Categorias.Categoria", b =>
+                {
+                    b.Navigation("Subcategorias");
                 });
 
             modelBuilder.Entity("Domain.Hilos.Hilo", b =>

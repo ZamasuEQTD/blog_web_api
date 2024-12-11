@@ -1,4 +1,5 @@
 using Application.Abstractions.Data;
+using Application.Features.Hilos.Abstractions;
 using Application.Features.Hilos.Queries.Responses;
 using Application.Hilos.Queries.Responses;
 using Dapper;
@@ -10,14 +11,19 @@ namespace Infraestructure.Hilos;
  
 public class ConnectionManager<T>
 {
-    public Dictionary<string, UserHubConnection> Connections { get; set; } = [];
+    public Dictionary<string, UserHubConnection?> Connections { get; set; } = [];
     public void RemoveConnection(string connectionId)
     {
         Connections.Remove(connectionId);
     }
+
+    public void AddConnection(string connectionId, UserHubConnection? user){
+        this.Connections[connectionId] = user;
+    }
+
 }
 
-public class HilosHubService
+public class HilosHubService : IHilosHubService
 {
     private readonly IHubContext<HilosHub> _hubContext;
     private readonly IDBConnectionFactory _connection;
@@ -41,7 +47,7 @@ public class HilosHubService
                 hilo.ultimo_bump AS UltimoBump,
                 hilo.recibir_notificaciones AS RecibirNotificaciones,
                 subcategoria.nombre_corto AS Subcategoria,
-                hilo.usuario_id AS AutorId,
+                hilo.autor_id AS AutorId,
                 false AS EsSticky,
                 hilo.dados AS DadosActivados,
                 hilo.id_unico_activado AS IdUnicoActivado,
@@ -49,8 +55,8 @@ public class HilosHubService
                 spoileable.spoiler,
                 portada.miniatura
             FROM hilos hilo
-            JOIN media_spoileables spoileable ON spoileable.id = hilo.portada_id
-            JOIN media portada ON portada.id = spoileable.media_id
+            JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
+            JOIN medias portada ON portada.id = spoileable.hashed_media_id
             JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
             WHERE hilo.id = @Id
             ";
@@ -60,7 +66,7 @@ public class HilosHubService
         var portadas = await connection.QueryAsync<GetHiloPortadaResponse, GetHiloBanderasResponse, GetHiloPortadaImagenResponse,GetHiloPortadaResponse>(sql,
             (portada, banderas,imagen ) => {
                 portada.Banderas = banderas;
-                portada.Imagen = imagen;
+                portada.Miniatura = imagen;
                 return portada;
             },
             new { Id = id },
@@ -77,9 +83,9 @@ public class HilosHubService
         {
             GetHiloPortadaResponse response;
 
-            if (userConnection.Value.UserId == portada.AutorId?.ToString())
+            if (userConnection.Value?.UserId == portada.AutorId?.ToString())
                 response = PortadaHubMapper.ToAutor(portada);
-            else if (userConnection.Value.UserType == UserType.Moderador)
+            else if (userConnection.Value?.UserType == UserType.Moderador)
                 response = PortadaHubMapper.ToModerador(portada);
             else
                 response = PortadaHubMapper.ToAnonimo(portada);
@@ -101,7 +107,7 @@ static class PortadaHubMapper
             Titulo = portada.Titulo,
             Descripcion = portada.Descripcion,
             AutorId = null,
-            Imagen = portada.Imagen,
+            Miniatura = portada.Miniatura,
             Banderas = portada.Banderas,
             Subcategoria = portada.Subcategoria,
             EsOp = true,
@@ -117,7 +123,7 @@ static class PortadaHubMapper
             AutorId = portada.AutorId,
             Titulo = portada.Titulo,
             Descripcion = portada.Descripcion,
-            Imagen = portada.Imagen,
+            Miniatura = portada.Miniatura,
             Banderas = portada.Banderas,
             Subcategoria = portada.Subcategoria,
             EsOp = false,
@@ -133,7 +139,7 @@ static class PortadaHubMapper
             AutorId = null,
             Titulo = portada.Titulo,
             Descripcion = portada.Descripcion,
-            Imagen = portada.Imagen,
+            Miniatura = portada.Miniatura,
             Banderas = portada.Banderas,
             Subcategoria = portada.Subcategoria,
             EsOp = false,
@@ -157,6 +163,8 @@ public class HilosHub : Hub<IHilosHub>
     }
     public override async Task OnConnectedAsync()
     {
+        _connectionManager.AddConnection(Context.ConnectionId,null);
+
         await base.OnConnectedAsync();
     }
 }

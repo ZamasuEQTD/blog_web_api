@@ -2,6 +2,7 @@ using Application.Abstractions;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Comentarios.Commands;
+using Application.Features.Hilos.Abstractions;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
 using Domain.Categorias;
@@ -18,7 +19,6 @@ namespace Application.Hilos.Commands
 {
     public class PostearHiloCommandHiloCommandHandler : ICommandHandler<PostearHiloCommand, Guid>
     {
-
         static private readonly List<FileType> ARCHIVOS_SOPORTADOS = [
             FileType.Video,
             FileType.Imagen,
@@ -31,7 +31,8 @@ namespace Application.Hilos.Commands
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador)
+        private readonly IHilosHubService _hilosHubService;
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, IHilosHubService hilosHubService)
         {
             _unitOfWork = unitOfWork;
             _user = user;
@@ -39,6 +40,7 @@ namespace Application.Hilos.Commands
             _mediasRepository = mediasRepository;
             _hilosRepository = hilosRepository;
             _mediaProcesador = mediaProcesador;
+            _hilosHubService = hilosHubService;
         }
 
         public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
@@ -87,11 +89,11 @@ namespace Application.Hilos.Commands
             reference = new MediaSpoileable(media.Id, media, request.Spoiler);
 
             _mediasRepository.Add(reference);
-
+            
             Hilo hilo = new Hilo(
                titulo.Value,
                descripcion.Value,
-               new Autor(_user.Rango == Rango.Moderador ? _user.Username : "Anonimo", _user.Rango.ToRangoDeUsuario()),
+               this._user.Autor,
                new UsuarioId(_user.UsuarioId),
                reference.Id,
                new SubcategoriaId(request.Subcategoria),
@@ -105,6 +107,8 @@ namespace Application.Hilos.Commands
             _hilosRepository.Add(hilo);
 
             await _unitOfWork.SaveChangesAsync();
+
+            await _hilosHubService.NotificarHiloPosteado(hilo.Id.Value);
 
             return hilo.Id.Value;
         }

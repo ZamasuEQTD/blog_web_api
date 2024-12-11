@@ -16,40 +16,60 @@ namespace Application.Categorias.Queries
 
         public async Task<Result<List<GetCategoriaReponse>>> Handle(GetCategoriasQuery request, CancellationToken cancellationToken)
         {
-            Dictionary<Guid, GetCategoriaReponse> categorias = [];
+            Dictionary<Guid, GetCategoriaReponse> _categorias = [];
 
             string sql = @"
             SELECT
-                c.nombre AS Nombre,
-                s.id AS Id,
-                s.id as Id,
-                s.nombre AS Nombre
-            FROM categorias c
-            LEFT JOIN subcategorias s ON s.categoria_id = c.id
+                id,
+                nombre
+            FROM categorias;
+            SELECT
+                id,
+                categoria_id AS CategoriaId,
+                nombre
+            FROM subcategorias 
             ";
 
-            using (var connection = _connection.CreateConnection())
+            using var connection = _connection.CreateConnection();
+
+            using var query = await connection.QueryMultipleAsync(sql);
+
+            var c = query.Read<GetCategoriaReponse>().ToList();
+
+            var s = query.Read<GetSubcategoriaResponse>();
+            
+            foreach (var sub in s)
             {
-                await connection.QueryAsync<GetCategoriaReponse, GetSubcategoriaResponse, GetCategoriaReponse>(sql, (categoria, subcategoria) =>
+                GetCategoriaReponse? categoria = c.FirstOrDefault(c => c.Id == sub.CategoriaId);
+
+                if (categoria != null)
                 {
-                    if (categorias.TryGetValue(categoria.Id, out var c))
-                    {
-                        categoria = c;
-                    }
-                    else
-                    {
-                        categorias.Add(categoria.Id, categoria);
-                    }
-
-                    categoria.Subcategorias.Add(subcategoria);
-
-                    return categoria;
-                }, splitOn: "Id");
+                    categoria.Subcategorias.Add(sub);
+                }
             }
 
-            List<GetCategoriaReponse> response = categorias.Select(c => c.Value).OrderByDescending(c => c.OcultaDesdePrincipio).ToList();
+            return c.ToList();
 
-            return response;
+            var categorias = await connection.QueryAsync<GetCategoriaReponse, GetSubcategoriaResponse, GetCategoriaReponse>(sql, (categoria, subcategoria) =>
+            {
+               if (_categorias.TryGetValue(categoria.Id, out var c))
+               {
+                   categoria = c;
+               }
+               else
+               {
+                   _categorias[categoria.Id] = categoria;
+               }
+
+               categoria.Subcategorias.Add(subcategoria);
+
+               return categoria;
+            }, 
+            splitOn: "Id"
+            );
+
+
+            return _categorias.Values.ToList();
         }
     }
 }

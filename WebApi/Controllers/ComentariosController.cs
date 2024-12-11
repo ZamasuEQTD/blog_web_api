@@ -48,7 +48,7 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }
         [Authorize]
-        [HttpPost("comentar-hilo/{hilo}")]
+        [HttpPost("comentar-hilo/{hilo:guid}")]
         public async Task<IResult> Comentar(
             [FromRoute] Guid hilo,
             [FromForm] ComentarHiloRequest request
@@ -75,6 +75,6 @@ namespace WebApi.Controllers
         [JsonPropertyName("embed_file")]
         public string? EmbedFile { get; set; }
         [JsonPropertyName("file")]
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
     }
 }

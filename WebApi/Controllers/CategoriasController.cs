@@ -1,5 +1,5 @@
-using Application.Categorias.Commands;
 using Application.Categorias.Queries;
+using Application.Features.Categorias.Commands.SeedCategorias;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
@@ -15,6 +15,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet( )]
+        [ProducesResponseType(typeof(List<GetCategoriaReponse>), StatusCodes.Status200OK)]
         public async Task<IResult> GetCategorias()
         {
             var result = await sender.Send(new GetCategoriasQuery());
@@ -22,36 +23,17 @@ namespace WebApi.Controllers
             Results.Ok(result)
             :
             result.HandleFailure();
-        }
-        [HttpPost("ol")]
-        public async Task<IResult> CrearCategoria(
-            [FromBody] CrearCategoriaRequest request
-        )
+         }
+        [HttpPost]
+        public async Task<IResult> SeedCategorias()
         {
-            var result = await sender.Send(new CrearCategoriaCommand(
-                request.Nombre,
-                request.Subcategorias.Select(s => new CrearSubcategoriaDto(
-                    s.Nombre,
-                    s.NombreCorto
-                )).ToList()
-            ));
-
+           
+            var result = await sender.Send(new SeedCategoriasCommand());
             return result.IsSuccess ?
                 Results.Ok(result)
                 :
-                result.HandleFailure();
+            result.HandleFailure();
         }
     }
-
-    public class CrearCategoriaRequest
-    {
-        public string Nombre { get; set; }
-        public List<CrearSubcategoriaDto> Subcategorias { get; set; }
-    }
-
-    public class CrearSubcategoriaRequest
-    {
-        public string Nombre { get; set; }
-        public string NombreCorto { get; set; }
-    }
+ 
 }

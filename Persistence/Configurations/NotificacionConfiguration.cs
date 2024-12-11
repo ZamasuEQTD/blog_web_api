@@ -24,15 +24,15 @@ namespace Persistence.Configuration
             });
 
 
-            builder.Property(r => r.NotificadoId).HasColumnName("usuario_notificado_id");
+            builder.Property(r => r.NotificadoId).HasColumnName("notificado_id");
 
             builder.HasOne<Usuario>().WithMany().HasForeignKey(r => r.NotificadoId);
 
             builder
                 .HasDiscriminator<string>("tipo_de_interaccion")
-                .HasValue<HiloSeguidoNotificacion>("hilo_seguido")
-                .HasValue<HiloComentadoNotificacion>("hilo_comentado")
-                .HasValue<ComentarioRespondidoNotificacion>("comentario_respondido");
+                .HasValue<HiloSeguidoNotificacion>("HiloSeguido")
+                .HasValue<HiloComentadoNotificacion>("HiloComentado")
+                .HasValue<ComentarioRespondidoNotificacion>("ComentarioRespondido");
         }
     }
 
