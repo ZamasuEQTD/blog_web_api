@@ -29,7 +29,7 @@ namespace WebApi.Controllers
             var result = await _sender.Send(command);
 
            return result.IsSuccess ?
-                Results.Ok(result)
+                Results.NoContent()
                 :
                 result.HandleFailure();
         }
@@ -45,7 +45,7 @@ namespace WebApi.Controllers
             var result = await _sender.Send(command);
 
             return result.IsSuccess ?
-                Results.Ok(result)
+                Results.NoContent()
                 :
                 result.HandleFailure();
         }

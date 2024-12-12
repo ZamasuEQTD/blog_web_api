@@ -5,7 +5,7 @@ namespace Application.Moderacion.Queries
     public class GetRegistroDeHilosQuery : IQuery<IEnumerable<GetRegistroDeHiloResponse>>
     {
         public Guid Usuario { get; set; }
-        public DateTime? UltimoHilo { get; set; }
+        public Guid? UltimoHilo { get; set; }
     }
 
     public class GetRegistroDeHiloResponse

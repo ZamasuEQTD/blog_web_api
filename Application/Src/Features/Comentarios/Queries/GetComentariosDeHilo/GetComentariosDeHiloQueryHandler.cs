@@ -87,7 +87,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
         });
 
         if(request.UltimoComentario != DateTime.MinValue){
-            builder.Where("comentario.created_at < @UltimoComentario", new {UltimoComentario = request.UltimoComentario});
+            builder.Where("comentario.created_at < @UltimoComentario", new {request.UltimoComentario});
         } 
 
         builder.AddParameters(parameters);

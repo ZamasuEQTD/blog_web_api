@@ -2,9 +2,9 @@ namespace Domain.Categorias.Abstractions
 {
     public interface ICategoriasRepository
     {
-        public void Add(Categoria categoria);
-        public void Add(Subcategoria categoria);
-        public Task<List<SubcategoriaId>> GetSubcategoriasParanormales();
-
+        void Add(Categoria categoria);
+        void Add(Subcategoria categoria);
+        Task<List<SubcategoriaId>> GetSubcategoriasParanormales();
+        Task<Subcategoria?> GetSubcategoria(SubcategoriaId subcategoriaId);
     }
 }

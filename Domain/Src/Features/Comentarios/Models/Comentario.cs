@@ -143,6 +143,7 @@ namespace Domain.Comentarios
     static public class HilosFailures
     {
         public static readonly Error SinPortada = new Error("Hilos.SinPortada", "El hilo no tiene portada");
+        public static readonly Error ArchivoNoSoportado = new Error("Hilos.ArchivoNoSoportado", "El archivo no es soportado");
         public static readonly Error YaEliminado = new Error("Hilos.YaEliminado", "El hilo ya ha sido eliminado");
         public static readonly Error Inactivo = new Error("Hilos.Inactivo", "El hilo está inactivo");
         public static readonly Error NoEsAutor = new Error("Hilos.NoEsAutor", "No eres el autor del hilo");

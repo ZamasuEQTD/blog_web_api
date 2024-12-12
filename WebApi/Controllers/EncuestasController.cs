@@ -26,7 +26,7 @@ public class EncuestasController : ControllerBase
 
         var result = await _sender.Send(command);
         return result.IsSuccess ?
-            Results.Ok(result)
+            Results.NoContent()
             :
             result.HandleFailure();
     }

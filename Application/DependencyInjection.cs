@@ -1,3 +1,7 @@
+using Application.Comentarios.Commands;
+using Application.Features.Comentarios.Abstractions;
+using Application.Features.Medias.Abstractions;
+using Application.Features.Medias.Services;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
 using MediatR;
@@ -16,12 +20,17 @@ namespace Application.Configuration
             .AsImplementedInterfaces().WithScopedLifetime());
 
             services.AddScoped<IMediaFactory, MediaFactoryServiceScoped>();
+            services.AddScoped<IEmbedMediaFactory, EmbedMediaFactoryServiceScoped>();
+            services.AddScoped<YoutubeEmbedService>();
+            services.AddScoped<EmbedProcesador>();
+
 
             services.AddScoped<VideoService>();
             services.AddScoped<ImagenService>();
-            services.AddScoped<MediaProcesador>();
             services.AddScoped<GifService>();
+            services.AddScoped<MediaProcesador>();
 
+            services.AddScoped<IColorService, ColorService>();  
 
             return services;
         }

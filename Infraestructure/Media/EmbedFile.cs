@@ -5,8 +5,7 @@ namespace Infraestructure.Media
     public class EmbedFile : IEmbedFile
     {
         static private readonly Dictionary<string, EmbedType> _domains =  new Dictionary<string, EmbedType> {
-            { "youtube.com", EmbedType.Youtube },
-            { "youtu.be", EmbedType.Youtube },
+            { "www.youtube.com", EmbedType.Youtube },
         };
 
         private readonly string _url;

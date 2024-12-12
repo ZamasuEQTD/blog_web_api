@@ -17,6 +17,8 @@ namespace Persistence.Repositories
 
         public void Add(Subcategoria categoria) => _context.Add(categoria);
 
+        public Task<Subcategoria?> GetSubcategoria(SubcategoriaId subcategoriaId)
+             => _context.Subcategorias.FirstOrDefaultAsync(s => s.Id == subcategoriaId);
         public Task<List<SubcategoriaId>> GetSubcategoriasParanormales() => _context.Subcategorias.Select(s => s.Id).ToListAsync();
     }
 }

@@ -24,7 +24,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
     {
         using var connection = _connection.CreateConnection();
 
-        var sql = @$"(
+        var sql = @$"
         SELECT 
             hilo.id,
             hilo.titulo,
@@ -41,50 +41,19 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
                 WHEN @IsLogged THEN hilo.autor_id
             ELSE NULL
             END AS AutorId,
-            false AS EsSticky,
+            sticky.id IS NOT NULL AS EsSticky,
             hilo.dados AS DadosActivados,
             hilo.id_unico_activado AS IdUnicoActivado,
             hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
             spoileable.spoiler,
-            portada.miniatura AS Url
+            portada.miniatura AS Url,
+            portada.provider AS Provider
         FROM hilos hilo
         JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
         JOIN medias portada ON portada.id = spoileable.hashed_media_id
         JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
+        LEFT JOIN stickies sticky ON hilo.id = sticky.hilo_id
         /**where**/
-        {(request.UltimoBump == DateTime.MinValue ? 
-        @"
-        UNION ALL
-        SELECT 
-            hilo.id,
-            hilo.titulo,
-            hilo.descripcion,
-            hilo.created_at as CreatedAt,
-            hilo.ultimo_bump as UltimoBump,
-            CASE
-                WHEN hilo.autor_id = @UsuarioId THEN hilo.recibir_notificaciones
-            ELSE NULL
-            END AS RecibirNotificaciones,
-            subcategoria.nombre_corto AS Subcategoria,
-            hilo.autor_id = @UsuarioId AS EsOp,
-            CASE
-                WHEN @IsLogged THEN hilo.autor_id
-            ELSE NULL
-            END AS AutorId,
-            true AS EsSticky,
-            hilo.dados AS DadosActivados,
-            hilo.id_unico_activado AS IdUnicoActivado,
-            hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
-            spoileable.spoiler,
-            portada.miniatura AS url
-        FROM hilos hilo
-        JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
-        JOIN medias portada ON portada.id = spoileable.hashed_media_id
-        JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
-        JOIN stickies sticky ON sticky.hilo_id = hilo.id
-        /**where**/
-        " : "")}
-        )
         ORDER BY EsSticky DESC, UltimoBump DESC
         LIMIT 20
         ";
@@ -109,6 +78,10 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
 
         if(request.UltimoBump != DateTime.MinValue) {
             builder.Where("hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
+        }
+
+        if(_user.IsLogged){
+            builder.Where("hilo.id NOT IN (SELECT hilo_id FROM interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
         }
 
         builder.AddParameters(parameters);

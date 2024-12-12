@@ -3,9 +3,11 @@ using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Comentarios.Commands;
 using Application.Features.Hilos.Abstractions;
+using Application.Features.Medias.Services;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
 using Domain.Categorias;
+using Domain.Comentarios;
 using Domain.Encuestas;
 using Domain.Encuestas.Abstractions;
 using Domain.Features.Medias.Models;
@@ -31,14 +33,16 @@ namespace Application.Hilos.Commands
         private readonly IEncuestasRepository _encuestasRepository;
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly EmbedProcesador _embedProcesador;
         private readonly IHilosHubService _hilosHubService;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, IHilosHubService hilosHubService)
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, IHilosHubService hilosHubService, EmbedProcesador embedProcesador )
         {
             _unitOfWork = unitOfWork;
+            _embedProcesador = embedProcesador;
             _user = user;
             _encuestasRepository = encuestasRepository;
             _mediasRepository = mediasRepository;
-            _hilosRepository = hilosRepository;
+            _hilosRepository = hilosRepository; 
             _mediaProcesador = mediaProcesador;
             _hilosHubService = hilosHubService;
         }
@@ -72,7 +76,7 @@ namespace Application.Hilos.Commands
 
             if (request.File is not null)
             {
-                if (!ARCHIVOS_SOPORTADOS.Contains(request.File.Type)) return new Error("Hilos.ArchivoNoSoportado", "Solo se aceptan imagenes y videos para la portada");
+                if (!ARCHIVOS_SOPORTADOS.Contains(request.File.Type)) return HilosFailures.ArchivoNoSoportado;
 
                 media = await _mediaProcesador.Procesar(request.File);
 
@@ -80,11 +84,9 @@ namespace Application.Hilos.Commands
             }
             else if (request.Embed is not null)
             {
-              //  media = await _embedProcessor.Procesar(request.Embed);
-
-              throw new NotImplementedException();
+               media = await _embedProcesador.Procesar(request.Embed);
             }
-            else return new Error("Hilos.SinPortada");
+            else return HilosFailures.SinPortada;
 
             reference = new MediaSpoileable(media.Id, media, request.Spoiler);
 

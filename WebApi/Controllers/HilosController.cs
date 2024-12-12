@@ -10,6 +10,7 @@ using Application.Hilos.Commands.PonerHiloEnFavorito;
 using Application.Features.Hilos.Queries.GetHiloPortada;
 using Application.Hilos.Queries.Responses;
 using Application.Features.Hilos.Queries.GetHilo;
+using Application.Features.Hilos.Queries.GetColeccion;
 namespace WebApi.Controllers
 {
 
@@ -41,19 +42,19 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpDelete("eliminar/{hilo}")]
+        [HttpDelete("eliminar/{hilo:guid}")]
         public async Task<IResult> Eliminar(Guid hilo)
         {
             var result = await sender.Send(new EliminarHiloCommand(hilo));
 
             return result.IsSuccess ?
-                Results.Ok(result)
+                Results.NoContent()
                 :
                 result.HandleFailure();
 
         }
 
-        [HttpPost("establecer-sticky/{hilo}")]
+        [HttpPost("establecer-sticky/{hilo:guid}")]
         public async Task<IResult> EstablecerSticky(Guid hilo)
         {
             var result = await sender.Send(new EstablecerStickyCommand(hilo));
@@ -64,7 +65,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpDelete("eliminar-sticky/{hilo}")]
+        [HttpDelete("eliminar-sticky/{hilo:guid}")]
         public async Task<IResult> EliminarSticky(Guid hilo)
         {
             var result = await sender.Send(new EliminarStickyCommand(hilo));
@@ -75,7 +76,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpPost("denunciar/{hilo}")]
+        [HttpPost("denunciar/{hilo:guid}")]
         public async Task<IResult> Denunciar(Guid hilo)
         {
             var result = await sender.Send(new DenunciarHiloCommand(hilo));
@@ -87,7 +88,7 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPost("colecciones/seguir/{hilo}")]
+        [HttpPost("colecciones/seguidos/seguir/{hilo:guid}")]
         public async Task<IResult> Seguir(Guid hilo)
         {
             var result = await sender.Send(
@@ -103,7 +104,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpPost("colecciones/ocultar/{hilo}")]
+        [HttpPost("colecciones/ocultos/ocultar/{hilo:guid}")]
         public async Task<IResult> Ocultar(Guid hilo)
         {
             var result = await sender.Send(new OcultarHiloCommand()
@@ -117,7 +118,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpPost("colecciones/favoritos/{hilo}")]
+        [HttpPost("colecciones/favoritos/poner-en-favoritos/{hilo:guid}")]
         public async Task<IResult> PonerEnFavoritos(Guid hilo)
         {
             var result = await sender.Send(new PonerHiloEnFavoritoCommand()
@@ -131,7 +132,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
-        [HttpGet("{hilo}")]
+        [HttpGet("{hilo:guid}")]
         [ProducesResponseType(typeof(GetHiloResponse), StatusCodes.Status200OK)]
         public async Task<IResult> GetHilo(Guid hilo)
         {
@@ -158,6 +159,48 @@ namespace WebApi.Controllers
                     UltimoBump = request.UltimoBump,
                 }
             );
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+
+        [HttpGet("colecciones/favoritos")]
+        public async Task<IResult> GetHilosFavoritos()
+        {
+            var result = await sender.Send(new GetColeccionQuery()
+            {
+                Tipo = TipoDeColeccion.Favoritos
+            });
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+        [HttpGet("colecciones/ocultos")]
+        public async Task<IResult> GetHilosOcultos()
+        {
+            var result = await sender.Send(new GetColeccionQuery()
+            {
+                Tipo = TipoDeColeccion.Ocultos
+            });
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
+        [HttpGet("colecciones/seguidos")]
+        public async Task<IResult> GetHilosSeguidos()
+        {
+            var result = await sender.Send(new GetColeccionQuery()
+            {
+                Tipo = TipoDeColeccion.Seguidos
+            });
 
             return result.IsSuccess ?
                 Results.Ok(result)

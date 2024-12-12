@@ -6,7 +6,7 @@ namespace Application.Moderacion
     public class GetRegistroDeComentariosQuery : IQuery<List<GetRegistroDeComentarioResponse>>
     {
         public Guid Usuario { get; set; }
-        public DateTime? UltimoComentario { get; set; }
+        public Guid? UltimoComentario { get; set; }
     }
 
     public class GetRegistroDeComentarioResponse
@@ -21,6 +21,12 @@ namespace Application.Moderacion
     {
         public Guid Id { get; set; }
         public string Titulo { get; set; }
+        public GetHiloMiniaturaResponse Miniatura { get; set; }
+    }
+
+    public class GetHiloMiniaturaResponse
+    {
+        public string Provider { get; set; }
         public string Miniatura { get; set; }
     }
 }

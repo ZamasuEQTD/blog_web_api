@@ -52,6 +52,7 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
                 portada.url,
                 portada.previsualizacion,
                 spoiler.spoiler,
+                portada.provider,
                 hilo.autor_nombre as Nombre,
                 hilo.autor_rango as Rango,
                 subcategoria.id,
@@ -60,8 +61,8 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
             JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
             JOIN medias_spoileables spoiler ON hilo.portada_id = spoiler.id
             JOIN medias portada ON spoiler.hashed_media_id = portada.id
-            LEFT JOIN stickies sticky ON hilo.id = sticky.hilo_id
-            WHERE hilo.id = @hilo;
+            LEFT JOIN stickies sticky ON sticky.hilo_id = hilo.id
+            WHERE hilo.id = @hilo AND hilo.status = 'Activo';
         ";
         
         using var connection = _connection.CreateConnection();

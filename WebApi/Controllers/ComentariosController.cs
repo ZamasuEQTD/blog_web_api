@@ -43,7 +43,7 @@ namespace WebApi.Controllers
             ));
 
             return result.IsSuccess ?
-            Results.Ok(result)
+            Results.NoContent()
             :
             result.HandleFailure();
         }
@@ -62,7 +62,7 @@ namespace WebApi.Controllers
             ));
 
             return result.IsSuccess ?
-            Results.Ok(result)
+            Results.NoContent()
             :
             result.HandleFailure();
         }

@@ -23,27 +23,33 @@ public class GetRegistroDeHilosQueryHandler : IQueryHandler<GetRegistroDeHilosQu
                         h.created_at AS fecha,
                         h.id,
                         h.titulo,
+                        portada.provider,
                         portada.miniatura
                     FROM hilos h
-                    JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
- 					JOIN media portada ON portada.id = portada_ref.media_id
-                    WHERE h.status = 'Activo' AND h.usuario_id = @Usuario
+                    JOIN medias_spoileables spoiler ON spoiler.id = h.portada_id
+ 					JOIN medias portada ON portada.id = spoiler.hashed_media_id
+                    WHERE h.status = 'Activo' AND h.autor_id = @Usuario AND (@UltimoHilo IS NULL OR h.created_at < (
+                        SELECT 
+                            created_at 
+                        FROM hilos 
+                        WHERE id = @UltimoHilo
+                        )
+                    )
                     ORDER BY h.created_at DESC
                     LIMIT 20
             ";
 
-            IEnumerable<GetRegistroDeHiloResponse> registros = await connection.QueryAsync<GetRegistroDeHiloResponse, GetHiloRegistroResponse, GetRegistroDeHiloResponse  >(sql,
-                (registro, hilo) =>
+            IEnumerable<GetRegistroDeHiloResponse> registros = await connection.QueryAsync<GetRegistroDeHiloResponse, GetHiloRegistroResponse, GetHiloMiniaturaResponse, GetRegistroDeHiloResponse  >(sql,
+                (registro, hilo, miniatura) =>
                 {
-                    return new GetRegistroDeHiloResponse
-                    {
-                        Contenido = registro.Contenido,
-                        Fecha = registro.Fecha,
-                        Hilo = hilo
-                    };
+                    hilo.Miniatura = miniatura;
+
+                    registro.Hilo = hilo;
+                    
+                    return registro;
                 }
                 ,
-                splitOn: "Id",
+                splitOn: "Id, provider",
                 param: new {
                     request.UltimoHilo,
                     request.Usuario

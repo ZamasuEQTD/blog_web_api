@@ -3,7 +3,7 @@ using SharedKernel.Abstractions;
 
 namespace Domain.Categorias
 {
-    public class Categoria 
+    public class Categoria
     {
         public CategoriaId Id { get; private set; }
         public string Nombre { get; private set; }

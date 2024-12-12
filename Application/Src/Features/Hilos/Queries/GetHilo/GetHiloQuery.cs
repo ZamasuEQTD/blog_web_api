@@ -38,6 +38,7 @@ public class GetHiloResponse
  
 public class GetHiloMediaResponse
 {
+    public string Provider { get; set; }
     [JsonPropertyName("es_spoiler")]
     public bool Spoileable { get; set; }
     public string Url { get; set; }

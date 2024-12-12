@@ -17,6 +17,7 @@ namespace Domain.Comentarios.ValueObjects
         static public readonly Colores Rojo = new Colores("Rojo");
         static public readonly Colores Amarillo = new Colores("Amarillo");
         static public readonly Colores Azul = new Colores("Azul");
+        static public readonly Colores Verde = new Colores("Verde");
         static public readonly Colores Black = new Colores("Black");
         static public readonly Colores White = new Colores("White");
 

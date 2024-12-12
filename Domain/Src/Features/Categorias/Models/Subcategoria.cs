@@ -12,6 +12,8 @@ namespace Domain.Categorias {
             Nombre = nombre;
             NombreCorto = nombreCorto;
         }
+
+        public bool EsParanormal => Nombre == "Paranormal";
     }
 
     public class SubcategoriaId : EntityId

@@ -14,9 +14,9 @@ public class ModeracionController : ApiController
     {
     }
 
-    [HttpGet("registro/hilos/usuario/{id}")]
+    [HttpGet("registro/hilos/usuario/{id:guid}")]
     [ProducesResponseType(typeof(IEnumerable<GetRegistroDeHiloResponse>), StatusCodes.Status200OK)]	
-    public async Task<IResult> GetRegistroDeHilosPosteados(Guid id,  [FromQuery(Name ="ultimo_hilo")] DateTime? UltimoHilo) {
+    public async Task<IResult> GetRegistroDeHilosPosteados(Guid id,  [FromQuery(Name ="ultimo_hilo")] Guid? UltimoHilo) {
         var result = await sender.Send(new GetRegistroDeHilosQuery(){
             Usuario = id,
             UltimoHilo = UltimoHilo
@@ -26,9 +26,9 @@ public class ModeracionController : ApiController
     }
 
 
-    [HttpGet("registro/comentarios/usuario/{id}")]
+    [HttpGet("registro/comentarios/usuario/{id:guid}")]
     [ProducesResponseType(typeof(IEnumerable<GetRegistroDeComentarioResponse>), StatusCodes.Status200OK)]
-    public async Task<IResult> GetRegistroComentariosUsuario(Guid id,[FromQuery(Name ="ultimo_comentario")] DateTime? UltimoComentario) {
+    public async Task<IResult> GetRegistroComentariosUsuario(Guid id, [FromQuery(Name ="ultimo_comentario")] Guid? UltimoComentario) {
         var result = await sender.Send(new GetRegistroDeComentariosQuery(){
             Usuario = id,
             UltimoComentario = UltimoComentario
@@ -36,7 +36,7 @@ public class ModeracionController : ApiController
         return result.IsSuccess ? Results.Ok(result) : Results.NotFound();
     }
 
-    [HttpGet("registro/usuario/{id}")]
+    [HttpGet("registro/usuario/{id:guid}")]
     [ProducesResponseType(typeof(GetRegistroUsuarioResponse), StatusCodes.Status200OK)]
     public async Task<IResult> GetRegistroUsuario(Guid id)
     {

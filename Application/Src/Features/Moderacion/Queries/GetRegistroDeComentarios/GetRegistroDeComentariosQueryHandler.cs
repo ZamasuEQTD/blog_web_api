@@ -30,6 +30,14 @@ namespace Application.Moderacion
                     JOIN hilos h ON h.id = c.hilo_id
                     JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
  					JOIN media portada ON portada.id = portada_ref.media_id
+                    WHERE h.status = 'Activo' AND c.status = 'Activo' AND h.autor_id = @Usuario AND (
+                        @UltimoComentario IS NULL OR c.created_at < (
+                            SELECT 
+                                created_at 
+                            FROM comentarios 
+                            WHERE id = @UltimoComentario
+                        )
+                    )
                     ORDER BY c.created_at DESC
                     LIMIT 20
                 ";

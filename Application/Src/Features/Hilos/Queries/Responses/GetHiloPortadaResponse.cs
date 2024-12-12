@@ -28,6 +28,7 @@ public class GetHiloPortadaResponse {
  
 public class GetHiloPortadaImagenResponse
 {
+    public string Provider { get; set; }
     [JsonPropertyName("es_spoiler")]
     public bool Spoiler { get; set; }
     public string Url { get; set; }
