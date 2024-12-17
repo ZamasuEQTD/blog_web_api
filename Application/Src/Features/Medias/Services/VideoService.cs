@@ -41,7 +41,7 @@ public class VideoService : IMediaService
             _videoGifPrevisualizadorService = videoGifPrevisualizadorService;
         }
 
-        public async Task<string> Procesar(string path)
+        public async Task<string>Procesar(string path)
         {
             string previsualizacion_path = _folderProvider.Previsualizaciones + "/" + Path.GetFileNameWithoutExtension(path) + ".png";
 

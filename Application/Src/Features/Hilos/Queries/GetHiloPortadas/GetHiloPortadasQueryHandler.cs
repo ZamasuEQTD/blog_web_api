@@ -81,7 +81,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
         }
 
         if(_user.IsLogged){
-            builder.Where("hilo.id NOT IN (SELECT hilo_id FROM interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
+            builder.Where("hilo.id NOT IN (SELECT hilo_id FROM hilo_interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
         }
 
         builder.AddParameters(parameters);

@@ -14,16 +14,9 @@ class GetRegistroUsuarioQueryHandler : IQueryHandler<GetRegistroUsuarioQuery, Ge
         SELECT
             usuario.id,
             usuario.username as nombre,
-            usuario.created_at as registradoen,
-            baneo.id,
-            baneo.concluye_en as concluye,
-            baneo.razon,
-            moderador.username as moderador,
-            baneo.mensaje
+            usuario.created_at as registradoen
         FROM usuarios usuario 
-        LEFT JOIN baneos baneo ON baneo.usuario_baneado_id = usuario.id
-        LEFT JOIN usuarios moderador ON moderador.id = baneo.moderador_id
-        WHERE usuario.id = @Usuario AND (baneo IS NULL OR baneo.concluye_en < @Now)
+        WHERE usuario.id = @Usuario
         ";
 
     private readonly IDBConnectionFactory _connection;
@@ -38,17 +31,10 @@ class GetRegistroUsuarioQueryHandler : IQueryHandler<GetRegistroUsuarioQuery, Ge
     {
         using var connection =   _connection.CreateConnection();
 
-        IEnumerable<GetRegistroUsuarioResponse> response = await connection.QueryAsync<GetRegistroUsuarioResponse, GetBaneoResponse, GetRegistroUsuarioResponse>(_query,
-        (usuario, baneo) => {
-            usuario.UltimoBaneo = baneo;
-
-            return usuario;
-        },
+        IEnumerable<GetRegistroUsuarioResponse> response = await connection.QueryAsync<GetRegistroUsuarioResponse>(_query,
         new {
             request.Usuario,
-            Now = _time.UtcNow
-        },
-        splitOn : "id"
+        } 
         );
 
         return Result.Success(response.First());

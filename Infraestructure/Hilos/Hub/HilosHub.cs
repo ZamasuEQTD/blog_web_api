@@ -53,7 +53,9 @@ public class HilosHubService : IHilosHubService
                 hilo.id_unico_activado AS IdUnicoActivado,
                 hilo.encuesta_id IS NOT NULL AS TieneEncuesta,
                 spoileable.spoiler,
-                portada.miniatura
+                portada.miniatura AS Url,
+                portada.provider AS Provider
+
             FROM hilos hilo
             JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
             JOIN medias portada ON portada.id = spoileable.hashed_media_id
