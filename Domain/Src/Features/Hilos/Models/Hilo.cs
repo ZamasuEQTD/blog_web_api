@@ -110,6 +110,8 @@ namespace Domain.Hilos
 
             Status = HiloStatus.Eliminado;
 
+            Raise(new HiloEliminadoDomainEvent(Id));
+
             return Result.Success();
         }
 

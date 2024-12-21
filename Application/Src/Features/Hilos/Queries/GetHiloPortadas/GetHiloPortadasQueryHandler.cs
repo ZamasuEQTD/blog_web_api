@@ -67,6 +67,8 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null,
         });
 
+        builder.Where("hilo.status = 'Activo'");
+
         if(!string.IsNullOrEmpty(request.Titulo))
         {
             builder.Where("hilo.titulo ~ @Titulo", new { request.Titulo });
