@@ -10,6 +10,7 @@ using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
 using Domain.Features.Medias.Models.ValueObjects;
+using Domain.Hilos.DomainEvents;
 
 namespace Domain.Hilos
 {
@@ -65,6 +66,32 @@ namespace Domain.Hilos
             Status = HiloStatus.Activo;
             Denuncias = [];
             ComentarioDestacados = [];
+        }
+
+        static public Hilo Create(
+            Titulo titulo,
+            Descripcion descripcion,
+            Autor autor,
+            UsuarioId autorId,
+            MediaSpoileableId portada,
+            SubcategoriaId subcategoria,
+            EncuestaId? encuesta,
+            ConfiguracionDeComentarios configuracion
+        ){
+            Hilo hilo = new Hilo(
+                titulo,
+                descripcion,
+                autor,
+                autorId,
+                portada,
+                subcategoria,
+                encuesta,
+                configuracion
+            );
+
+            hilo.Raise(new HiloPosteadoDomainEvent(hilo.Id));
+
+            return hilo;
         }
 
         public Result Eliminar( )

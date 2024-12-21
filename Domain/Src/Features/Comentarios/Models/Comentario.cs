@@ -1,3 +1,4 @@
+using Domain.Comentarios.DomainEvents;
 using Domain.Comentarios.ValueObjects;
 using Domain.Features.Medias.Models.ValueObjects;
 using Domain.Hilos;
@@ -13,7 +14,7 @@ namespace Domain.Comentarios
     {
         public UsuarioId AutorId { get; private set; }
         public Autor Autor { get; private set; }
-        public HiloId Hilo { get; private set; }
+        public HiloId HiloId { get; private set; }
         public Texto Texto { get; private set; }
         public Tag Tag { get; private set; }
         public MediaSpoileableId? MediaSpoileableId { get; private set; }
@@ -27,12 +28,12 @@ namespace Domain.Comentarios
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
         private Comentario() { }
-        public Comentario(HiloId hilo, UsuarioId autorId, Autor autor, MediaSpoileableId? mediaSpoileableId, Texto texto, Colores color, InformacionDeComentario informacion)
+        public Comentario(HiloId hiloId, UsuarioId autorId, Autor autor, MediaSpoileableId? mediaSpoileableId, Texto texto, Colores color, InformacionDeComentario informacion)
         {
             Id = new(Guid.NewGuid());
             AutorId = autorId;
             Autor = autor;
-            Hilo = hilo;
+            HiloId = hiloId;
             MediaSpoileableId = mediaSpoileableId;
             Texto = texto;
             Status = ComentarioStatus.Activo;
@@ -60,6 +61,8 @@ namespace Domain.Comentarios
             }
 
             Status = ComentarioStatus.Eliminado;
+
+            this.Raise(new ComentarioEliminadoDomainEvent(this.HiloId, this.Id));
 
             return Result.Success();
         }

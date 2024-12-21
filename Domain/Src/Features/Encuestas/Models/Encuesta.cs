@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using Domain.Comentarios;
+using Domain.Encuestas.DomainEvents;
 using Domain.Usuarios;
 using SharedKernel;
 using SharedKernel.Abstractions;
@@ -32,6 +33,8 @@ namespace Domain.Encuestas
                 usuarioId,
                 respuestaId
             ));
+
+            this.Raise(new EncuestaVotadaDomainEvent(this.Id, respuestaId));
 
             return Result.Success();
         }

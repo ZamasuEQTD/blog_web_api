@@ -10,9 +10,10 @@ using WebApi.Configuration;
 using Infraestructure.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Application.Features.Hilos;
-using Infraestructure.Hilos;
 using Application.Features.Hilos.Abstractions;
 using Infraestructure.Authentication;
+using Application.Hilos;
+using Infraestructure.Hubs.Home;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +35,8 @@ builder.Services.AddSignalR();
 
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeLineBehavior<,>));
 
-builder.Services.AddSingleton<ConnectionManager<HilosHub>>();
-builder.Services.AddScoped<IHilosHubService, HilosHubService>();
+builder.Services.AddSingleton<HomeConnectionManager>();
+builder.Services.AddScoped<IHomeHubService, HomeHubService>();
 
 builder.Services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly, includeInternalTypes: true);
 
@@ -59,7 +60,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.MapHub<HilosHub>("/hilos-hub");
+app.MapHub<HomeHub>("/home-hub");
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -87,8 +88,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 //app.UseMiddleware<GlobalExceptionMiddleware>();
-
-app.MapHub<HilosHub>("/hilos");
 
 app.Run();
 

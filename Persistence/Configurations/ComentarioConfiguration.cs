@@ -20,8 +20,8 @@ namespace Persistence.Configurations
             builder.Property(c => c.AutorId).HasColumnName("autor_id");
             builder.HasOne<Usuario>().WithMany().HasForeignKey(c => c.AutorId);
 
-            builder.Property(c => c.Hilo).HasColumnName("hilo_id");
-            builder.HasOne<Hilo>().WithMany().HasForeignKey(c => c.Hilo);
+            builder.Property(c => c.HiloId).HasColumnName("hilo_id");
+            builder.HasOne<Hilo>().WithMany().HasForeignKey(c => c.HiloId);
 
             builder.Property(c => c.MediaSpoileableId).HasColumnName("media_spoileable_id");
             builder.HasOne<MediaSpoileable>().WithMany().HasForeignKey(c => c.MediaSpoileableId);

@@ -34,8 +34,7 @@ namespace Application.Hilos.Commands
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
         private readonly EmbedProcesador _embedProcesador;
-        private readonly IHilosHubService _hilosHubService;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, IHilosHubService hilosHubService, EmbedProcesador embedProcesador )
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcesador embedProcesador )
         {
             _unitOfWork = unitOfWork;
             _embedProcesador = embedProcesador;
@@ -44,7 +43,6 @@ namespace Application.Hilos.Commands
             _mediasRepository = mediasRepository;
             _hilosRepository = hilosRepository; 
             _mediaProcesador = mediaProcesador;
-            _hilosHubService = hilosHubService;
         }
 
         public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
@@ -92,7 +90,7 @@ namespace Application.Hilos.Commands
 
             _mediasRepository.Add(reference);
             
-            Hilo hilo = new Hilo(
+            Hilo hilo = Hilo.Create(
                titulo.Value,
                descripcion.Value,
                this._user.Autor,
@@ -109,8 +107,6 @@ namespace Application.Hilos.Commands
             _hilosRepository.Add(hilo);
 
             await _unitOfWork.SaveChangesAsync();
-
-            await _hilosHubService.NotificarHiloPosteado(hilo.Id.Value);
 
             return hilo.Id.Value;
         }

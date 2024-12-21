@@ -3,6 +3,7 @@ using Application.Medias.Abstractions;
 using Application.Medias.Services;
 using Domain.Usuarios.Abstractions;
 using Infraestructure.Authentication;
+using Infraestructure.Hubs.Abstractions;
 using Infraestructure.Media;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.Abstractions;
