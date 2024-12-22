@@ -8,10 +8,8 @@ using WebApi.Infraestructure;
 
 namespace WebApi.Controllers
 {
-
-
-    [Route("api/notificaciones")]
     [Authorize]
+    [Route("api/notificaciones")]
     public class NotificacionesController :  Controller
     {
         private readonly ISender _sender;
@@ -46,9 +44,7 @@ namespace WebApi.Controllers
                 :
             result.HandleFailure();
         }       
-
-
-        [Authorize]
+        
         [HttpGet()]
         public async Task<IResult> GetNotificaciones(){
             var result = await _sender.Send(new GetNotificacionesQuery());

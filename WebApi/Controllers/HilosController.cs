@@ -42,6 +42,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+        [Authorize(Roles = "Moderador")]
         [HttpDelete("eliminar/{hilo:guid}")]
         public async Task<IResult> Eliminar(Guid hilo)
         {
@@ -54,17 +55,19 @@ namespace WebApi.Controllers
 
         }
 
+        [Authorize(Roles = "Moderador")]
         [HttpPost("establecer-sticky/{hilo:guid}")]
         public async Task<IResult> EstablecerSticky(Guid hilo)
         {
             var result = await sender.Send(new EstablecerStickyCommand(hilo));
 
             return result.IsSuccess ?
-                Results.Ok(result)
+                Results.NoContent()
                 :
                 result.HandleFailure();
         }
 
+        [Authorize(Roles = "Moderador")]
         [HttpDelete("eliminar-sticky/{hilo:guid}")]
         public async Task<IResult> EliminarSticky(Guid hilo)
         {
@@ -76,6 +79,8 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+
+        [Authorize]
         [HttpPost("denunciar/{hilo:guid}")]
         public async Task<IResult> Denunciar(Guid hilo)
         {
@@ -88,6 +93,7 @@ namespace WebApi.Controllers
 
         }
 
+        [Authorize]
         [HttpPost("colecciones/seguidos/seguir/{hilo:guid}")]
         public async Task<IResult> Seguir(Guid hilo)
         {
@@ -118,6 +124,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+        [Authorize]
         [HttpPost("colecciones/favoritos/poner-en-favoritos/{hilo:guid}")]
         public async Task<IResult> PonerEnFavoritos(Guid hilo)
         {
@@ -167,6 +174,7 @@ namespace WebApi.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("colecciones/favoritos")]
         public async Task<IResult> GetHilosFavoritos()
         {
@@ -180,6 +188,8 @@ namespace WebApi.Controllers
                 :
                 result.HandleFailure();
         }
+
+        [Authorize]
         [HttpGet("colecciones/ocultos")]
         public async Task<IResult> GetHilosOcultos()
         {
@@ -194,6 +204,7 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+        [Authorize]
         [HttpGet("colecciones/seguidos")]
         public async Task<IResult> GetHilosSeguidos()
         {

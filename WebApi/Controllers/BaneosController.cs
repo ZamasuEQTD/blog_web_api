@@ -1,11 +1,14 @@
 using Application.Bneos.Commands;
 using Domain.Baneos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 
 namespace WebApi.Controllers    
 {
+
+    [Authorize(Roles = "Moderador")]
     [Route("api/baneos")]
     public class BaneosController : Controller
     {

@@ -5,23 +5,28 @@ using System.Text;
 using Application.Abstractions;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace Infraestructure.Authentication
 {
     public sealed class JwtProvider : IJwtProvider
     {
         private readonly JwtOptions _options;
-        public JwtProvider(IOptions<JwtOptions> options)
+        private readonly IRolesProvider _rolesProvider;
+        public JwtProvider(IOptions<JwtOptions> options, IRolesProvider rolesProvider)
         {
             _options = options.Value;
+            _rolesProvider = rolesProvider;
         }
         public async Task<string> Generar(Usuario usuario)
         {
-            var claims = new Claim[]{
-                new (JwtRegisteredClaimNames.Sub, usuario.Id.Value.ToString()),
-                new (JwtRegisteredClaimNames.Name, usuario.Username.Value),
+            Claim[] claims = new Claim[]{
+                new (JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
+                new (JwtRegisteredClaimNames.Name,  usuario.Moderador ?? usuario.UserName!),
             };
 
+            claims = [..claims, new Claim("roles", JsonSerializer.Serialize(await _rolesProvider.GetRoles(usuario)),JsonClaimValueTypes.JsonArray)];
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
@@ -33,7 +38,7 @@ namespace Infraestructure.Authentication
                 _options.Audience,
                 claims,
                 null,
-                DateTime.UtcNow.AddMinutes(1000),
+                DateTime.UtcNow.AddDays(5),
                 signingCredentials
             );
 

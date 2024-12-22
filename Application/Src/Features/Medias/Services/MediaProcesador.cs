@@ -1,3 +1,4 @@
+using Application.Abstractions;
 using Application.Hilos.Commands;
 using Application.Medias.Abstractions;
 using Domain.Features.Medias.Models;
@@ -12,13 +13,16 @@ public class MediaProcesador
     private readonly IMediaFolderProvider _folderProvider;
     private readonly IMediaFactory _mediaFactory;
 
-    public MediaProcesador(IHasher hasher, IFileService fileService, IMediasRepository repository, IMediaFolderProvider folderProvider, IMediaFactory mediaFactory)
+    private readonly IUrlProvider _url;
+
+    public MediaProcesador(IHasher hasher, IFileService fileService, IMediasRepository repository, IMediaFolderProvider folderProvider, IMediaFactory mediaFactory, IUrlProvider url)
     {
         _hasher = hasher;
         _fileService = fileService;
         _repository = repository;
         _folderProvider = folderProvider;
         _mediaFactory = mediaFactory;
+        _url = url;
     }
 
     public async Task<HashedMedia> Procesar(IFile file)
@@ -38,7 +42,7 @@ public class MediaProcesador
         return new HashedMedia(
             file.FileName,
             hash,
-            "/media/files/" + Path.GetFileName(media_path),
+            _url.Files + Path.GetFileName(media_path),
             await _mediaFactory.Create(file.Type).Create(media_path)
         );
     }

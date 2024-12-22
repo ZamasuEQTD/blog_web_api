@@ -2,12 +2,14 @@ using System.Text.Json.Serialization;
 using Application.Moderacion;
 using Application.Moderacion.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Infraestructure;
 
 namespace WebApi.Controllers;
 
 [Route("api/moderacion")]	
+[Authorize(Roles = "Moderador")]
 public class ModeracionController : ApiController
 {
     public ModeracionController(ISender sender) : base(sender)

@@ -3,21 +3,21 @@ using Application.Abstractions.Messaging;
 using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
 using Domain.Usuarios.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 using SharedKernel;
-using SharedKernel.Abstractions;
 
 namespace Application.Usuarios.Commands
 {
     public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
     {
-        private readonly IUsuariosRepository _repository;
         private readonly IPasswordHasher _hasher;
         private readonly IJwtProvider _jwtProvider;
-        public LoginCommandHandler(IPasswordHasher hasher, IUsuariosRepository repository, IJwtProvider jwtProvider)
+        private readonly UserManager<Usuario> _userManager;
+        public LoginCommandHandler(IPasswordHasher hasher, IJwtProvider jwtProvider, UserManager<Usuario> userManager)
         {
             _hasher = hasher;
-            _repository = repository;
             _jwtProvider = jwtProvider;
+            _userManager = userManager;
         }
 
         public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -27,10 +27,10 @@ namespace Application.Usuarios.Commands
             Result<Password> password = Password.Create(request.Password);
 
             if (username.IsFailure || password.IsFailure) return UsuariosFailures.CredencialesInvalidas;
+            
+            Usuario? usuario = await _userManager.FindByNameAsync(request.Username);
 
-            Usuario? usuario = await _repository.GetUsuarioByUsername(username.Value);
-
-            if (usuario is null || !_hasher.Verify(password.Value, usuario.HashedPassword)) return UsuariosFailures.CredencialesInvalidas;
+            if (usuario is null || !_hasher.Verify(password.Value, usuario.PasswordHash!)) return UsuariosFailures.CredencialesInvalidas;
 
             return await _jwtProvider.Generar(usuario);
         }

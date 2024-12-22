@@ -11,6 +11,7 @@ using SharedKernel;
 using SharedKernel.Abstractions;
 using Domain.Features.Medias.Models.ValueObjects;
 using Domain.Hilos.DomainEvents;
+using Domain.Hilos.Events;
 
 namespace Domain.Hilos
 {
@@ -258,6 +259,8 @@ namespace Domain.Hilos
 
 
             this.UltimoBump = now;
+
+            Raise(new HiloComentadoDomainEvent(Id, comentario.Id));
 
             return Result.Success();
         }

@@ -18,20 +18,22 @@ namespace Application.Bneos.Commands
         private readonly IUserContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _timeProvider;
-        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider timeProvider)
+        private readonly IRolesProvider _rolesProvider;
+        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUserContext context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider timeProvider, IRolesProvider rolesProvider)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _usuariosRepository = usuariosRepository;
             _baneosRepository = baneosRepository;
             _timeProvider = timeProvider;
+            _rolesProvider = rolesProvider;
         }
 
         public async Task<Result> Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
         {
             Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.UsuarioId));
 
-            //if (usuario is null || usuario.Roles.Any(r => r.Name != "Anonimo")) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
+            if (usuario is null || (await _rolesProvider.GetRoles(usuario)).Any(r => r != "Anonimo")) return BaneosFailures.SoloPuedesBanearUsuariosAnonimos;
 
             DateTime? finalizacion = null;
 

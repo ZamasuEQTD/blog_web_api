@@ -5,7 +5,7 @@ namespace Application.Notificaciones.Queries;
 
 public class GetNotificacionesQuery : IQuery<IEnumerable<GetNotificacionResponse>>
 {
-    public DateTime? UltimaNotificacion { get; set; }
+    public Guid? UltimaNotificacion { get; set; }
 }
 
 public class GetNotificacionResponse

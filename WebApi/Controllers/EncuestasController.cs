@@ -1,5 +1,6 @@
 using Application.Encuestas.VotarRespuesta;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Extensions;
 
@@ -16,6 +17,7 @@ public class EncuestasController : ControllerBase
         _sender = sender;
     }
 
+    [Authorize]
     [HttpPost("/votar/{encuesta}/{respuesta}")]
     public async Task<IResult> Votar(Guid encuesta, Guid respuesta)
     {

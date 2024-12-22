@@ -1,7 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace Persistence.Migrations
 {
@@ -55,13 +58,52 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "roles",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ShortName = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_roles", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "usuario_roles",
+                columns: table => new
+                {
+                    usuario_id = table.Column<string>(type: "text", nullable: false),
+                    role_id = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_usuario_roles", x => new { x.usuario_id, x.role_id });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "usuarios",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    username = table.Column<string>(type: "text", nullable: false),
-                    hashed_password = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Moderador = table.Column<string>(type: "text", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,15 +117,15 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     nombre = table.Column<string>(type: "text", nullable: false),
                     nombre_corto = table.Column<string>(type: "text", nullable: false),
-                    CategoriaId = table.Column<Guid>(type: "uuid", nullable: true),
+                    categoria_id = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_subcategorias", x => x.id);
                     table.ForeignKey(
-                        name: "FK_subcategorias_categorias_CategoriaId",
-                        column: x => x.CategoriaId,
+                        name: "FK_subcategorias_categorias_categoria_id",
+                        column: x => x.categoria_id,
                         principalTable: "categorias",
                         principalColumn: "id");
                 });
@@ -123,6 +165,112 @@ namespace Persistence.Migrations
                         name: "FK_medias_spoileables_medias_hashed_media_id",
                         column: x => x.hashed_media_id,
                         principalTable: "medias",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_usuarios_UserId",
+                        column: x => x.UserId,
+                        principalTable: "usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_usuarios_UserId",
+                        column: x => x.UserId,
+                        principalTable: "usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_usuarios_UserId",
+                        column: x => x.UserId,
+                        principalTable: "usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_usuarios_UserId",
+                        column: x => x.UserId,
+                        principalTable: "usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -240,7 +388,7 @@ namespace Persistence.Migrations
                     autor_nombre = table.Column<string>(type: "text", nullable: false),
                     autor_rango = table.Column<string>(type: "text", nullable: false),
                     hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Texto = table.Column<string>(type: "text", nullable: false),
+                    texto = table.Column<string>(type: "text", nullable: false),
                     tag = table.Column<string>(type: "text", nullable: false),
                     media_spoileable_id = table.Column<Guid>(type: "uuid", nullable: true),
                     tag_unico = table.Column<string>(type: "text", nullable: true),
@@ -248,15 +396,15 @@ namespace Persistence.Migrations
                     color = table.Column<string>(type: "text", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
                     recibir_notificaciones = table.Column<bool>(type: "boolean", nullable: false),
-                    HiloId = table.Column<Guid>(type: "uuid", nullable: true),
+                    HiloId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_comentarios", x => x.id);
                     table.ForeignKey(
-                        name: "FK_comentarios_hilos_HiloId",
-                        column: x => x.HiloId,
+                        name: "FK_comentarios_hilos_HiloId1",
+                        column: x => x.HiloId1,
                         principalTable: "hilos",
                         principalColumn: "id");
                     table.ForeignKey(
@@ -478,7 +626,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RespuestasComentarios",
+                name: "respuestas_comentarios",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -488,20 +636,68 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RespuestasComentarios", x => x.id);
+                    table.PrimaryKey("PK_respuestas_comentarios", x => x.id);
                     table.ForeignKey(
-                        name: "FK_RespuestasComentarios_comentarios_respondido_id",
+                        name: "FK_respuestas_comentarios_comentarios_respondido_id",
                         column: x => x.respondido_id,
                         principalTable: "comentarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RespuestasComentarios_comentarios_respuesta_id",
+                        name: "FK_respuestas_comentarios_comentarios_respuesta_id",
                         column: x => x.respuesta_id,
                         principalTable: "comentarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: new[] { "id", "ConcurrencyStamp", "Name", "NormalizedName", "ShortName" },
+                values: new object[,]
+                {
+                    { new Guid("242e0f20-2568-4b46-b90c-e26493be9bcd"), null, "Owner", "Owner", "Owner" },
+                    { new Guid("6c49b6cf-9f30-4517-813e-5e2e6aae15fa"), null, "Anonimo", "ANONIMO", "Anon" },
+                    { new Guid("a164b7bd-46c9-4f42-88e5-e37fda1b10ac"), null, "Moderador", "MODERADOR", "Mod" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "usuario_roles",
+                columns: new[] { "role_id", "usuario_id" },
+                values: new object[,]
+                {
+                    { "242e0f20-2568-4b46-b90c-e26493be9bcd", "8266d993-8287-46c3-9779-4a100120e5b3" },
+                    { "a164b7bd-46c9-4f42-88e5-e37fda1b10ac", "84d55df5-946a-478b-a493-8799e002df7b" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "usuarios",
+                columns: new[] { "id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Moderador", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { new Guid("8266d993-8287-46c3-9779-4a100120e5b3"), 0, "7e1aefa7-b581-4e87-9ace-710ff3e37d1a", null, false, false, null, "Zamasu", null, null, "$2a$13$fN8SPSuCYlUy3uEBGf3tGOmhUU5A7RCNSagbwjYziM/zLVy4xdkJW", null, false, null, false, "Owner1223" },
+                    { new Guid("84d55df5-946a-478b-a493-8799e002df7b"), 0, "3733a5ac-1ff2-4d8d-b143-7514d121b89f", null, false, false, null, "Zamasus", null, null, "$2a$13$yHIvZPXm6bg471cyIrgPWOQlHk3nFDh17ZJsnyDrP.RF2NmK.gpPO", null, false, null, false, "Moderador" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_baneos_moderador_id",
@@ -534,9 +730,9 @@ namespace Persistence.Migrations
                 column: "hilo_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_comentarios_HiloId",
+                name: "IX_comentarios_HiloId1",
                 table: "comentarios",
-                column: "HiloId");
+                column: "HiloId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_comentarios_media_spoileable_id",
@@ -641,14 +837,20 @@ namespace Persistence.Migrations
                 column: "encuesta_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RespuestasComentarios_respondido_id",
-                table: "RespuestasComentarios",
+                name: "IX_respuestas_comentarios_respondido_id",
+                table: "respuestas_comentarios",
                 column: "respondido_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RespuestasComentarios_respuesta_id",
-                table: "RespuestasComentarios",
+                name: "IX_respuestas_comentarios_respuesta_id",
+                table: "respuestas_comentarios",
                 column: "respuesta_id");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "roles",
+                column: "NormalizedName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_stickies_hilo_id",
@@ -657,9 +859,20 @@ namespace Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_subcategorias_CategoriaId",
+                name: "IX_subcategorias_categoria_id",
                 table: "subcategorias",
-                column: "CategoriaId");
+                column: "categoria_id");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "usuarios",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "usuarios",
+                column: "NormalizedUserName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_votos_EncuestaId",
@@ -675,6 +888,21 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "baneos");
 
@@ -700,13 +928,19 @@ namespace Persistence.Migrations
                 name: "respuestas");
 
             migrationBuilder.DropTable(
-                name: "RespuestasComentarios");
+                name: "respuestas_comentarios");
 
             migrationBuilder.DropTable(
                 name: "stickies");
 
             migrationBuilder.DropTable(
+                name: "usuario_roles");
+
+            migrationBuilder.DropTable(
                 name: "votos");
+
+            migrationBuilder.DropTable(
+                name: "roles");
 
             migrationBuilder.DropTable(
                 name: "comentarios");

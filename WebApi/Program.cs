@@ -14,8 +14,17 @@ using Application.Features.Hilos.Abstractions;
 using Infraestructure.Authentication;
 using Application.Hilos;
 using Infraestructure.Hubs.Home;
+using Domain.Usuarios;
+using Microsoft.AspNetCore.Identity;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// For Identity  
+builder.Services.AddIdentity<Usuario, Role>()
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<BlogDbContext>()
+                .AddDefaultTokenProviders();
 
 builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration).AddSwaggerBearerTokenSupport(); ;
 builder.Services.AddSwaggerGen(c =>
@@ -24,7 +33,11 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;})
+ .AddJwtBearer();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 

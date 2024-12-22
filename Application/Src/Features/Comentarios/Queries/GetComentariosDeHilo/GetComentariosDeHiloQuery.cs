@@ -7,7 +7,7 @@ namespace Application.Comentarios.GetComentarioDeHilos;
 public class GetComentariosDeHiloQuery : IQuery<List<GetComentarioResponse>>
 {
     public Guid HiloId { get; set; }
-    public DateTime UltimoComentario { get; set; }
+    public Guid UltimoComentario { get; set; }
 }
 
 public class GetComentarioResponse {
@@ -30,6 +30,7 @@ public class GetComentarioResponse {
     public string Color {get; set;}
     public GetHiloAutorResponse Autor { get; set; }
     public GetComentarioDetallesResponse Detalles { get; set; }
+    public GetHiloMediaResponse Media { get; set; }
 }
 
 

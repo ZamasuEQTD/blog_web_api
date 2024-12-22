@@ -23,7 +23,7 @@ namespace WebApi.Controllers
             Results.Ok(result)
             :
             result.HandleFailure();
-         }
+        }
         [HttpPost]
         public async Task<IResult> SeedCategorias()
         {

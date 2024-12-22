@@ -31,7 +31,6 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
                 CASE 
                     WHEN notificacion.tipo_de_interaccion = 'hilo_comentado' OR notificacion.tipo_de_interaccion = 'hilo_seguido_comentado' THEN h.titulo
                     WHEN notificacion.tipo_de_interaccion = 'comentario_respondido' THEN c.texto
-                    ELSE NULL
                 END AS contenido,
                 h.id as id,
                 h.titulo as titulo,
@@ -46,7 +45,12 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
             AND 
                 notificacion.status = 'SinLeer' 
             AND 
-                notificacion.created_at > @UltimaNotificacion
+                notificacion.created_at < (
+                    SELECT 
+                        created_at
+                    FROM notificaciones
+                    WHERE id = @UltimaNotificacion
+                )
             ORDER BY fecha DESC
             LIMIT 20
             ",
@@ -56,7 +60,7 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
 
                 return notificacion;
             },
-            new { _userContext.UsuarioId, UltimaNotificacion = request.UltimaNotificacion == DateTime.MinValue? (object) DBNull.Value : request.UltimaNotificacion }
+            new { _userContext.UsuarioId, request.UltimaNotificacion}
         );
 
         return Result.Success(notificaciones);

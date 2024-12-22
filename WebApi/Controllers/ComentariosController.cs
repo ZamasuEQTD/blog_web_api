@@ -34,6 +34,7 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }
 
+        [Authorize]
         [HttpPost("hilo/{hilo}/destacar/{comentario}")]
         public async Task<IResult> Destacar(Guid hilo, Guid comentario)
         {
@@ -47,6 +48,7 @@ namespace WebApi.Controllers
             :
             result.HandleFailure();
         }
+
         [Authorize]
         [HttpPost("comentar-hilo/{hilo:guid}")]
         public async Task<IResult> Comentar(
@@ -60,6 +62,21 @@ namespace WebApi.Controllers
                 request.EmbedFile is not null ? new EmbedFile(request.EmbedFile!) : null,
                 request.File is not null ? new FormFileImplementation(request.File!) : null
             ));
+
+            return result.IsSuccess ?
+            Results.NoContent()
+            :
+            result.HandleFailure();
+        }
+
+        [Authorize(Roles = "Moderador")]
+        [HttpDelete("eliminar/hilo/{hilo:guid}/comentario/{comentario:guid}")]
+        public async Task<IResult> Eliminar(Guid comentario, Guid hilo)
+        {
+            var result = await sender.Send(new EliminarComentarioCommand(){
+                Comentario = comentario,
+                Hilo = hilo
+            });
 
             return result.IsSuccess ?
             Results.NoContent()

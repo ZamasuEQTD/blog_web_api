@@ -1,25 +1,52 @@
-using Domain.Baneos;
-using Domain.Comentarios;
-using Domain.Notificaciones;
-using SharedKernel;
-using SharedKernel.Abstractions;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Usuarios
 {
-    public  class Usuario : Entity<UsuarioId>
+    public class Role : IdentityRole<UsuarioId>, IEquatable<Role>
     {
-        public Username Username { get; private set; }
-        public string HashedPassword { get; private set; }
-        public Usuario(
-            Username username,
-            string HashedPassword
-        ) : base()
+        public string ShortName { get; set; }
+
+        public override int GetHashCode()
         {
-            this.Id = new UsuarioId(Guid.NewGuid());
-            this.Username = username;
-            this.HashedPassword = HashedPassword;
+            return Name!.GetHashCode();
         }
-        protected Usuario() {}
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Role && Equals(obj);
+        }
+
+        public bool Equals(Role? other)
+        {
+            return other != null && other.Name == Name;
+        }
+
+        public static Role Anonimo = new Role { 
+            Id = new UsuarioId(Guid.NewGuid()), 
+            Name = "Anonimo", 
+            ShortName = "Anon",
+            NormalizedName = "ANONIMO"
+        };
+        public static Role Moderador = new Role { 
+            Id = new UsuarioId(Guid.NewGuid()), 
+            Name = "Moderador", 
+            ShortName = "Mod",
+            NormalizedName = "MODERADOR"
+        };
+
+        public static Role Owner = new Role { 
+            Id = new UsuarioId(Guid.NewGuid()), 
+            Name = "Owner", 
+            ShortName = "Owner",
+            NormalizedName = "Owner"
+        };
+
+        public static List<Role> Roles = new List<Role> { Anonimo, Moderador, Owner };
+    }
+
+    public class Usuario : IdentityUser<UsuarioId>
+    {
+        public string? Moderador {get;set;}
     }
 
     public class Autor

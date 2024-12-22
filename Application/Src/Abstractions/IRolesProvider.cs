@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.Abstractions
 {
-    public interface IJwtProvider
+    public interface IRolesProvider
     {
-        public Task<string> Generar(Usuario usuario);
+        public Task<IEnumerable<string>> GetRoles(Usuario usuario);
     }
 }

@@ -12,8 +12,8 @@ namespace Domain.Hilos.ValueObjects
         }
 
         public static HiloStatus Activo => new HiloStatus("Activo");
-        public static HiloStatus Archivado => new HiloStatus("Eliminar");
-        public static HiloStatus Eliminado => new HiloStatus("Archivado");
+        public static HiloStatus Archivado => new HiloStatus("Archivado");
+        public static HiloStatus Eliminado => new HiloStatus("Eliminado");
         protected override IEnumerable<object> GetAtomicValues()
         {
             return new[] { Value };

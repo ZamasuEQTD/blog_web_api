@@ -1,10 +1,12 @@
 using Application.Abstractions;
 using Application.Medias.Abstractions;
 using Application.Medias.Services;
+using Domain.Usuarios;
 using Domain.Usuarios.Abstractions;
 using Infraestructure.Authentication;
 using Infraestructure.Hubs.Abstractions;
 using Infraestructure.Media;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.Abstractions;
 using static Application.Medias.Services.VideoService;
@@ -29,7 +31,15 @@ namespace Infraestructure.Configuration
 
             services.AddScoped<MiniaturaService>();
 
+            services.AddScoped<IRolesProvider,RolesProvider>();
+
+            services.AddScoped<RoleManager<Role>>();
+            services.AddScoped<UserManager<Usuario>>();
+
             services.AddScoped<GifVideoPrevisualizadorProcesador>();
+
+            services.AddScoped<IUrlProvider, UrlConfigurationProvider>();
+
             return services;
         }
     }

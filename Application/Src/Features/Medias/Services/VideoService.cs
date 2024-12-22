@@ -1,3 +1,4 @@
+using Application.Abstractions;
 using Application.Medias.Abstractions;
 using Domain.Features.Medias.Models;
 
@@ -7,10 +8,12 @@ public class VideoService : IMediaService
 {
     private readonly MiniaturaService _miniaturaService;
     private readonly GifVideoPrevisualizadorProcesador _gifVideoPrevisualizadorProcesador;
-    public VideoService(MiniaturaService miniaturaService, GifVideoPrevisualizadorProcesador gifVideoPrevisualizadorProcesador)
+    private readonly IUrlProvider _url;
+    public VideoService(MiniaturaService miniaturaService, GifVideoPrevisualizadorProcesador gifVideoPrevisualizadorProcesador, IUrlProvider url)
     {
         _miniaturaService = miniaturaService;
         _gifVideoPrevisualizadorProcesador = gifVideoPrevisualizadorProcesador;
+        _url = url;
     }
 
 
@@ -23,8 +26,8 @@ public class VideoService : IMediaService
 
         return new Media(
             MediaProvider.Video,
-            "/media/thumbnails/" + Path.GetFileName(miniatura),
-            "/media/previsualizaciones/" + Path.GetFileName(previsualizacion)
+            _url.Thumbnail + Path.GetFileName(miniatura),
+            _url.Previsualizacion + Path.GetFileName(previsualizacion)
         );
     }
 

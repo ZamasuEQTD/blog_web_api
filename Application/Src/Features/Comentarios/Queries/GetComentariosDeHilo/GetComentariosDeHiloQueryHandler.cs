@@ -20,7 +20,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
 
     public async Task<Result<List<GetComentarioResponse>>> Handle(GetComentariosDeHiloQuery request, CancellationToken cancellationToken)
     {
-        var sql = @$"(
+        var sql = @$"
             SELECT 
                 comentario.id,
                 comentario.created_at as createdat,
@@ -31,7 +31,6 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.autor_id = @UsuarioId AS EsAutor,
                 CASE
                     WHEN comentario.autor_id = @UsuarioId THEN comentario.recibir_notificaciones
-                    ELSE NULL
                 END AS RecibirNotificaciones,
                 NULL as destacado_at,  
                 FALSE as destacado,
@@ -42,60 +41,28 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.tag_unico as tagunico
             FROM comentarios comentario
             JOIN hilos hilo ON hilo.id = comentario.hilo_id
-            /**where**/
-            {
-            (request.UltimoComentario == DateTime.MinValue ?
-            @$"
-            UNION ALL
-            SELECT 
-                comentario.id,
-                comentario.created_at as createdat,
-                comentario.texto,
-                comentario.autor_id as autorid,
-                comentario.color,
-                hilo.autor_id = comentario.autor_id AS EsOp,
-                comentario.autor_id = @UsuarioId AS EsAutor,
-                CASE
-                    WHEN comentario.autor_id = @UsuarioId THEN comentario.recibir_notificaciones
-                    ELSE NULL
-                END AS RecibirNotificaciones,
-                destacado.created_at as destacado_at,  
-                true as destacado,
-                comentario.autor_nombre as nombre,
-                comentario.autor_rango as rango,
-                comentario.tag,
-                comentario.dados,
-                comentario.tag_unico as tagunico
-            FROM comentarios comentario
-            JOIN comentarios_destacados destacado ON destacado.comentario_id = comentario.id
-            JOIN hilos hilo ON hilo.id = comentario.hilo_id
-            /**where**/
-            " : "")
-            }
-            )
+            WHERE 
+                comentario.hilo_id = @HiloId 
+            AND 
+                comentario.status = 'Activo'
+            AND 
+                (@UltimoComentario IS NULL OR comentario.created_at < (SELECT created_at FROM comentarios WHERE id = @UltimoComentario)
+            AND (
+                @UsuarioId IS NULL OR comentario.id NOT IN (
+                    SELECT 
+                        comentario_id
+                    FROM comentarios_interacciones 
+                    WHERE usuario_id = @UsuarioId AND oculto
+                    )
+                )
             ORDER BY destacado_at DESC, createdat DESC
             LIMIT 20
         ";
+
         using var connection = _connection.CreateConnection();
 
-        SqlBuilder builder = new SqlBuilder().Where("comentario.hilo_id = @HiloId", new {request.HiloId});
-
-        DynamicParameters parameters = new DynamicParameters();
-
-        parameters.AddDynamicParams(new {
-            UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null
-        });
-
-        if(request.UltimoComentario != DateTime.MinValue){
-            builder.Where("comentario.created_at < @UltimoComentario", new {request.UltimoComentario});
-        } 
-
-        builder.AddParameters(parameters);
-
-        var template = builder.AddTemplate(sql);
-
         IEnumerable<GetComentarioResponse> comentarios = await connection.QueryAsync<GetComentarioResponse, GetHiloAutorResponse, GetComentarioDetallesResponse, GetComentarioResponse>(
-        template.RawSql, 
+        sql, 
         (comentario, autor, detalles) => {
             comentario.Autor = autor;
             
@@ -103,10 +70,14 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
             
             return comentario;
         },
-        param: template.Parameters, 
+        param: new {
+            request.HiloId,
+            request.UltimoComentario,
+            _user.UsuarioId
+        }, 
         splitOn: "nombre,tag"
         );
 
-        return Result.Success(comentarios.ToList());
+        return comentarios.ToList();
     }
 }
