@@ -18,7 +18,6 @@ public class HiloComentadoDomainEventHandler : INotificationHandler<HiloComentad
     {
         using var connection = _connection.CreateConnection();
 
-        await connection.QueryAsync("");
 
     }
 }

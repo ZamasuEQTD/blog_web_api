@@ -52,12 +52,12 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
             AND 
                 comentario.status = 'Activo'
             AND 
-                (@UltimoComentario IS NULL OR comentario.created_at < (SELECT created_at FROM comentarios WHERE id = @UltimoComentario)
+                (@UltimoComentario IS NULL OR comentario.created_at < (SELECT created_at FROM comentarios WHERE id = @UltimoComentario))
             AND (
                 @UsuarioId IS NULL OR comentario.id NOT IN (
                     SELECT 
                         comentario_id
-                    FROM comentarios_interacciones 
+                    FROM comentario_interacciones 
                     WHERE usuario_id = @UsuarioId AND oculto
                     )
                 )
@@ -81,7 +81,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
         param: new {
             request.HiloId,
             request.UltimoComentario,
-            _user.UsuarioId
+            UsuarioId =_user.IsLogged?(Guid?) _user.UsuarioId :null
         }, 
         splitOn: "nombre,tag"
         );
