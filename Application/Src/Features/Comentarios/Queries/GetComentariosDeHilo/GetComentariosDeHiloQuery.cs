@@ -7,7 +7,7 @@ namespace Application.Comentarios.GetComentarioDeHilos;
 public class GetComentariosDeHiloQuery : IQuery<List<GetComentarioResponse>>
 {
     public Guid HiloId { get; set; }
-    public Guid UltimoComentario { get; set; }
+    public Guid? UltimoComentario { get; set; }
 }
 
 public class GetComentarioResponse {

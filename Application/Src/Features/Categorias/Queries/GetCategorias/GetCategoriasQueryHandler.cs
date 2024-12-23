@@ -49,27 +49,6 @@ namespace Application.Categorias.Queries
             }
 
             return c.ToList();
-
-            var categorias = await connection.QueryAsync<GetCategoriaReponse, GetSubcategoriaResponse, GetCategoriaReponse>(sql, (categoria, subcategoria) =>
-            {
-               if (_categorias.TryGetValue(categoria.Id, out var c))
-               {
-                   categoria = c;
-               }
-               else
-               {
-                   _categorias[categoria.Id] = categoria;
-               }
-
-               categoria.Subcategorias.Add(subcategoria);
-
-               return categoria;
-            }, 
-            splitOn: "Id"
-            );
-
-
-            return _categorias.Values.ToList();
         }
     }
 }

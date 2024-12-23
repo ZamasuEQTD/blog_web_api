@@ -21,11 +21,11 @@ namespace WebApi.Controllers
 
         [HttpGet("hilo/{hilo}")]
         [ProducesResponseType(typeof(IEnumerable<GetComentarioResponse>), StatusCodes.Status200OK)]
-        public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery(Name = "ultimo_comentario")] DateTime? ultimoComentario)
+        public async Task<IResult> GetComentarios([FromRoute] Guid hilo, [FromQuery(Name = "ultimo_comentario")] Guid? ultimoComentario)
         {
             var result = await sender.Send(new GetComentariosDeHiloQuery(){
                 HiloId = hilo,
-                UltimoComentario = ultimoComentario ?? DateTime.MinValue
+                UltimoComentario = ultimoComentario  
             });
 
             return result.IsSuccess ?
