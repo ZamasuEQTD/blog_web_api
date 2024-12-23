@@ -38,9 +38,15 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.autor_rango as rango,
                 comentario.tag,
                 comentario.dados,
-                comentario.tag_unico as tagunico
+                comentario.tag_unico as tagunico,
+                portada.url,
+                portada.previsualizacion,
+                spoiler.spoiler,
+                portada.provider
             FROM comentarios comentario
             JOIN hilos hilo ON hilo.id = comentario.hilo_id
+            LEFT JOIN medias_spoileables spoiler ON comentario.media_spoileable_id = spoiler.id
+            LEFT OUTER JOIN medias portada ON spoiler.hashed_media_id = portada.id
             WHERE 
                 comentario.hilo_id = @HiloId 
             AND 
@@ -61,13 +67,15 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
 
         using var connection = _connection.CreateConnection();
 
-        IEnumerable<GetComentarioResponse> comentarios = await connection.QueryAsync<GetComentarioResponse, GetHiloAutorResponse, GetComentarioDetallesResponse, GetComentarioResponse>(
+        IEnumerable<GetComentarioResponse> comentarios = await connection.QueryAsync<GetComentarioResponse, GetHiloAutorResponse, GetComentarioDetallesResponse,GetHiloMediaResponse?, GetComentarioResponse>(
         sql, 
-        (comentario, autor, detalles) => {
+        (comentario, autor, detalles,media) => {
             comentario.Autor = autor;
             
             comentario.Detalles = detalles;
             
+            comentario.Media = media;
+
             return comentario;
         },
         param: new {
