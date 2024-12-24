@@ -27,6 +27,7 @@ namespace Domain.Comentarios
         public ComentarioStatus Status { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public bool Activo => Status == ComentarioStatus.Activo;
+        public bool EsAutor(UsuarioId usuarioId) => AutorId == usuarioId;
         private Comentario() { }
         public Comentario(HiloId hiloId, UsuarioId autorId, Autor autor, MediaSpoileableId? mediaSpoileableId, Texto texto, Colores color, InformacionDeComentario informacion)
         {

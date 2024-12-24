@@ -25,11 +25,12 @@ namespace Application.Moderacion
                         c.created_at as fecha,
                         h.id,
                         h.titulo,
+                        portada.provider,
                         portada.miniatura
                     FROM comentarios c
                     JOIN hilos h ON h.id = c.hilo_id
-                    JOIN media_spoileables portada_ref ON portada_ref.id = h.portada_id
- 					JOIN media portada ON portada.id = portada_ref.media_id
+                    JOIN medias_spoileables portada_ref ON portada_ref.id = h.portada_id
+ 					JOIN medias portada ON portada.id = portada_ref.hashed_media_id
                     WHERE h.status = 'Activo' AND c.status = 'Activo' AND h.autor_id = @Usuario AND (
                         @UltimoComentario IS NULL OR c.created_at < (
                             SELECT 
@@ -43,9 +44,10 @@ namespace Application.Moderacion
                 ";
 
 
-                IEnumerable<GetRegistroDeComentarioResponse> registros = await connection.QueryAsync<GetRegistroDeComentarioResponse, GetHiloRegistroResponse, GetRegistroDeComentarioResponse>(sql,
-                    (comentario, hilo) =>
+                IEnumerable<GetRegistroDeComentarioResponse> registros = await connection.QueryAsync<GetRegistroDeComentarioResponse, GetHiloRegistroResponse,GetHiloMiniaturaResponse, GetRegistroDeComentarioResponse>(sql,
+                    (comentario, hilo, miniatura) =>
                     {
+                        hilo.Miniatura = miniatura;
                         return new GetRegistroDeComentarioResponse
                         {
                             Id = comentario.Id,
@@ -59,7 +61,7 @@ namespace Application.Moderacion
                     request.Usuario,
                     request.UltimoComentario
                 },  
-                splitOn : "id"
+                splitOn : "id,provider"
                 );
 
                 return registros.ToList();

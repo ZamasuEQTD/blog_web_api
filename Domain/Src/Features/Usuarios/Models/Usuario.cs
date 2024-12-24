@@ -2,24 +2,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Usuarios
 {
-    public class Role : IdentityRole<UsuarioId>, IEquatable<Role>
+    public class Role : IdentityRole<UsuarioId>
     {
         public string ShortName { get; set; }
-
-        public override int GetHashCode()
-        {
-            return Name!.GetHashCode();
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is Role && Equals(obj);
-        }
-
-        public bool Equals(Role? other)
-        {
-            return other != null && other.Name == Name;
-        }
 
         public static Role Anonimo = new Role { 
             Id = new UsuarioId(Guid.NewGuid()), 
@@ -47,6 +32,7 @@ namespace Domain.Usuarios
     public class Usuario : IdentityUser<UsuarioId>
     {
         public string? Moderador {get;set;}
+        public DateTime RegistradoEn {get;set;}
     }
 
     public class Autor

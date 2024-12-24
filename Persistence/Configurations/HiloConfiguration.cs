@@ -53,6 +53,26 @@ namespace Persistence.Configurations
                 conf.Property(c => c.IdUnicoActivado).HasColumnName("id_unico_activado");
             });
 
+            builder.OwnsMany(h => h.Interacciones, y =>
+            {
+                y.ToTable("hilo_interacciones");
+
+                y.HasKey(r => r.Id);
+                y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
+                y.WithOwner().HasForeignKey(r => r.HiloId);
+
+                y.Property(d => d.HiloId).HasColumnName("hilo_id");
+
+
+                y.Property(d => d.UsuarioId).HasColumnName("usuario_id");
+                y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
+
+                y.Property(r => r.Seguido).HasColumnName("seguido");
+                y.Property(r => r.Favorito).HasColumnName("favorito");
+                y.Property(r => r.Oculto).HasColumnName("oculto");
+            });
+
             builder.OwnsOne(h => h.Autor, b =>
             {
                 b.Property(c => c.Nombre).HasColumnName("autor_nombre");

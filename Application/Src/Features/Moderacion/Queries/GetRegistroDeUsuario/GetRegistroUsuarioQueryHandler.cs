@@ -14,7 +14,7 @@ class GetRegistroUsuarioQueryHandler : IQueryHandler<GetRegistroUsuarioQuery, Ge
         SELECT
             usuario.id,
             usuario.username as nombre,
-            usuario.created_at as registradoen
+            usuario.registrado_en as registradoen
         FROM usuarios usuario 
         WHERE usuario.id = @Usuario
         ";

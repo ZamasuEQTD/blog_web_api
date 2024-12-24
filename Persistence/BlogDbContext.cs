@@ -54,7 +54,8 @@ namespace Persistence
                 Id = new UsuarioId(Guid.NewGuid()),
                 UserName = "Moderador",
                 PasswordHash = _hasher.Hash(Password.Create("Moderador").Value),
-                Moderador = "Zamasus"
+                Moderador = "Zamasus",
+                RegistradoEn = DateTime.UtcNow
             };
 
             Usuario owner = new Usuario
@@ -62,7 +63,8 @@ namespace Persistence
                 Id = new UsuarioId(Guid.NewGuid()),
                 UserName = "Owner1223",
                 PasswordHash = _hasher.Hash(Password.Create("Owner123").Value),
-                Moderador = "Zamasu"
+                Moderador = "Zamasu",
+                RegistradoEn = DateTime.UtcNow
             };
 
             modelBuilder.Entity<Usuario>(entity =>
@@ -75,6 +77,10 @@ namespace Persistence
                 entity.ToTable(name: "usuarios");         
 
                 entity.Property(b => b.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
+
+                entity.Property(u=> u.UserName).HasColumnName("username");
+
+                entity.Property(u=> u.RegistradoEn).HasColumnName("registrado_en");
 
                 entity.Property(e => e.Moderador).HasColumnName(name:"Moderador");
             });
@@ -91,7 +97,6 @@ namespace Persistence
 
             modelBuilder.Entity<IdentityUserRole<string>>(entity =>
             {
-
 
                 entity.HasData(new IdentityUserRole<string>
                 {

@@ -90,9 +90,7 @@ namespace Application.Comentarios.Commands
                 
                 _mediasRepository.Add(reference);
             }
-
-
-
+            
             Comentario c = new Comentario(
                 hilo.Id,
                 new UsuarioId(_userContext.UsuarioId),

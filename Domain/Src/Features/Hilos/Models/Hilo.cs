@@ -30,7 +30,7 @@ namespace Domain.Hilos
         public List<DenunciaDeHilo> Denuncias { get; private set; }
         public List<Comentario> Comentarios { get; private set; } = [];
         public List<ComentarioDestacado> ComentarioDestacados { get; private set; }
-        public List<HiloInteraccionNotificacion> Notificaciones { get; private set; } = [];
+        public List<Notificacion> Notificaciones { get; private set; } = [];
         public List<HiloInteraccion> Interacciones { get; private set; } = [];
         public UsuarioId AutorId { get; private set; }
         public SubcategoriaId SubcategoriaId { get; private set; }
@@ -225,7 +225,7 @@ namespace Domain.Hilos
 
             List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
 
-            if(AutorId != comentario.AutorId)
+            if(!EsAutor(comentario.AutorId) && RecibirNotificaciones)
             {
                 Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
             }
@@ -238,14 +238,16 @@ namespace Domain.Hilos
                 {
                     respondido.AgregarRespuesta(comentario.Id);
 
-                    if(respondido.AutorId != comentario.AutorId)
+                    if(respondido.AutorId != comentario.AutorId && respondido.RecibirNotificaciones)
                     {
-                        Notificaciones.Add(new ComentarioRespondidoNotificacion(
+                        Notificacion notificacion = new ComentarioRespondidoNotificacion(
                             respondido.AutorId,
                             Id,
                             comentario.Id,
                             respondido.Id
-                        ));
+                        );
+
+                        Notificaciones.Add(notificacion);
                     }
                 }
             }
@@ -254,7 +256,9 @@ namespace Domain.Hilos
 
             foreach (UsuarioId seguidor in seguidores)
             {
-                Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
+                if(!comentario.EsAutor(seguidor)) {
+                    Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
+                }
             }
 
 

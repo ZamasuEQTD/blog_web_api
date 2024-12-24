@@ -9,21 +9,25 @@ namespace Domain.Notificaciones
     public abstract class Notificacion : Entity<NotificacionId>
     {
         public UsuarioId NotificadoId { get; private set; }
-        public NotificacionStatus Status { get; private set; }
+        public bool Leida { get; private set; }
+        public HiloId HiloId { get; private set; }
+        public ComentarioId ComentarioId { get; private set; }
 
         protected Notificacion() { }
-        protected Notificacion(UsuarioId usuarioId)
+        protected Notificacion(UsuarioId usuarioId, HiloId hiloId, ComentarioId comentarioId)
         {
             this.Id = new(Guid.NewGuid());
             this.NotificadoId = usuarioId;
-            this.Status = NotificacionStatus.SinLeer;
+            this.Leida = false;
+            HiloId = hiloId;
+            ComentarioId = comentarioId;
         }
 
         public Result Leer(UsuarioId usuarioId)
         {
             if (usuarioId != NotificadoId) return NotificacionesFailures.NoTePertenece;
 
-            this.Status = NotificacionStatus.Leida;
+            this.Leida = true;
 
             return Result.Success();
         }
@@ -31,24 +35,7 @@ namespace Domain.Notificaciones
         public bool EsUsuarioNotificado(UsuarioId usuarioId) => this.NotificadoId == usuarioId;
     }   
 
-    public class NotificacionStatus : ValueObject
-    {
-        public string Value { get; private set; }
-
-        private NotificacionStatus() { }
-        public NotificacionStatus(string status)
-        {
-            this.Value = status;
-        }
-
-        protected override IEnumerable<object> GetAtomicValues()
-        {
-            yield return Value;
-        }
-
-        public static readonly NotificacionStatus Leida = new("Leida");
-        public static readonly NotificacionStatus SinLeer = new("SinLeer");
-    }
+     
 
     public class NotificacionId : EntityId
     {
@@ -60,30 +47,18 @@ namespace Domain.Notificaciones
         public readonly static Error NoTePertenece = new Error("notificacion.no_te_pertenece", "No te pertenece esta notificación");
     }
 
-    public abstract class HiloInteraccionNotificacion : Notificacion
-    {
-        public HiloId HiloId { get; private set; }
-        public ComentarioId ComentarioId { get; private set; }
-        protected HiloInteraccionNotificacion() { }
-        public HiloInteraccionNotificacion(UsuarioId usuarioId, HiloId hiloId, ComentarioId comentarioId) : base(usuarioId)
-        {
-            HiloId = hiloId;
-            ComentarioId = comentarioId;
-        }
-    }
-
-    public class HiloComentadoNotificacion : HiloInteraccionNotificacion
+    public class HiloComentadoNotificacion : Notificacion
     {
         private HiloComentadoNotificacion() { }
         public HiloComentadoNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId) : base(usuarioId, hilo, comentarioId) { }
     }
 
-    public class HiloSeguidoNotificacion : HiloInteraccionNotificacion
+    public class HiloSeguidoNotificacion : Notificacion
     {
         private HiloSeguidoNotificacion() { }
         public HiloSeguidoNotificacion(UsuarioId usuarioId, HiloId hilo, ComentarioId comentarioId) : base(usuarioId, hilo, comentarioId) { }
     }
-    public class ComentarioRespondidoNotificacion : HiloInteraccionNotificacion
+    public class ComentarioRespondidoNotificacion : Notificacion
     {
         public ComentarioId RespondidoId { get; private set; }
         private ComentarioRespondidoNotificacion() { }

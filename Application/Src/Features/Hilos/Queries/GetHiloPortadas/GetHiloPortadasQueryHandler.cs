@@ -38,7 +38,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             subcategoria.nombre_corto AS Subcategoria,
             @IsLogged AND hilo.autor_id = @UsuarioId AS EsOp,
             CASE
-                WHEN @IsLogged THEN hilo.autor_id
+                WHEN true THEN hilo.autor_id
             ELSE NULL
             END AS AutorId,
             sticky.id IS NOT NULL AS EsSticky,

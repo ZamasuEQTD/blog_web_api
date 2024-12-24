@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -12,9 +13,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241223233726_replanteando_notis")]
+    partial class replanteando_notis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,10 +329,6 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("hilo_id");
 
-                    b.Property<bool>("Leida")
-                        .HasColumnType("boolean")
-                        .HasColumnName("leida");
-
                     b.Property<Guid>("NotificadoId")
                         .HasColumnType("uuid")
                         .HasColumnName("notificado_id");
@@ -387,21 +386,21 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("20c682d2-a4d6-4a70-946f-383a6029bcb3"),
+                            Id = new Guid("9fc3e2ff-0383-4e6a-8c83-de558b87cb50"),
                             Name = "Anonimo",
                             NormalizedName = "ANONIMO",
                             ShortName = "Anon"
                         },
                         new
                         {
-                            Id = new Guid("43449ed9-0816-4fe6-9f58-1da6b8b8ee27"),
+                            Id = new Guid("f430e9a8-491a-4bd7-b76a-4d0f4eefcfb1"),
                             Name = "Moderador",
                             NormalizedName = "MODERADOR",
                             ShortName = "Mod"
                         },
                         new
                         {
-                            Id = new Guid("c4916822-2aa9-4cd0-a594-43d024a67764"),
+                            Id = new Guid("d7cb2025-d0cf-4b35-b515-5f43b00ca0fa"),
                             Name = "Owner",
                             NormalizedName = "Owner",
                             ShortName = "Owner"
@@ -484,29 +483,29 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("259a37e0-ba4d-4518-bc8d-633508c4ab7b"),
+                            Id = new Guid("fe654252-460a-494c-b41f-a7789b51b00b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a880c577-c148-43e5-9cb8-d9e9e8037de2",
+                            ConcurrencyStamp = "6241f465-bae9-42d8-aa03-abb03158657d",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Moderador = "Zamasus",
-                            PasswordHash = "$2a$13$ME9OsVKDp3yN3KEBPxmGMuPfcowVZkDPSxoA01bLSoYRUDntO2p6W",
+                            PasswordHash = "$2a$13$L08zPDFIY5PHizF9FHC2EO0XWFZ3J9T/dtxrxr.uc08eStNPWX0Jm",
                             PhoneNumberConfirmed = false,
-                            RegistradoEn = new DateTime(2024, 12, 23, 23, 49, 51, 307, DateTimeKind.Utc).AddTicks(3864),
+                            RegistradoEn = new DateTime(2024, 12, 23, 23, 37, 25, 695, DateTimeKind.Utc).AddTicks(6233),
                             TwoFactorEnabled = false,
                             UserName = "Moderador"
                         },
                         new
                         {
-                            Id = new Guid("a5ab5119-296c-4b8c-b56c-dd33b824eff7"),
+                            Id = new Guid("13b20cc1-9fea-4008-b532-f1327e1a847f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fe18fbf6-5d83-40aa-8c4e-75853aae18d5",
+                            ConcurrencyStamp = "97ff121b-d3ce-45bf-87a2-632021cb9cb2",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Moderador = "Zamasu",
-                            PasswordHash = "$2a$13$H23FNTtHwso7WrUdkdimjOphe2Fzp9iC7LXPOxcvWiBZKUq02xtnC",
+                            PasswordHash = "$2a$13$es2ZlzY4OuMsPk.M5d6JpOOQOl5WfIqRM8GtfkcGq6aEe2osVTH7S",
                             PhoneNumberConfirmed = false,
-                            RegistradoEn = new DateTime(2024, 12, 23, 23, 49, 51, 831, DateTimeKind.Utc).AddTicks(5109),
+                            RegistradoEn = new DateTime(2024, 12, 23, 23, 37, 26, 226, DateTimeKind.Utc).AddTicks(6869),
                             TwoFactorEnabled = false,
                             UserName = "Owner1223"
                         });
@@ -613,13 +612,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "259a37e0-ba4d-4518-bc8d-633508c4ab7b",
-                            RoleId = "43449ed9-0816-4fe6-9f58-1da6b8b8ee27"
+                            UserId = "fe654252-460a-494c-b41f-a7789b51b00b",
+                            RoleId = "f430e9a8-491a-4bd7-b76a-4d0f4eefcfb1"
                         },
                         new
                         {
-                            UserId = "a5ab5119-296c-4b8c-b56c-dd33b824eff7",
-                            RoleId = "c4916822-2aa9-4cd0-a594-43d024a67764"
+                            UserId = "13b20cc1-9fea-4008-b532-f1327e1a847f",
+                            RoleId = "d7cb2025-d0cf-4b35-b515-5f43b00ca0fa"
                         });
                 });
 
@@ -1305,6 +1304,27 @@ namespace Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("NotificadoId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Notificaciones.NotificacionStatus", "Status", b1 =>
+                        {
+                            b1.Property<Guid>("NotificacionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("status");
+
+                            b1.HasKey("NotificacionId");
+
+                            b1.ToTable("notificaciones");
+
+                            b1.WithOwner()
+                                .HasForeignKey("NotificacionId");
+                        });
+
+                    b.Navigation("Status")
                         .IsRequired();
                 });
 

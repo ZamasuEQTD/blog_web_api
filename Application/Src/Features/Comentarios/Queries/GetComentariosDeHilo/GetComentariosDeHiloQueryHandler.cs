@@ -83,7 +83,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
             request.UltimoComentario,
             UsuarioId =_user.IsLogged?(Guid?) _user.UsuarioId :null
         }, 
-        splitOn: "nombre,tag"
+        splitOn: "nombre,tag,url"
         );
 
         return comentarios.ToList();

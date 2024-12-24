@@ -24,13 +24,13 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
         IEnumerable<GetNotificacionResponse> notificaciones = await connection.QueryAsync<GetNotificacionResponse, GetHiloNotificacionResponse, GetNotificacionResponse>(
             @"
             SELECT 
-                notificacion.tipo_de_interaccion,
+                notificacion.tipo_de_interaccion as tipo,
                 notificacion.id,
                 notificacion.created_at as fecha,
-                notificacion.comentario_id as comentario_id,
+                notificacion.comentario_id as comentarioid,
                 CASE 
-                    WHEN notificacion.tipo_de_interaccion = 'hilo_comentado' OR notificacion.tipo_de_interaccion = 'hilo_seguido_comentado' THEN h.titulo
-                    WHEN notificacion.tipo_de_interaccion = 'comentario_respondido' THEN c.texto
+                    WHEN notificacion.tipo_de_interaccion = 'ComentarioRespondido' THEN c.texto
+                    ELSE h.titulo
                 END AS contenido,
                 h.id as id,
                 h.titulo as titulo,
@@ -38,18 +38,20 @@ public class GetNotificacionesQueryHandler : IQueryHandler<GetNotificacionesQuer
             FROM notificaciones notificacion
             JOIN hilos h ON notificacion.hilo_id = h.id
             JOIN comentarios c ON notificacion.comentario_id = c.id
-            JOIN media_spoileables spoiler ON h.portada_id = spoiler.id
-            JOIN media p ON spoiler.media_id = p.id
+            JOIN medias_spoileables spoiler ON h.portada_id = spoiler.id
+            JOIN medias p ON spoiler.hashed_media_id = p.id
             WHERE 
-                notificacion.usuario_notificado_id = @UsuarioId
+                notificacion.notificado_id = @UsuarioId
             AND 
-                notificacion.status = 'SinLeer' 
+                notificacion.leida = false
             AND 
+                (@UltimaNotificacion IS NULL OR
                 notificacion.created_at < (
                     SELECT 
                         created_at
                     FROM notificaciones
                     WHERE id = @UltimaNotificacion
+                )
                 )
             ORDER BY fecha DESC
             LIMIT 20

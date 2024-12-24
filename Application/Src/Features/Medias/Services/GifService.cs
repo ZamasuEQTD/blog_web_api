@@ -25,8 +25,8 @@ public class GifService : IMediaService
 
         return new Media(
             MediaProvider.Gif,
-            _url.Thumbnail + miniatura,
-            _url.Previsualizacion + previsualizacion
+            _url.Thumbnail + Path.GetFileName(miniatura),
+            _url.Previsualizacion + Path.GetFileName(previsualizacion)
         );
     }
 }

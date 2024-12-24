@@ -20,11 +20,10 @@ using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// For Identity  
 builder.Services.AddIdentity<Usuario, Role>()
-                .AddRoles<Role>()
-                .AddEntityFrameworkStores<BlogDbContext>()
-                .AddDefaultTokenProviders();
+.AddRoles<Role>()
+.AddEntityFrameworkStores<BlogDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration).AddSwaggerBearerTokenSupport(); ;
 builder.Services.AddSwaggerGen(c =>

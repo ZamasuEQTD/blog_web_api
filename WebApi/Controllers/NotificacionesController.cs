@@ -45,7 +45,7 @@ namespace WebApi.Controllers
             result.HandleFailure();
         }       
         
-        [HttpGet()]
+        [HttpGet("mis-notificaciones")]
         public async Task<IResult> GetNotificaciones(){
             var result = await _sender.Send(new GetNotificacionesQuery());
            

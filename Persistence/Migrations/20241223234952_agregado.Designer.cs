@@ -13,8 +13,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20241222191142_initial")]
-    partial class initial
+    [Migration("20241223234952_agregado")]
+    partial class agregado
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -311,53 +311,27 @@ namespace Persistence.Migrations
                     b.ToTable("hilos", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Hilos.HiloInteraccion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Favorito")
-                        .HasColumnType("boolean")
-                        .HasColumnName("favorito");
-
-                    b.Property<Guid>("HiloId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("hilo_id");
-
-                    b.Property<bool>("Oculto")
-                        .HasColumnType("boolean")
-                        .HasColumnName("oculto");
-
-                    b.Property<bool>("Seguido")
-                        .HasColumnType("boolean")
-                        .HasColumnName("seguido");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("usuario_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HiloId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("hilo_interacciones", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid>("ComentarioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("comentario_id");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<Guid>("HiloId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("hilo_id");
+
+                    b.Property<bool>("Leida")
+                        .HasColumnType("boolean")
+                        .HasColumnName("leida");
 
                     b.Property<Guid>("NotificadoId")
                         .HasColumnType("uuid")
@@ -365,10 +339,14 @@ namespace Persistence.Migrations
 
                     b.Property<string>("tipo_de_interaccion")
                         .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ComentarioId");
+
+                    b.HasIndex("HiloId");
 
                     b.HasIndex("NotificadoId");
 
@@ -412,21 +390,21 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6c49b6cf-9f30-4517-813e-5e2e6aae15fa"),
+                            Id = new Guid("20c682d2-a4d6-4a70-946f-383a6029bcb3"),
                             Name = "Anonimo",
                             NormalizedName = "ANONIMO",
                             ShortName = "Anon"
                         },
                         new
                         {
-                            Id = new Guid("a164b7bd-46c9-4f42-88e5-e37fda1b10ac"),
+                            Id = new Guid("43449ed9-0816-4fe6-9f58-1da6b8b8ee27"),
                             Name = "Moderador",
                             NormalizedName = "MODERADOR",
                             ShortName = "Mod"
                         },
                         new
                         {
-                            Id = new Guid("242e0f20-2568-4b46-b90c-e26493be9bcd"),
+                            Id = new Guid("c4916822-2aa9-4cd0-a594-43d024a67764"),
                             Name = "Owner",
                             NormalizedName = "Owner",
                             ShortName = "Owner"
@@ -480,6 +458,10 @@ namespace Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("RegistradoEn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("registrado_en");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -488,7 +470,8 @@ namespace Persistence.Migrations
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 
@@ -504,27 +487,29 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("84d55df5-946a-478b-a493-8799e002df7b"),
+                            Id = new Guid("259a37e0-ba4d-4518-bc8d-633508c4ab7b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3733a5ac-1ff2-4d8d-b143-7514d121b89f",
+                            ConcurrencyStamp = "a880c577-c148-43e5-9cb8-d9e9e8037de2",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Moderador = "Zamasus",
-                            PasswordHash = "$2a$13$yHIvZPXm6bg471cyIrgPWOQlHk3nFDh17ZJsnyDrP.RF2NmK.gpPO",
+                            PasswordHash = "$2a$13$ME9OsVKDp3yN3KEBPxmGMuPfcowVZkDPSxoA01bLSoYRUDntO2p6W",
                             PhoneNumberConfirmed = false,
+                            RegistradoEn = new DateTime(2024, 12, 23, 23, 49, 51, 307, DateTimeKind.Utc).AddTicks(3864),
                             TwoFactorEnabled = false,
                             UserName = "Moderador"
                         },
                         new
                         {
-                            Id = new Guid("8266d993-8287-46c3-9779-4a100120e5b3"),
+                            Id = new Guid("a5ab5119-296c-4b8c-b56c-dd33b824eff7"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7e1aefa7-b581-4e87-9ace-710ff3e37d1a",
+                            ConcurrencyStamp = "fe18fbf6-5d83-40aa-8c4e-75853aae18d5",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Moderador = "Zamasu",
-                            PasswordHash = "$2a$13$fN8SPSuCYlUy3uEBGf3tGOmhUU5A7RCNSagbwjYziM/zLVy4xdkJW",
+                            PasswordHash = "$2a$13$H23FNTtHwso7WrUdkdimjOphe2Fzp9iC7LXPOxcvWiBZKUq02xtnC",
                             PhoneNumberConfirmed = false,
+                            RegistradoEn = new DateTime(2024, 12, 23, 23, 49, 51, 831, DateTimeKind.Utc).AddTicks(5109),
                             TwoFactorEnabled = false,
                             UserName = "Owner1223"
                         });
@@ -631,13 +616,13 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "84d55df5-946a-478b-a493-8799e002df7b",
-                            RoleId = "a164b7bd-46c9-4f42-88e5-e37fda1b10ac"
+                            UserId = "259a37e0-ba4d-4518-bc8d-633508c4ab7b",
+                            RoleId = "43449ed9-0816-4fe6-9f58-1da6b8b8ee27"
                         },
                         new
                         {
-                            UserId = "8266d993-8287-46c3-9779-4a100120e5b3",
-                            RoleId = "242e0f20-2568-4b46-b90c-e26493be9bcd"
+                            UserId = "a5ab5119-296c-4b8c-b56c-dd33b824eff7",
+                            RoleId = "c4916822-2aa9-4cd0-a594-43d024a67764"
                         });
                 });
 
@@ -660,28 +645,9 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Notificaciones.HiloInteraccionNotificacion", b =>
-                {
-                    b.HasBaseType("Domain.Notificaciones.Notificacion");
-
-                    b.Property<Guid>("ComentarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("comentario_id");
-
-                    b.Property<Guid>("HiloId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("hilo_id");
-
-                    b.HasIndex("ComentarioId");
-
-                    b.HasIndex("HiloId");
-
-                    b.HasDiscriminator().HasValue("HiloInteraccionNotificacion");
-                });
-
             modelBuilder.Entity("Domain.Notificaciones.ComentarioRespondidoNotificacion", b =>
                 {
-                    b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
+                    b.HasBaseType("Domain.Notificaciones.Notificacion");
 
                     b.Property<Guid>("RespondidoId")
                         .HasColumnType("uuid")
@@ -694,14 +660,14 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Notificaciones.HiloComentadoNotificacion", b =>
                 {
-                    b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
+                    b.HasBaseType("Domain.Notificaciones.Notificacion");
 
                     b.HasDiscriminator().HasValue("HiloComentado");
                 });
 
             modelBuilder.Entity("Domain.Notificaciones.HiloSeguidoNotificacion", b =>
                 {
-                    b.HasBaseType("Domain.Notificaciones.HiloInteraccionNotificacion");
+                    b.HasBaseType("Domain.Notificaciones.Notificacion");
 
                     b.HasDiscriminator().HasValue("HiloSeguido");
                 });
@@ -1220,6 +1186,53 @@ namespace Persistence.Migrations
                                 .HasForeignKey("HiloId");
                         });
 
+                    b.OwnsMany("Domain.Hilos.HiloInteraccion", "Interacciones", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<bool>("Favorito")
+                                .HasColumnType("boolean")
+                                .HasColumnName("favorito");
+
+                            b1.Property<Guid>("HiloId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("hilo_id");
+
+                            b1.Property<bool>("Oculto")
+                                .HasColumnType("boolean")
+                                .HasColumnName("oculto");
+
+                            b1.Property<bool>("Seguido")
+                                .HasColumnType("boolean")
+                                .HasColumnName("seguido");
+
+                            b1.Property<Guid>("UsuarioId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("usuario_id");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("HiloId");
+
+                            b1.HasIndex("UsuarioId");
+
+                            b1.ToTable("hilo_interacciones", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("HiloId");
+
+                            b1.HasOne("Domain.Usuarios.Usuario", null)
+                                .WithMany()
+                                .HasForeignKey("UsuarioId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
+
                     b.OwnsOne("Domain.Hilos.ValueObjects.ConfiguracionDeComentarios", "Configuracion", b1 =>
                         {
                             b1.Property<Guid>("HiloId")
@@ -1269,54 +1282,32 @@ namespace Persistence.Migrations
 
                     b.Navigation("Denuncias");
 
+                    b.Navigation("Interacciones");
+
                     b.Navigation("Status")
                         .IsRequired();
 
                     b.Navigation("Sticky");
                 });
 
-            modelBuilder.Entity("Domain.Hilos.HiloInteraccion", b =>
+            modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
                 {
+                    b.HasOne("Domain.Comentarios.Comentario", null)
+                        .WithMany()
+                        .HasForeignKey("ComentarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Hilos.Hilo", null)
-                        .WithMany("Interacciones")
+                        .WithMany("Notificaciones")
                         .HasForeignKey("HiloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Usuarios.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Notificaciones.Notificacion", b =>
-                {
-                    b.HasOne("Domain.Usuarios.Usuario", null)
-                        .WithMany()
                         .HasForeignKey("NotificadoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Domain.Notificaciones.NotificacionStatus", "Status", b1 =>
-                        {
-                            b1.Property<Guid>("NotificacionId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("status");
-
-                            b1.HasKey("NotificacionId");
-
-                            b1.ToTable("notificaciones");
-
-                            b1.WithOwner()
-                                .HasForeignKey("NotificacionId");
-                        });
-
-                    b.Navigation("Status")
                         .IsRequired();
                 });
 
@@ -1371,21 +1362,6 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Notificaciones.HiloInteraccionNotificacion", b =>
-                {
-                    b.HasOne("Domain.Comentarios.Comentario", null)
-                        .WithMany()
-                        .HasForeignKey("ComentarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Hilos.Hilo", null)
-                        .WithMany("Notificaciones")
-                        .HasForeignKey("HiloId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Notificaciones.ComentarioRespondidoNotificacion", b =>
                 {
                     b.HasOne("Domain.Comentarios.Comentario", null)
@@ -1403,8 +1379,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Hilos.Hilo", b =>
                 {
                     b.Navigation("Comentarios");
-
-                    b.Navigation("Interacciones");
 
                     b.Navigation("Notificaciones");
                 });

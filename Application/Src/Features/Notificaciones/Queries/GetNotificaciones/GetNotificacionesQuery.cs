@@ -14,6 +14,7 @@ public class GetNotificacionResponse
     public Guid Id { get; set; }
     public string Contenido { get; set; }
     public DateTime Fecha { get; set; }
+    [JsonPropertyName("comentario_id")]
     public Guid ComentarioId { get; set; }
     public GetHiloNotificacionResponse Hilo { get; set; }
 }

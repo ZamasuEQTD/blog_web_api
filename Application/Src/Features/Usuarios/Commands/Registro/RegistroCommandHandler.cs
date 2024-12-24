@@ -43,6 +43,7 @@ namespace Application.Usuarios.Commands
 
             usuario = new Usuario {
                 Id = new UsuarioId(Guid.NewGuid()),
+                RegistradoEn = DateTime.UtcNow,
                 UserName = request.Username,
                 PasswordHash = _passwordHasher.Hash(password.Value)
             };

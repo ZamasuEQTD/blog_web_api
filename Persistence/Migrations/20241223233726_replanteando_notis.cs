@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class replanteando_notis : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,7 +90,8 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     Moderador = table.Column<string>(type: "text", nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    registrado_en = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    username = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -590,9 +591,9 @@ namespace Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     notificado_id = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
-                    tipo_de_interaccion = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    hilo_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    comentario_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    hilo_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    comentario_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tipo_de_interaccion = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
                     respondido_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -656,9 +657,9 @@ namespace Persistence.Migrations
                 columns: new[] { "id", "ConcurrencyStamp", "Name", "NormalizedName", "ShortName" },
                 values: new object[,]
                 {
-                    { new Guid("242e0f20-2568-4b46-b90c-e26493be9bcd"), null, "Owner", "Owner", "Owner" },
-                    { new Guid("6c49b6cf-9f30-4517-813e-5e2e6aae15fa"), null, "Anonimo", "ANONIMO", "Anon" },
-                    { new Guid("a164b7bd-46c9-4f42-88e5-e37fda1b10ac"), null, "Moderador", "MODERADOR", "Mod" }
+                    { new Guid("9fc3e2ff-0383-4e6a-8c83-de558b87cb50"), null, "Anonimo", "ANONIMO", "Anon" },
+                    { new Guid("d7cb2025-d0cf-4b35-b515-5f43b00ca0fa"), null, "Owner", "Owner", "Owner" },
+                    { new Guid("f430e9a8-491a-4bd7-b76a-4d0f4eefcfb1"), null, "Moderador", "MODERADOR", "Mod" }
                 });
 
             migrationBuilder.InsertData(
@@ -666,17 +667,17 @@ namespace Persistence.Migrations
                 columns: new[] { "role_id", "usuario_id" },
                 values: new object[,]
                 {
-                    { "242e0f20-2568-4b46-b90c-e26493be9bcd", "8266d993-8287-46c3-9779-4a100120e5b3" },
-                    { "a164b7bd-46c9-4f42-88e5-e37fda1b10ac", "84d55df5-946a-478b-a493-8799e002df7b" }
+                    { "d7cb2025-d0cf-4b35-b515-5f43b00ca0fa", "13b20cc1-9fea-4008-b532-f1327e1a847f" },
+                    { "f430e9a8-491a-4bd7-b76a-4d0f4eefcfb1", "fe654252-460a-494c-b41f-a7789b51b00b" }
                 });
 
             migrationBuilder.InsertData(
                 table: "usuarios",
-                columns: new[] { "id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Moderador", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Moderador", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "registrado_en", "SecurityStamp", "TwoFactorEnabled", "username" },
                 values: new object[,]
                 {
-                    { new Guid("8266d993-8287-46c3-9779-4a100120e5b3"), 0, "7e1aefa7-b581-4e87-9ace-710ff3e37d1a", null, false, false, null, "Zamasu", null, null, "$2a$13$fN8SPSuCYlUy3uEBGf3tGOmhUU5A7RCNSagbwjYziM/zLVy4xdkJW", null, false, null, false, "Owner1223" },
-                    { new Guid("84d55df5-946a-478b-a493-8799e002df7b"), 0, "3733a5ac-1ff2-4d8d-b143-7514d121b89f", null, false, false, null, "Zamasus", null, null, "$2a$13$yHIvZPXm6bg471cyIrgPWOQlHk3nFDh17ZJsnyDrP.RF2NmK.gpPO", null, false, null, false, "Moderador" }
+                    { new Guid("13b20cc1-9fea-4008-b532-f1327e1a847f"), 0, "97ff121b-d3ce-45bf-87a2-632021cb9cb2", null, false, false, null, "Zamasu", null, null, "$2a$13$es2ZlzY4OuMsPk.M5d6JpOOQOl5WfIqRM8GtfkcGq6aEe2osVTH7S", null, false, new DateTime(2024, 12, 23, 23, 37, 26, 226, DateTimeKind.Utc).AddTicks(6869), null, false, "Owner1223" },
+                    { new Guid("fe654252-460a-494c-b41f-a7789b51b00b"), 0, "6241f465-bae9-42d8-aa03-abb03158657d", null, false, false, null, "Zamasus", null, null, "$2a$13$L08zPDFIY5PHizF9FHC2EO0XWFZ3J9T/dtxrxr.uc08eStNPWX0Jm", null, false, new DateTime(2024, 12, 23, 23, 37, 25, 695, DateTimeKind.Utc).AddTicks(6233), null, false, "Moderador" }
                 });
 
             migrationBuilder.CreateIndex(
