@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Application.Bneos.Commands;
 using Domain.Baneos;
 using MediatR;
@@ -56,6 +57,7 @@ namespace WebApi.Controllers
 
     public class BanearUsuarioRequest
     {
+        [JsonPropertyName("usuario_id")]
         public Guid UsuarioId { get; set; }
         public string? Mensaje { get; set; }
         public DuracionBaneo Duracion { get; set; }

@@ -36,7 +36,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             ELSE NULL
             END AS RecibirNotificaciones,
             subcategoria.nombre_corto AS Subcategoria,
-            @IsLogged AND hilo.autor_id = @UsuarioId AS EsOp,
+            hilo.autor_id = @UsuarioId AS EsOp,
             CASE
                 WHEN true THEN hilo.autor_id
             ELSE NULL

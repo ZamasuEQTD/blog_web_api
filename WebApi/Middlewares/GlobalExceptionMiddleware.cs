@@ -23,7 +23,7 @@ public class GlobalExceptionMiddleware
             var problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
-                Title = "Server Error"
+                Title = "Server Error",
             };
 
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;

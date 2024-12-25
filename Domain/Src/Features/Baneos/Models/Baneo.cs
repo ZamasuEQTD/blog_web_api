@@ -36,6 +36,8 @@ namespace Domain.Baneos
     public enum DuracionBaneo
     {
         CincoMinutos,
+        UnaHora,
+        UnDia,
         UnaSemana,
         UnMes,
         Permanente

@@ -3,16 +3,17 @@ using System.Text.Json.Serialization;
 using Application.Abstractions;
 using Application.Abstractions.Data;
 using Dapper;
+using Domain.Baneos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebApi.Atributos
 {
-    public class SinBaneo :IAsyncActionFilter
+    public class SinBaneoFilter :IAsyncActionFilter
     {
-
         private readonly IDBConnectionFactory _connection;
         private readonly IUserContext _user;
-        public SinBaneo(IDBConnectionFactory connection, IUserContext user)
+        public SinBaneoFilter(IDBConnectionFactory connection, IUserContext user)
         {
             _connection = connection;
             _user = user;
@@ -20,28 +21,42 @@ namespace WebApi.Atributos
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-
-            using (var connection = _connection.CreateConnection())
-            {
-                string sql = $@"
+            using var connection = _connection.CreateConnection();
+            string sql = $@"
                     SELECT
-                        baneo.id
-                        baneo.mensaje
+                        baneo.id,
+                        baneo.mensaje,
                         baneo.concluye,
-                        moderador.nombre_de_moderador
+                        baneo.razon,
+                        moderador.moderador
                     FROM baneos baneo
                     JOIN usuarios moderador ON baneo.moderador_id = moderador.id
-                    WHERE  baneo.usuario_id = {_user.UsuarioId}
+                    WHERE  baneo.usuario_baneado_id = @UsuarioId
                 ";
 
-                string? baneo = await connection.QueryFirstAsync<string?>(sql);
+            GetBaneoResponse? baneo = await connection.QueryFirstAsync<GetBaneoResponse?>(sql, new
+            {
+                _user.UsuarioId
+            });
 
-                if(baneo is not null){
-                    context.HttpContext.Response.StatusCode = 200;
-                }
+            if (baneo is not null)
+            {
+                context.HttpContext.Response.StatusCode = 403;
 
-                await next();
+                await context.HttpContext.Response.WriteAsJsonAsync(new ProblemDetails()
+                {
+                    Title = "Baneos.HasSidoBaneado",
+                    Detail = "No puedes realizar esta accion baneado",
+                    Status = 403,
+                    Extensions = {
+                            {"baneo", baneo},
+        }
+                });
+
+                return;
             }
+
+            await next();
         }
     }
 
@@ -50,9 +65,8 @@ namespace WebApi.Atributos
         public Guid Id {get;set;}
         public string Moderador{get;set;}
         [JsonPropertyName("concluye_en")]
-        public DateTime? Concluye{get;set;}
+        public DateTime? Concluye {get;set;}
         public string? Mensaje {get;set;}
-
-
+        public Razon Razon {get;set;}
     }
 }

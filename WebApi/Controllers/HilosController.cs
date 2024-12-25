@@ -11,6 +11,7 @@ using Application.Features.Hilos.Queries.GetHiloPortada;
 using Application.Hilos.Queries.Responses;
 using Application.Features.Hilos.Queries.GetHilo;
 using Application.Features.Hilos.Queries.GetColeccion;
+using WebApi.Atributos;
 namespace WebApi.Controllers
 {
 
@@ -20,6 +21,7 @@ namespace WebApi.Controllers
         public HilosController(ISender sender) : base(sender) { }
 
         [Authorize]
+        [TypeFilter(typeof(SinBaneoFilter))] 
         [HttpPost("postear")]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {
@@ -30,7 +32,7 @@ namespace WebApi.Controllers
                 Spoiler = request.Spoiler,
                 Subcategoria = request.Subcategoria,
                 DadosActivados = request.DadosActivados,
-                IdUnicoAtivado = request.IdUnicoAtivado,
+                IdUnicoAtivado = request.IdUnicoActivado,
                 Encuesta = request.Encuesta ?? [],
                 File = request.File is not null ? new FormFileImplementation(request.File) : null,
                 Embed = request.Embed is not null ? new EmbedFile(request.Embed) : null
@@ -189,6 +191,22 @@ namespace WebApi.Controllers
                 result.HandleFailure();
         }
 
+
+        [Authorize]
+        [HttpPost("hilos/cambiar-notificaciones/{hilo:guid}")]
+        public async Task<IResult> CambiarNotificaciones(Guid hilo)
+        {
+            var result = await sender.Send(new CambiarNotificacionesHiloCommand()
+            {
+                HiloId = hilo
+            });
+
+            return result.IsSuccess ?
+                Results.Ok(result)
+                :
+                result.HandleFailure();
+        }
+
         [Authorize]
         [HttpGet("colecciones/ocultos")]
         public async Task<IResult> GetHilosOcultos()
@@ -229,7 +247,7 @@ namespace WebApi.Controllers
         public List<string>? Encuesta { get; set; }
         public bool Spoiler { get; set; }
         public bool DadosActivados { get; set; }
-        public bool IdUnicoAtivado { get; set; }
+        public bool IdUnicoActivado { get; set; }
     }
 
     public class GetPortadasRequest

@@ -82,7 +82,7 @@ namespace Persistence
 
                 entity.Property(u=> u.RegistradoEn).HasColumnName("registrado_en");
 
-                entity.Property(e => e.Moderador).HasColumnName(name:"Moderador");
+                entity.Property(e => e.Moderador).HasColumnName(name:"moderador");
             });
 
             modelBuilder.Entity<Role>(entity =>

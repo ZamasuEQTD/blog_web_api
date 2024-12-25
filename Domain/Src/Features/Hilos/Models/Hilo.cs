@@ -274,6 +274,15 @@ namespace Domain.Hilos
             SubcategoriaId = subcategoriaId;
         }
 
+        public Result CambiarNotificaciones (UsuarioId usuarioId)
+        {
+            if (!EsAutor(usuarioId)) return HilosFailures.NoEsAutor;
+
+            RecibirNotificaciones = !RecibirNotificaciones;
+
+            return Result.Success();
+        }
+
         private void DestacarComentario(Comentario comentario) => ComentarioDestacados.Add(new(comentario.Id, Id));
         public void DejarDeDestacarComentario(ComentarioId comentarioId) => ComentarioDestacados = ComentarioDestacados.Where(c => c.Id == comentarioId).ToList();
         public bool HaDenunciado(UsuarioId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);

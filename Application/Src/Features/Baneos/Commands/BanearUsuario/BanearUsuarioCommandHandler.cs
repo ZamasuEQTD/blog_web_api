@@ -57,11 +57,14 @@ namespace Application.Bneos.Commands
 
     static class BaneoExtensions {
         public static DateTime ToDuracion(this DuracionBaneo duracion) {
-            DateTime time = new DateTime();
+            DateTime time = DateTime.UtcNow;
             return duracion switch {
                 DuracionBaneo.CincoMinutos => time.AddMinutes(5),
+                DuracionBaneo.UnaHora => time.AddHours(1),
+                DuracionBaneo.UnDia => time.AddDays(1),
                 DuracionBaneo.UnaSemana => time.AddDays(7),
                 DuracionBaneo.UnMes => time.AddMonths(1),
+                DuracionBaneo.Permanente => time.AddYears(1000),
                 _ => throw new ArgumentException("Duracion de baneo no soportada")
             };
         }
