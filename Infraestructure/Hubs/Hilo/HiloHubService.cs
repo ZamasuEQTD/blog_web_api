@@ -1,36 +1,40 @@
 using Application.Comentarios.GetComentarioDeHilos;
+using Application.Features.Hilos.Abstractions;
 using Infraestructure.Hubs.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infraestructure.Hubs.Hilo;
-
-public interface IHilosHubService {
-    Task NotificarEncuestaVotada(Guid respuesta);
-    Task NotificarHiloComentado(GetComentarioResponse comentario);
-    Task NotificarComentarioEliminado(Guid id);
-}
 
 public class HilosConnectionsContext
 {
     public Dictionary<Guid, HashSet<IUserHubContext>> Connections { get; set; } = new();
 }
 
-public class HiloHubService : IHilosHubService
+public class HilosHubService : IHilosHubService
 {
 
     private readonly IHubContext<HilosHub, IHilosHub> _hub;
-    public Task NotificarComentarioEliminado(Guid id)
+    private readonly HilosConnectionsContext _connections;
+    public HilosHubService(
+        IHubContext<HilosHub, IHilosHub> hub,
+        HilosConnectionsContext connections
+        )
     {
-        throw new NotImplementedException();
+        _hub = hub;
+        _connections = connections;
     }
 
-    public Task NotificarEncuestaVotada(Guid respuesta)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task NotificarComentarioEliminado(Guid hilo, Guid comentario) => await this._hub.Clients.Group(hilo.ToString()).OnComentarioEliminado(comentario);
 
-    public Task NotificarHiloComentado(GetComentarioResponse comentario)
+    public async Task NotificarHiloComentado(Guid hilo, GetComentarioResponse comentario)
     {
-        throw new NotImplementedException();
+        _connections.Connections.TryGetValue(hilo, out var usuarios);
+
+        if(usuarios is null) return;
+
+        foreach (var usuario in usuarios)
+        {
+            await _hub.Clients.Client(usuario.ConnectionId).OnHiloComentado(comentario);
+        }
     }
 }

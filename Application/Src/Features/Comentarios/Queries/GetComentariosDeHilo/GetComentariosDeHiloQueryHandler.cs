@@ -86,6 +86,31 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
         splitOn: "nombre,tag,url"
         );
 
+        foreach (var comentario in comentarios)
+        {
+            IEnumerable<string> respuestas = await connection.QueryAsync<string>(@"
+                SELECT 
+	                comentario.tag
+                FROM respuestas_comentarios
+                JOIN comentarios comentario ON respuesta_id = @Id;
+            ", new {
+                comentario.Id
+            });
+
+            IEnumerable<string> response = await connection.QueryAsync<string>(@"
+                SELECT 
+	                comentario.tag
+                FROM respuestas_comentarios
+                JOIN comentarios comentario ON respondido_id = @Id;
+            ", new {
+                comentario.Id
+            });
+
+            comentario.Taggueos = respuestas.ToList();
+
+            comentario.Tags = response.ToList();
+        }
+
         return comentarios.ToList();
     }
 }

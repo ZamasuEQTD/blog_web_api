@@ -34,7 +34,7 @@ namespace WebApi.Atributos
                     WHERE  baneo.usuario_baneado_id = @UsuarioId
                 ";
 
-            GetBaneoResponse? baneo = await connection.QueryFirstAsync<GetBaneoResponse?>(sql, new
+            GetBaneoResponse? baneo = await connection.QueryFirstOrDefaultAsync<GetBaneoResponse?>(sql, new
             {
                 _user.UsuarioId
             });
@@ -49,8 +49,8 @@ namespace WebApi.Atributos
                     Detail = "No puedes realizar esta accion baneado",
                     Status = 403,
                     Extensions = {
-                            {"baneo", baneo},
-        }
+                        {"baneo", baneo},
+                    }
                 });
 
                 return;

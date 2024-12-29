@@ -17,6 +17,9 @@ using Infraestructure.Hubs.Home;
 using Domain.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using Persistence;
+using Infraestructure.Hubs.Encuestas;
+using Application.Encuestas.Abstractions;
+using Infraestructure.Hubs.Hilo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +51,10 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipeLineBehavior<,>));
 
 builder.Services.AddSingleton<HomeConnectionManager>();
+builder.Services.AddSingleton<HilosConnectionsContext>();
 builder.Services.AddScoped<IHomeHubService, HomeHubService>();
+builder.Services.AddScoped<IEncuestasHubService, EncuestaHubService>();
+builder.Services.AddScoped<IHilosHubService, HilosHubService>();
 
 builder.Services.AddValidatorsFromAssembly(Application.AssemblyReference.Assembly, includeInternalTypes: true);
 
@@ -73,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHub<HomeHub>("/home-hub");
+app.MapHub<EncuestaHub>("/encuestas-hub");
+app.MapHub<HilosHub>("/hilos-hub");
 
 app.UseStaticFiles(new StaticFileOptions
 {

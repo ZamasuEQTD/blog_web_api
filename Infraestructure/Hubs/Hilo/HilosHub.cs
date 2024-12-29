@@ -15,29 +15,18 @@ public class HilosHub : Hub<IHilosHub>
         _connections = connections;
     }
 
-    public Task SubscribirseHilo(Guid hiloId)
+    public Task SubscribirseHilo(Guid hilo)
     {
+
         IUserHubContext user = _services.GetService<IUserHubContext>()!;
 
-        if (!_connections.Connections.ContainsKey(hiloId))
+        if (!_connections.Connections.ContainsKey(hilo))
         {
-            _connections.Connections.Add(hiloId, new HashSet<IUserHubContext>(){
+            _connections.Connections.Add(hilo, new HashSet<IUserHubContext>(){
                 user
             });
         } else {
-            _connections.Connections[hiloId].Add(user);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task DesubscribirseHilo(Guid hiloId)
-    {
-        IUserHubContext user = _services.GetService<IUserHubContext>()!;
-
-        if (_connections.Connections.ContainsKey(hiloId))
-        {
-            _connections.Connections[hiloId].Remove(user);
+            _connections.Connections[hilo].Add(user);
         }
 
         return Task.CompletedTask;
