@@ -45,6 +45,13 @@ public class GetHiloMediaResponse
     public string? Previsualizacion { get; set; }
 }
 
+
+public class  GetContenidoCensurableResponse<T>
+{
+    public bool Spoiler {get;set;}
+    public T Content {get;set;}
+}
+
 public class GetHiloAutorResponse
 {
     public string Nombre { get; set; }

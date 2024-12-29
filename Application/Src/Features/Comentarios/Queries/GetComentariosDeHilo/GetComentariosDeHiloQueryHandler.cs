@@ -90,25 +90,29 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
         {
             IEnumerable<string> respuestas = await connection.QueryAsync<string>(@"
                 SELECT 
-	                comentario.tag
-                FROM respuestas_comentarios
-                JOIN comentarios comentario ON respuesta_id = @Id;
+	                respuesta.tag
+                FROM respuestas_comentarios interaccion
+                JOIN comentarios respuesta ON respuesta.id = interaccion.respuesta_id
+                WHERE interaccion.respondido_id = @Id
+                ORDER by created_at
             ", new {
                 comentario.Id
             });
 
-            IEnumerable<string> response = await connection.QueryAsync<string>(@"
-                SELECT 
-	                comentario.tag
+            IEnumerable<string> responde = await connection.QueryAsync<string>(@"
+                SELECT
+	                respuesta.tag
                 FROM respuestas_comentarios
-                JOIN comentarios comentario ON respondido_id = @Id;
+                JOIN comentarios respuesta ON respuesta.id = respuesta_id
+                WHERE respuesta_id = @Id
+                ORDER by created_at
             ", new {
                 comentario.Id
             });
 
-            comentario.Taggueos = respuestas.ToList();
-
-            comentario.Tags = response.ToList();
+            comentario.Respuestas = respuestas.ToList();
+            
+            comentario.Responde = responde.ToList();
         }
 
         return comentarios.ToList();

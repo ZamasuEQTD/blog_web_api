@@ -21,8 +21,8 @@ public class GetComentarioResponse {
     [JsonPropertyName("es_autor")]
     public bool EsAutor { get; set; }
     public bool Destacado { get; set; }
-    public List<string> Taggueos { get; set; } = new List<string>();
-    public List<string> Tags { get; set; } = new List<string>();
+    public List<string> Respuestas { get; set; } = new List<string>();
+    public List<string> Responde { get; set; } = new List<string>();
     [JsonPropertyName("es_op")]
     public bool EsOp { get; set; }
     [JsonPropertyName("recibir_notificaciones")]
