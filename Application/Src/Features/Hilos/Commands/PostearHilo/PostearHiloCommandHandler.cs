@@ -15,6 +15,7 @@ using Domain.Hilos;
 using Domain.Hilos.Abstractions;
 using Domain.Hilos.ValueObjects;
 using Domain.Usuarios;
+using Microsoft.AspNetCore.Identity;
 using SharedKernel;
 
 namespace Application.Hilos.Commands
@@ -34,14 +35,14 @@ namespace Application.Hilos.Commands
         private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
         private readonly EmbedProcesador _embedProcesador;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcesador embedProcesador )
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, IUserContext user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcesador embedProcesador)
         {
             _unitOfWork = unitOfWork;
             _embedProcesador = embedProcesador;
             _user = user;
             _encuestasRepository = encuestasRepository;
             _mediasRepository = mediasRepository;
-            _hilosRepository = hilosRepository; 
+            _hilosRepository = hilosRepository;
             _mediaProcesador = mediaProcesador;
         }
 
@@ -89,20 +90,20 @@ namespace Application.Hilos.Commands
             reference = new MediaSpoileable(media.Id, media, request.Spoiler);
 
             _mediasRepository.Add(reference);
-            
+
             Hilo hilo = Hilo.Create(
-               titulo.Value,
-               descripcion.Value,
-               this._user.Autor,
-               new UsuarioId(_user.UsuarioId),
-               reference.Id,
-               new SubcategoriaId(request.Subcategoria),
-               encuestaId,
-               new(
-                   request.DadosActivados,
-                   request.IdUnicoAtivado
-               )
-           );
+                titulo.Value,
+                descripcion.Value,
+                _user.Autor,
+                new UsuarioId(_user.UsuarioId),
+                reference.Id,
+                new SubcategoriaId(request.Subcategoria),
+                encuestaId,
+                new(
+                    request.DadosActivados,
+                    request.IdUnicoAtivado
+                )
+            );
 
             _hilosRepository.Add(hilo);
 

@@ -5,21 +5,22 @@ using SharedKernel;
 using Dapper;
 using Application.Features.Hilos.Queries.GetHilo;
 using Application.Abstractions;
+using Domain.Usuarios;
 namespace Application.Comentarios.GetComentariosDeHilo;
 
 public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHiloQuery, List<GetComentarioResponse>>
 {
     private readonly IDBConnectionFactory _connection;
     private readonly IUserContext _user;
-
     public GetComentariosDeHiloQueryHandler(IDBConnectionFactory connection, IUserContext user)
     {
         _connection = connection;
         _user = user;
     }
 
-    public async Task<Result<List<GetComentarioResponse>>> Handle(GetComentariosDeHiloQuery request, CancellationToken cancellationToken)
-    {
+    public async Task<Result<List<GetComentarioResponse>>> Handle(GetComentariosDeHiloQuery request, CancellationToken cancellationToken) {
+        List<string> roles = _user.IsAuthenticated? _user.Roles : [];
+
         var sql = @$"
             SELECT 
                 comentario.id,
@@ -28,7 +29,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 comentario.autor_id as autorid,
                 comentario.color,
                 hilo.autor_id = comentario.autor_id AS EsOp,
-                comentario.autor_id = @UsuarioId AS EsAutor,
+                comentario.autor_id
                 CASE
                     WHEN comentario.autor_id = @UsuarioId THEN comentario.recibir_notificaciones
                 END AS RecibirNotificaciones,
@@ -81,7 +82,7 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
         param: new {
             request.HiloId,
             request.UltimoComentario,
-            UsuarioId =_user.IsLogged?(Guid?) _user.UsuarioId :null
+            UsuarioId =_user.IsAuthenticated?(Guid?) _user.UsuarioId :null
         }, 
         splitOn: "nombre,tag,url"
         );
@@ -105,7 +106,6 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
                 FROM respuestas_comentarios
                 JOIN comentarios respuesta ON respuesta.id = respuesta_id
                 WHERE respuesta_id = @Id
-                ORDER by created_at
             ", new {
                 comentario.Id
             });
@@ -113,6 +113,10 @@ public class GetComentariosDeHiloQueryHandler : IQueryHandler<GetComentariosDeHi
             comentario.Respuestas = respuestas.ToList();
             
             comentario.Responde = responde.ToList();
+        
+            if(!roles.Contains(Role.Moderador.Name!)){
+                comentario.AutorId = null;
+            }
         }
 
         return comentarios.ToList();

@@ -16,8 +16,7 @@ public class GetComentarioResponse {
     [JsonPropertyName("created_at")]
     public DateTime CreatedAt { get; set; }
     [JsonPropertyName("autor_id")]
-    public Guid AutorId { get; set; }
-
+    public Guid? AutorId { get; set; }
     [JsonPropertyName("es_autor")]
     public bool EsAutor { get; set; }
     public bool Destacado { get; set; }

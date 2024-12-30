@@ -101,7 +101,7 @@ namespace Domain.Hilos
 
             if (TieneStickyActivo())
             {
-                Sticky = null;
+                EliminarSticky();
             }
 
             foreach (var denuncia in Denuncias)
@@ -116,6 +116,7 @@ namespace Domain.Hilos
             return Result.Success();
         }
 
+       
         public Result EstablecerSticky( )
         {
             if (TieneStickyActivo( )) return HilosFailures.YaTieneStickyActivo;

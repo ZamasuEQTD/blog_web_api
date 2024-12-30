@@ -10,7 +10,7 @@ namespace Domain.Hilos.ValueObjects
         static public readonly int MIN = 10;
 
         public string Value { get; private set; }
-        public Titulo() { }
+        private Titulo() { }
         private Titulo(string value)
         {
             Value = value;

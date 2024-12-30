@@ -106,7 +106,7 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
             },
             new { 
                 HiloId = request.Hilo,
-                UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null 
+                UsuarioId = _user.IsAuthenticated ? (Guid?) _user.UsuarioId : null 
             }
             ,splitOn: "DadosActivados,url,nombre,id,id,id"
         );

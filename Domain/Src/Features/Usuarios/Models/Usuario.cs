@@ -26,7 +26,7 @@ namespace Domain.Usuarios
             NormalizedName = "Owner"
         };
 
-        public static List<Role> Roles = new List<Role> { Anonimo, Moderador, Owner };
+        public static IEnumerable<Role> Roles = new List<Role> { Anonimo, Moderador, Owner };
     }
 
     public class Usuario : IdentityUser<UsuarioId>

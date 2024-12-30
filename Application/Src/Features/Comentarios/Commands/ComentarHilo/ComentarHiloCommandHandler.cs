@@ -24,30 +24,26 @@ namespace Application.Comentarios.Commands
 {
     public class ComentarHiloCommandHandler : ICommandHandler<ComentarHiloCommand>
     {
-
          static private readonly List<FileType> ARCHIVOS_SOPORTADOS = [
             FileType.Video,
             FileType.Imagen,
             FileType.Gif,
         ];
 
-
         private readonly IHilosRepository _hilosRepository;
         private readonly ICategoriasRepository _categoriasRepository;
-        private readonly IUserContext _userContext;
+        private readonly IUserContext _user;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _timeProvider;
         private readonly IColorService _colorService;
         private readonly MediaProcesador _mediaProcesador;
         private readonly IMediasRepository _mediasRepository;
         private readonly EmbedProcesador _embedProcesador;
-
-
         public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, IUserContext userContext, ICategoriasRepository categoriasRepository, INotificacionesRepository notificacionesRepository, IDateTimeProvider timeProvider, IColorService colorService, MediaProcesador mediaProcesador, IMediasRepository mediasRepository, EmbedProcesador embedProcesador)
         {
             _unitOfWork = unitOfWork;
             _hilosRepository = hilosRepository;
-            _userContext = userContext;
+            _user = userContext;
             _categoriasRepository = categoriasRepository;
             _timeProvider = timeProvider;
             _colorService = colorService;
@@ -93,8 +89,8 @@ namespace Application.Comentarios.Commands
             
             Comentario c = new Comentario(
                 hilo.Id,
-                new UsuarioId(_userContext.UsuarioId),
-                new Autor("Anonimo","Anon"),
+                new UsuarioId(_user.UsuarioId),
+                _user.Autor,
                 reference?.Id,
                 texto.Value,
                 await _colorService.GenerarColor(hilo.SubcategoriaId),
@@ -102,7 +98,7 @@ namespace Application.Comentarios.Commands
                     TagsService.GenerarTag(),
                     hilo.Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(
                         hilo.Id,
-                        new UsuarioId(_userContext.UsuarioId)
+                        new UsuarioId(_user.UsuarioId)
                     ) : null,
                     hilo.Configuracion.Dados ? DadosService.Generar() : null
                 )

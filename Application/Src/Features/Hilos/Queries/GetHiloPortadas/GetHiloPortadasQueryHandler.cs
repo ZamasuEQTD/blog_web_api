@@ -63,8 +63,8 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
         DynamicParameters parameters = new DynamicParameters();
 
         parameters.AddDynamicParams(new {
-           _user.IsLogged,
-            UsuarioId = _user.IsLogged ? (Guid?) _user.UsuarioId : null,
+           _user.IsAuthenticated,
+            UsuarioId = _user.IsAuthenticated ? (Guid?) _user.UsuarioId : null,
         });
 
         builder.Where("hilo.status = 'Activo'");
@@ -82,7 +82,7 @@ public class GetHiloPortadasQueryHandler : IQueryHandler<GetHiloPortadasQuery, I
             builder.Where("hilo.ultimo_bump < @ultimo_bump", new { ultimo_bump = request.UltimoBump });
         }
 
-        if(_user.IsLogged){
+        if(_user.IsAuthenticated){
             builder.Where("hilo.id NOT IN (SELECT hilo_id FROM hilo_interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
         }
 

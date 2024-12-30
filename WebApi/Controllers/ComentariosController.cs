@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Application.Comentarios;
 using Application.Comentarios.Commands;
 using Application.Comentarios.GetComentarioDeHilos;
+using Application.Features.Comentarios.Queries.GetComentarioDeHilo;
 using Infraestructure.Media;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,21 @@ namespace WebApi.Controllers
     {
         public ComentariosController(ISender sender) : base(sender)
         {
+        }
+
+        [HttpGet("{hilo:guid}/{tag}")]
+        [ProducesResponseType(typeof(IEnumerable<GetComentarioResponse>), StatusCodes.Status200OK)]
+        public async Task<IResult> GetComentario(  Guid hilo, string tag)
+        {
+            var result = await sender.Send(new GetComentarioDeHiloQuery(
+                hilo,
+                tag
+            ));
+
+            return result.IsSuccess ?
+            Results.Ok(result)
+            :
+            result.HandleFailure();
         }
 
         [HttpGet("hilo/{hilo}")]
